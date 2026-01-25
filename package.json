@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "script:seed-transactions": "tsx scripts/seed-transactions.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -52,9 +53,11 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.18",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "jsdom": "^27.4.0",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.0.18"
   }
