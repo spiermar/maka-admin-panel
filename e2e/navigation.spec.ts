@@ -16,9 +16,10 @@ test.describe('Navigation and Protected Routes', () => {
     await login(page);
   });
 
-  test('should protect routes and redirect unauthenticated users', async ({ page, context }) => {
-    // Open a new page (simulating new tab/session)
-    const newPage = await context.newPage();
+  test('should protect routes and redirect unauthenticated users', async ({ browser }) => {
+    // Create a completely new context (not sharing cookies with authenticated session)
+    const newContext = await browser.newContext();
+    const newPage = await newContext.newPage();
 
     // Try to access dashboard without authentication
     await newPage.goto('/');
@@ -28,6 +29,7 @@ test.describe('Navigation and Protected Routes', () => {
     await expect(newPage.getByRole('heading', { name: /login/i })).toBeVisible();
 
     await newPage.close();
+    await newContext.close();
   });
 
   test('should allow navigation from dashboard to other pages', async ({ page }) => {
@@ -50,8 +52,8 @@ test.describe('Navigation and Protected Routes', () => {
     // Start on dashboard
     await expect(page).toHaveURL('/');
 
-    // Navigate to different routes
-    const routes = ['/accounts', '/transactions', '/categories'];
+    // Navigate to different routes that exist
+    const routes = ['/settings', '/accounts/1'];
 
     for (const route of routes) {
       // Try navigating to each route
@@ -71,8 +73,8 @@ test.describe('Navigation and Protected Routes', () => {
     const dashboardHeading = page.getByRole('heading', { name: /dashboard/i });
     await expect(dashboardHeading).toBeVisible();
 
-    // Try to navigate to accounts page
-    await page.goto('/accounts');
+    // Navigate to settings page
+    await page.goto('/settings');
     await page.waitForLoadState('networkidle');
 
     // Go back
@@ -86,17 +88,16 @@ test.describe('Navigation and Protected Routes', () => {
     await page.goForward();
     await page.waitForLoadState('networkidle');
 
-    // Should be back on accounts
-    expect(page.url()).toContain('/accounts');
+    // Should be back on settings
+    expect(page.url()).toContain('/settings');
   });
 
   test('should handle direct URL access for protected routes', async ({ page }) => {
     // Directly navigate to various protected routes
     const protectedRoutes = [
       '/',
-      '/accounts',
-      '/transactions',
-      '/categories',
+      '/settings',
+      '/accounts/1',
     ];
 
     for (const route of protectedRoutes) {
@@ -123,6 +124,11 @@ test.describe('Navigation and Protected Routes', () => {
 });
 
 test.describe('Navigation Unauthorized', () => {
+  test.beforeEach(async ({ context }) => {
+    // Clear all cookies to ensure unauthenticated state
+    await context.clearCookies();
+  });
+
   test('should redirect to login when accessing protected routes without auth', async ({ page }) => {
     // Try to access dashboard without logging in
     await page.goto('/');
@@ -132,20 +138,27 @@ test.describe('Navigation Unauthorized', () => {
     await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
   });
 
-  test('should redirect to login for all protected routes when not authenticated', async ({ page }) => {
+  test('should redirect to login for all protected routes when not authenticated', async ({ browser }) => {
     const protectedRoutes = [
       '/',
-      '/accounts',
-      '/transactions',
-      '/categories',
+      '/settings',
+      '/accounts/1', // Dynamic route with example ID
     ];
 
+    // Test each route with a fresh context to avoid chunk loading issues
     for (const route of protectedRoutes) {
-      await page.goto(route);
+      const context = await browser.newContext();
+      const page = await context.newPage();
 
-      // Should redirect to login
+      // Navigate and wait for redirect
+      const response = await page.goto(route);
       await page.waitForURL('/login', { timeout: 5000 });
+
+      // Should be on login page
+      await expect(page).toHaveURL('/login');
       await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+
+      await context.close();
     }
   });
 
