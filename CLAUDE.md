@@ -157,6 +157,9 @@ Copy `.env.example` to `.env.local` and configure:
 - `SESSION_SECRET` - Generate with: `openssl rand -base64 32`
 - `NODE_ENV` - Set to `development` or `production`
 
+## MCP Tools
+- Use Next.js DevTools MCP server for Next.js development tools and utilities for coding agents.
+
 ## Important Context
 
 ### Database Schema Notes
