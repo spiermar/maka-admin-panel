@@ -18,27 +18,27 @@ export async function getTransactionsByAccount(
   const offset = options?.offset || 0;
 
   return queryMany<TransactionWithDetails>(
-    `SELECT
+    `WITH RECURSIVE category_hierarchy AS (
+       SELECT id, name, parent_id, name::varchar as full_path
+       FROM categories
+       WHERE parent_id IS NULL
+
+       UNION ALL
+
+       SELECT c.id, c.name, c.parent_id,
+              ch.full_path || ' > ' || c.name
+       FROM categories c
+       INNER JOIN category_hierarchy ch ON c.parent_id = ch.id
+     )
+     SELECT
        t.*,
        a.name as account_name,
        c.name as category_name,
-       (
-         WITH RECURSIVE category_path AS (
-           SELECT id, name, parent_id, name::varchar as path
-           FROM categories
-           WHERE id = t.category_id
-
-           UNION ALL
-
-           SELECT c2.id, c2.name, c2.parent_id, c2.name || ' > ' || cp.path
-           FROM categories c2
-           INNER JOIN category_path cp ON c2.id = cp.parent_id
-         )
-         SELECT path FROM category_path WHERE parent_id IS NULL
-       ) as category_path
+       COALESCE(ch.full_path, 'Uncategorized') as category_path
      FROM transactions t
      INNER JOIN accounts a ON t.account_id = a.id
      LEFT JOIN categories c ON t.category_id = c.id
+     LEFT JOIN category_hierarchy ch ON t.category_id = ch.id
      WHERE t.account_id = $1
      ORDER BY t.date DESC, t.created_at DESC
      LIMIT $2 OFFSET $3`,
@@ -50,27 +50,27 @@ export async function getRecentTransactions(
   limit: number = 10
 ): Promise<TransactionWithDetails[]> {
   return queryMany<TransactionWithDetails>(
-    `SELECT
+    `WITH RECURSIVE category_hierarchy AS (
+       SELECT id, name, parent_id, name::varchar as full_path
+       FROM categories
+       WHERE parent_id IS NULL
+
+       UNION ALL
+
+       SELECT c.id, c.name, c.parent_id,
+              ch.full_path || ' > ' || c.name
+       FROM categories c
+       INNER JOIN category_hierarchy ch ON c.parent_id = ch.id
+     )
+     SELECT
        t.*,
        a.name as account_name,
        c.name as category_name,
-       (
-         WITH RECURSIVE category_path AS (
-           SELECT id, name, parent_id, name::varchar as path
-           FROM categories
-           WHERE id = t.category_id
-
-           UNION ALL
-
-           SELECT c2.id, c2.name, c2.parent_id, c2.name || ' > ' || cp.path
-           FROM categories c2
-           INNER JOIN category_path cp ON c2.id = cp.parent_id
-         )
-         SELECT path FROM category_path WHERE parent_id IS NULL
-       ) as category_path
+       COALESCE(ch.full_path, 'Uncategorized') as category_path
      FROM transactions t
      INNER JOIN accounts a ON t.account_id = a.id
      LEFT JOIN categories c ON t.category_id = c.id
+     LEFT JOIN category_hierarchy ch ON t.category_id = ch.id
      ORDER BY t.date DESC, t.created_at DESC
      LIMIT $1`,
     [limit]

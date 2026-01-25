@@ -12,7 +12,12 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Dashboard error:', error);
+    console.error('Dashboard error:', {
+      message: error.message,
+      name: error.name,
+      digest: error.digest,
+      stack: error.stack,
+    });
   }, [error]);
 
   return (
