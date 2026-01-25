@@ -22,11 +22,17 @@ npm run dev          # Start Next.js dev server on http://localhost:3000
 npm run build        # Build for production
 npm start            # Start production server
 
-# Testing
-npm test             # Run tests in watch mode
-npm test -- --run    # Run tests once (CI mode)
-npm run test:coverage # Run tests with coverage report
+# Unit Testing (Vitest)
+npm test             # Run unit tests in watch mode
+npm test -- --run    # Run unit tests once (CI mode)
+npm run test:coverage # Run unit tests with coverage report
 npm run test:ui      # Open Vitest UI dashboard
+
+# E2E Testing (Playwright)
+npm run test:e2e     # Run end-to-end tests
+npm run test:e2e:ui  # Run E2E tests with interactive UI
+npm run test:e2e:headed # Run E2E tests with visible browser
+npm run test:e2e:debug  # Debug E2E tests with step-through
 
 # Code Quality
 npm run lint         # Run ESLint
@@ -139,9 +145,21 @@ Server Components pass data as props to Client Components. This maximizes perfor
 - Used by Server Actions to validate input before DB operations
 
 ### Testing
+
+**Unit Tests (Vitest):**
 - `__tests__/` - Unit tests using Vitest
 - `vitest.config.ts` - Vitest configuration for Next.js 16
 - `vitest.setup.ts` - Global test setup and mocks
+
+**End-to-End Tests (Playwright):**
+- `e2e/` - E2E tests using Playwright
+- `e2e/auth.spec.ts` - Authentication flow tests
+- `e2e/dashboard.spec.ts` - Dashboard visualization tests
+- `e2e/navigation.spec.ts` - Navigation and routing tests
+- `e2e/visual.spec.ts` - Visual regression and accessibility tests
+- `e2e/helpers/auth.ts` - Reusable authentication helpers
+- `playwright.config.ts` - Playwright configuration
+- See `e2e/README.md` and `e2e/QUICK_START.md` for detailed documentation
 
 ## Configuration
 
@@ -170,6 +188,7 @@ Copy `.env.example` to `.env.local` and configure:
 
 ## MCP Tools
 - Use Next.js DevTools MCP server for Next.js development tools and utilities for coding agents.
+- Use the Playright MCP server for browser automation capabilities using Playwright.
 
 ## Important Context
 
