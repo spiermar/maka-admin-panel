@@ -38,7 +38,9 @@ A web-based ledger application for managing, categorizing, and analyzing financi
    cp .env.example .env.local
    ```
 
-   Edit `.env.local` and add your database connection string and session secret.
+   Edit `.env.local` and configure:
+   - `POSTGRES_URL` - PostgreSQL connection string (Neon or local)
+   - `SESSION_SECRET` - Generate with: `openssl rand -base64 32`
 
 4. Initialize the database:
    ```bash
@@ -51,6 +53,26 @@ A web-based ledger application for managing, categorizing, and analyzing financi
    ```
 
 6. Open [http://localhost:3000](http://localhost:3000)
+
+### Running Tests
+
+The project includes a comprehensive test suite with 97% code coverage:
+
+```bash
+# Run tests in watch mode
+npm test
+
+# Run tests once (CI mode)
+npm test -- --run
+
+# Run with coverage report
+npm run test:coverage
+
+# Open Vitest UI dashboard
+npm run test:ui
+```
+
+See `__tests__/README.md` for detailed testing documentation.
 
 ### Default Login
 

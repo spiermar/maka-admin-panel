@@ -22,6 +22,12 @@ npm run dev          # Start Next.js dev server on http://localhost:3000
 npm run build        # Build for production
 npm start            # Start production server
 
+# Testing
+npm test             # Run tests in watch mode
+npm test -- --run    # Run tests once (CI mode)
+npm run test:coverage # Run tests with coverage report
+npm run test:ui      # Open Vitest UI dashboard
+
 # Code Quality
 npm run lint         # Run ESLint
 ```
@@ -132,6 +138,11 @@ Server Components pass data as props to Client Components. This maximizes perfor
 - `lib/validations/*.ts` - Zod schemas for all forms
 - Used by Server Actions to validate input before DB operations
 
+### Testing
+- `__tests__/` - Unit tests using Vitest
+- `vitest.config.ts` - Vitest configuration for Next.js 16
+- `vitest.setup.ts` - Global test setup and mocks
+
 ## Configuration
 
 ### Database Setup
@@ -153,7 +164,7 @@ psql $DATABASE_URL -f scripts/init-db.sql
 
 Copy `.env.example` to `.env.local` and configure:
 
-- `DATABASE_URL` - PostgreSQL connection string (Neon or local)
+- `POSTGRES_URL` - PostgreSQL connection string (Neon or local)
 - `SESSION_SECRET` - Generate with: `openssl rand -base64 32`
 - `NODE_ENV` - Set to `development` or `production`
 
