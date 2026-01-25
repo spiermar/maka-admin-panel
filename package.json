@@ -14,19 +14,23 @@
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/bcrypt": "^6.0.0",
     "@vercel/postgres": "^0.10.0",
+    "autoprefixer": "^10.4.23",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "iron-session": "^8.0.4",
     "lucide-react": "^0.563.0",
     "next": "^16.0.0",
+    "postcss": "^8.5.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.71.1",
     "recharts": "^3.7.0",
     "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.18",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^4.3.6"
   },
@@ -36,8 +40,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
 }
