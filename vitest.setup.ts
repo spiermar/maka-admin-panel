@@ -3,7 +3,6 @@ import { vi } from 'vitest';
 
 // Mock environment variables
 process.env.SESSION_SECRET = 'test-secret-key-for-testing-purposes-only';
-process.env.NODE_ENV = 'test';
 
 // Mock Next.js navigation
 vi.mock('next/navigation', () => ({
