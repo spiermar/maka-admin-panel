@@ -39,7 +39,13 @@ export async function RecentTransactions() {
             ) : (
               transactions.map((transaction) => (
                 <TableRow key={transaction.id}>
-                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>
+                    {new Date(transaction.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </TableCell>
                   <TableCell>
                     <Link
                       href={`/accounts/${transaction.account_id}`}

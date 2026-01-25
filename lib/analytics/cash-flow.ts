@@ -57,35 +57,33 @@ export async function getCategoryBreakdown(
   limit: number = 10
 ): Promise<CategoryBreakdown[]> {
   const rows = await queryMany<Omit<CategoryBreakdown, 'percentage'>>(
-    `WITH category_totals AS (
+    `WITH RECURSIVE category_hierarchy AS (
+       SELECT id, name, parent_id, name::varchar as full_path, 1 as depth_level
+       FROM categories
+       WHERE parent_id IS NULL
+
+       UNION ALL
+
+       SELECT c.id, c.name, c.parent_id,
+              ch.full_path || ' > ' || c.name,
+              ch.depth_level + 1
+       FROM categories c
+       INNER JOIN category_hierarchy ch ON c.parent_id = ch.id
+     ),
+     category_totals AS (
        SELECT
          t.category_id,
          COALESCE(c.name, 'Uncategorized') as category_name,
-         COALESCE(
-           (
-             WITH RECURSIVE category_path AS (
-               SELECT id, name, parent_id, name::varchar as path
-               FROM categories
-               WHERE id = t.category_id
-
-               UNION ALL
-
-               SELECT c2.id, c2.name, c2.parent_id, c2.name || ' > ' || cp.path
-               FROM categories c2
-               INNER JOIN category_path cp ON c2.id = cp.parent_id
-             )
-             SELECT path FROM category_path WHERE parent_id IS NULL
-           ),
-           'Uncategorized'
-         ) as category_path,
+         COALESCE(ch.full_path, 'Uncategorized') as category_path,
          ABS(SUM(t.amount))::decimal(15,2) as amount
        FROM transactions t
        LEFT JOIN categories c ON t.category_id = c.id
+       LEFT JOIN category_hierarchy ch ON t.category_id = ch.id
        WHERE (c.category_type = $1 OR t.category_id IS NULL)
          AND DATE_TRUNC('month', t.date) = DATE_TRUNC('month', CURRENT_DATE)
-       GROUP BY t.category_id, c.name
+       GROUP BY t.category_id, c.name, ch.full_path
      )
-     SELECT * FROM category_totals
+     SELECT category_id, category_name, category_path, amount FROM category_totals
      WHERE amount > 0
      ORDER BY amount DESC
      LIMIT $2`,
