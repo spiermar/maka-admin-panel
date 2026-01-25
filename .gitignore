@@ -41,3 +41,9 @@ next-env.d.ts
 
 # claude
 .claude/settings.local.json
+
+# docs
+docs/
+!docs/plans/
+!docs/REQUIREMENTS.md
+!docs/DEPLOYMENT.md
