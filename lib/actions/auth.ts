@@ -7,7 +7,7 @@ import { getSession } from '@/lib/auth/session';
 import { verifyPassword } from '@/lib/auth/password';
 import { loginSchema } from '@/lib/validations/auth';
 
-export async function login(formData: FormData) {
+export async function login(prevState: any, formData: FormData) {
   const result = loginSchema.safeParse({
     username: formData.get('username'),
     password: formData.get('password'),
@@ -48,7 +48,9 @@ export async function login(formData: FormData) {
   session.username = user.username;
   await session.save();
 
-  redirect('/');
+  return {
+    success: true,
+  };
 }
 
 export async function logout() {
