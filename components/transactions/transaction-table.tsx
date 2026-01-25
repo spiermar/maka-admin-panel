@@ -59,7 +59,17 @@ export function TransactionTable({
         ) : (
           transactions.map((transaction) => (
             <TableRow key={transaction.id}>
-              <TableCell>{transaction.date}</TableCell>
+              <TableCell>
+                {new Date(
+                  typeof transaction.date === 'string'
+                    ? transaction.date + 'T00:00:00'
+                    : transaction.date
+                ).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </TableCell>
               <TableCell>{transaction.payee}</TableCell>
               <TableCell>
                 {transaction.category_path || 'Uncategorized'}
