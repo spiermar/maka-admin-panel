@@ -61,8 +61,8 @@ test.describe('Dashboard Visualization', () => {
     await page.waitForLoadState('networkidle');
 
     // The CashFlowChart component uses recharts
-    // Look for chart heading or container
-    await expect(page.getByText(/cash flow/i).or(page.getByText(/monthly/i))).toBeVisible();
+    // Look for the specific "Cash Flow Over Time" heading
+    await expect(page.getByRole('heading', { name: 'Cash Flow Over Time' })).toBeVisible();
 
     // Verify no chart loading errors
     await expect(page.getByText(/failed to load/i)).not.toBeVisible();
