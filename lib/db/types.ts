@@ -39,3 +39,7 @@ export interface TransactionWithDetails extends Transaction {
   category_name: string | null;
   category_path: string | null;
 }
+
+export interface CategoryWithPath extends Category {
+  path: string;
+}
