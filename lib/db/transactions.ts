@@ -24,7 +24,7 @@ export async function getTransactionsByAccount(
        c.name as category_name,
        (
          WITH RECURSIVE category_path AS (
-           SELECT id, name, parent_id, name as path
+           SELECT id, name, parent_id, name::varchar as path
            FROM categories
            WHERE id = t.category_id
 
@@ -56,7 +56,7 @@ export async function getRecentTransactions(
        c.name as category_name,
        (
          WITH RECURSIVE category_path AS (
-           SELECT id, name, parent_id, name as path
+           SELECT id, name, parent_id, name::varchar as path
            FROM categories
            WHERE id = t.category_id
 

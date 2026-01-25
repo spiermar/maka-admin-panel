@@ -30,7 +30,7 @@ export async function getAllCategoriesWithPaths(): Promise<CategoryWithPath[]> {
          category_type,
          depth,
          created_at,
-         name as path
+         name::varchar as path
        FROM categories
        WHERE parent_id IS NULL
 

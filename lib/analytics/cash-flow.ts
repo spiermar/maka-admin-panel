@@ -64,7 +64,7 @@ export async function getCategoryBreakdown(
          COALESCE(
            (
              WITH RECURSIVE category_path AS (
-               SELECT id, name, parent_id, name as path
+               SELECT id, name, parent_id, name::varchar as path
                FROM categories
                WHERE id = t.category_id
 
