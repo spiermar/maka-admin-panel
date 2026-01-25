@@ -106,3 +106,15 @@ export async function setupAuthenticatedSession(
     throw new Error('Failed to setup authenticated session');
   }
 }
+
+/**
+ * Clear session
+ *
+ * Clears all cookies to remove authentication.
+ * Useful for testing unauthenticated scenarios.
+ *
+ * @param page - Playwright Page object
+ */
+export async function clearSession(page: Page): Promise<void> {
+  await page.context().clearCookies();
+}
