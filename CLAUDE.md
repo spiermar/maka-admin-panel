@@ -41,11 +41,28 @@ npm run lint         # Run ESLint
 ## Coding Standards and Conventions
 
 ### Git Branching Rules
-- Use semantic naming: `type/description` (e.g., `feature/login-page`, `fix/header-bug`)
-- Types: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`
-- Include ticket numbers when applicable: `feat/JIRA-123-description`
-- Use lowercase and hyphens for separators
-- Always create a new branch for new tasks using `/branch`
+
+**CRITICAL: NEVER COMMIT DIRECTLY TO `main` BRANCH**
+
+Before starting ANY work (fixes, features, or changes), you MUST:
+
+1. **First, create a new branch** following semantic naming conventions:
+   - Format: `type/description`
+   - Examples: `fix/transaction-date-rendering`, `feat/user-profile-page`
+   - Types: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `test/`
+   - Include ticket numbers when applicable: `feat/JIRA-123-description`
+   - Use lowercase and hyphens for separators
+
+2. **Then, implement your changes** on that branch
+
+3. **Commit to the feature branch** (never to main)
+
+4. **Push the branch** and create a pull request
+
+**Workflow Enforcement:**
+- Check current branch with `git branch` before committing
+- If on `main`, STOP and create a feature branch first
+- The only exception is when explicitly told to commit directly to main
 
 ### Version Control
 - Use Conventional Commits specification for git commit messages
@@ -194,18 +211,26 @@ Copy `.env.example` to `.env.local` and configure:
 
 ### Development Workflow for Fixes and Features
 
-When implementing fixes or new features, follow this workflow:
+**MANDATORY: This workflow MUST be followed for ALL changes. No exceptions.**
 
-1. **Create a new branch** following the naming conventions above:
+When implementing fixes or new features, follow this workflow IN ORDER:
+
+1. **FIRST: Create a new branch** (BEFORE writing any code or making any changes):
    ```bash
+   # Check you're on main first
+   git branch
+
+   # Create and switch to new branch
    git checkout -b feat/your-feature-description
    # or
    git checkout -b fix/bug-description
    ```
 
-2. **Implement your changes** following the architecture patterns and coding standards
+   **STOP HERE if you're still on `main` - create the branch before proceeding!**
 
-3. **Commit your changes** using Conventional Commits format:
+2. **SECOND: Implement your changes** following the architecture patterns and coding standards
+
+3. **THIRD: Commit your changes** to the feature branch using Conventional Commits format:
    ```bash
    git add .
    git commit -m "feat: add user profile page"
@@ -222,12 +247,19 @@ When implementing fixes or new features, follow this workflow:
    - `test:` - Adding or updating tests
    - `chore:` - Build process, dependencies, tooling
 
-4. **Push your branch** to remote:
+4. **FOURTH: Verify you're on a feature branch before committing**:
+   ```bash
+   # Check current branch - should NOT be 'main'
+   git branch
+   # If output shows '* main', STOP and create a feature branch first
+   ```
+
+5. **FIFTH: Push your branch** to remote:
    ```bash
    git push -u origin feat/your-feature-description
    ```
 
-5. **Open a Pull Request**:
+6. **SIXTH: Open a Pull Request**:
    - Use the `/pr` command or create PR manually via GitHub CLI:
      ```bash
      gh pr create --title "feat: your feature description" --body "Description of changes"
@@ -236,7 +268,10 @@ When implementing fixes or new features, follow this workflow:
    - Reference any related issues
    - Ensure all tests pass before requesting review
 
-**Important:** Always work on feature branches. Never commit directly to `main`.
+**CRITICAL REMINDER:**
+- ✅ ALWAYS work on feature branches
+- ❌ NEVER commit directly to `main`
+- 🛑 If you find yourself about to commit to `main`, STOP and create a feature branch first
 
 ## Important Context
 
