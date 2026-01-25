@@ -190,6 +190,54 @@ Copy `.env.example` to `.env.local` and configure:
 - Use Next.js DevTools MCP server for Next.js development tools and utilities for coding agents.
 - Use the Playright MCP server for browser automation capabilities using Playwright.
 
+## Workflows
+
+### Development Workflow for Fixes and Features
+
+When implementing fixes or new features, follow this workflow:
+
+1. **Create a new branch** following the naming conventions above:
+   ```bash
+   git checkout -b feat/your-feature-description
+   # or
+   git checkout -b fix/bug-description
+   ```
+
+2. **Implement your changes** following the architecture patterns and coding standards
+
+3. **Commit your changes** using Conventional Commits format:
+   ```bash
+   git add .
+   git commit -m "feat: add user profile page"
+   # or
+   git commit -m "fix: resolve session expiration issue"
+   ```
+
+   Common commit types:
+   - `feat:` - New feature
+   - `fix:` - Bug fix
+   - `docs:` - Documentation changes
+   - `style:` - Code style/formatting (no logic changes)
+   - `refactor:` - Code refactoring
+   - `test:` - Adding or updating tests
+   - `chore:` - Build process, dependencies, tooling
+
+4. **Push your branch** to remote:
+   ```bash
+   git push -u origin feat/your-feature-description
+   ```
+
+5. **Open a Pull Request**:
+   - Use the `/pr` command or create PR manually via GitHub CLI:
+     ```bash
+     gh pr create --title "feat: your feature description" --body "Description of changes"
+     ```
+   - Provide a clear description of what changed and why
+   - Reference any related issues
+   - Ensure all tests pass before requesting review
+
+**Important:** Always work on feature branches. Never commit directly to `main`.
+
 ## Important Context
 
 ### Database Schema Notes
