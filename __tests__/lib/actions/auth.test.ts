@@ -35,8 +35,9 @@ describe('Auth Actions', () => {
       formData.append('username', 'testuser');
       formData.append('password', 'password123');
 
-      await expect(login(formData)).rejects.toThrow('NEXT_REDIRECT: /');
+      const result = await login(null, formData);
 
+      expect(result).toEqual({ success: true });
       expect(queryOne).toHaveBeenCalledWith(
         'SELECT * FROM users WHERE username = $1',
         ['testuser']
@@ -56,7 +57,7 @@ describe('Auth Actions', () => {
       formData.append('username', 'nonexistent');
       formData.append('password', 'password123');
 
-      const result = await login(formData);
+      const result = await login(null, formData);
 
       expect(result).toEqual({
         success: false,
@@ -79,7 +80,7 @@ describe('Auth Actions', () => {
       formData.append('username', 'testuser');
       formData.append('password', 'wrongpassword');
 
-      const result = await login(formData);
+      const result = await login(null, formData);
 
       expect(result).toEqual({
         success: false,
@@ -93,7 +94,7 @@ describe('Auth Actions', () => {
       formData.append('username', '');
       formData.append('password', 'password123');
 
-      const result = await login(formData);
+      const result = await login(null, formData);
 
       expect(result).toEqual({
         success: false,
@@ -106,7 +107,7 @@ describe('Auth Actions', () => {
       formData.append('username', 'testuser');
       formData.append('password', '');
 
-      const result = await login(formData);
+      const result = await login(null, formData);
 
       expect(result).toEqual({
         success: false,
@@ -117,7 +118,7 @@ describe('Auth Actions', () => {
     it('should reject login with missing credentials', async () => {
       const formData = new FormData();
 
-      const result = await login(formData);
+      const result = await login(null, formData);
 
       expect(result).toEqual({
         success: false,
@@ -134,7 +135,7 @@ describe('Auth Actions', () => {
       formData.append('username', 'testuser');
       formData.append('password', 'password123');
 
-      await expect(login(formData)).rejects.toThrow('Database error');
+      await expect(login(null, formData)).rejects.toThrow('Database error');
     });
   });
 

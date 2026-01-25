@@ -1,4 +1,4 @@
 export interface SessionData {
-  userId: number;
-  username: string;
+  userId?: number;
+  username?: string;
 }
