@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 /**
  * Dashboard End-to-End Tests
@@ -13,7 +13,7 @@ import { test, expect } from '@playwright/test';
  */
 
 // Helper function to login before each test
-async function login(page) {
+async function login(page: Page) {
   await page.goto('/login');
   await page.getByLabel(/username/i).fill('admin');
   await page.getByLabel(/password/i).fill('admin123');
@@ -172,7 +172,9 @@ test.describe('Dashboard Data Integrity', () => {
 
     // Verify page has content (not blank)
     expect(content).toBeTruthy();
-    expect(content.length).toBeGreaterThan(100);
+    if (content) {
+      expect(content.length).toBeGreaterThan(100);
+    }
 
     // Dashboard should show the main heading
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();

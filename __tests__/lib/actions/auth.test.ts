@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { login, logout } from '@/lib/actions/auth';
-import { mockUser, mockQueryResult, createSessionMock } from '../utils/mocks';
+import { mockUser, createSessionMock } from '../utils/mocks';
 
 // Mock dependencies
 vi.mock('@/lib/db', () => ({

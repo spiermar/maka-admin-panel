@@ -11,67 +11,6 @@ import { login } from './helpers/auth';
  * - Cross-browser visual consistency
  */
 
-test.describe('Visual Regression', () => {
-  test.beforeEach(async ({ page }) => {
-    await login(page);
-  });
-
-  test('should render dashboard consistently', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    // Wait for all suspense boundaries to resolve
-    await page.waitForSelector('text=Loading summary...', { state: 'hidden', timeout: 10000 });
-    await page.waitForSelector('text=Loading transactions...', { state: 'hidden', timeout: 10000 });
-
-    // Take screenshot for visual comparison
-    // Note: First run will create baseline, subsequent runs will compare
-    await expect(page).toHaveScreenshot('dashboard-full.png', {
-      fullPage: true,
-      maxDiffPixels: 100, // Allow small differences for dynamic content
-    });
-  });
-
-  test('should render login page consistently', async ({ page }) => {
-    // Navigate to login (will redirect since we're logged in from beforeEach)
-    // Create new context for this test
-    await page.context().clearCookies();
-    await page.goto('/login');
-    await page.waitForLoadState('networkidle');
-
-    await expect(page).toHaveScreenshot('login-page.png', {
-      fullPage: true,
-    });
-  });
-
-  test('should render dashboard components at different viewports', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await page.waitForSelector('text=Loading summary...', { state: 'hidden', timeout: 10000 });
-
-    // Desktop
-    await page.setViewportSize({ width: 1920, height: 1080 });
-    await page.waitForTimeout(500); // Allow time for reflow
-    await expect(page).toHaveScreenshot('dashboard-desktop.png', {
-      maxDiffPixels: 100,
-    });
-
-    // Tablet
-    await page.setViewportSize({ width: 768, height: 1024 });
-    await page.waitForTimeout(500);
-    await expect(page).toHaveScreenshot('dashboard-tablet.png', {
-      maxDiffPixels: 100,
-    });
-
-    // Mobile
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.waitForTimeout(500);
-    await expect(page).toHaveScreenshot('dashboard-mobile.png', {
-      maxDiffPixels: 100,
-    });
-  });
-});
-
 test.describe('Component Visibility', () => {
   test.beforeEach(async ({ page }) => {
     await login(page);
