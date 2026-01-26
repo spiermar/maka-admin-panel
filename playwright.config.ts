@@ -44,8 +44,6 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     // Video on failure
     video: 'retain-on-failure',
-    // Disable CSS animations for visual regression tests
-    reducedMotion: 'reduce',
   },
 
   // Configure projects for major browsers
