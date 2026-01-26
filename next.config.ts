@@ -1,8 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable dev indicators for visual regression testing
-  devIndicators: false,
   async headers() {
     return [
       {
