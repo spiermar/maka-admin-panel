@@ -193,7 +193,7 @@ describe('Cash Flow Analytics', () => {
 
       vi.mocked(queryMany).mockResolvedValue([mockMonthlyData[0]]);
 
-      const result = await getMonthlyCashFlow(1);
+      const _result = await getMonthlyCashFlow(1);
 
       expect(queryMany).toHaveBeenCalledWith(
         expect.any(String),
@@ -206,7 +206,7 @@ describe('Cash Flow Analytics', () => {
     it('should return category breakdown for expenses', async () => {
       const { queryMany } = await import('@/lib/db');
 
-      const breakdownWithoutPercentage = mockCategoryBreakdown.map(({ percentage, ...rest }) => rest);
+      const breakdownWithoutPercentage = mockCategoryBreakdown.map(({ percentage: _percentage, ...rest }) => rest);
       vi.mocked(queryMany).mockResolvedValue(breakdownWithoutPercentage);
 
       const result = await getCategoryBreakdown('expense');
@@ -224,10 +224,10 @@ describe('Cash Flow Analytics', () => {
     it('should return category breakdown for income', async () => {
       const { queryMany } = await import('@/lib/db');
 
-      const breakdownWithoutPercentage = mockCategoryBreakdown.map(({ percentage, ...rest }) => rest);
+      const breakdownWithoutPercentage = mockCategoryBreakdown.map(({ percentage: _percentage, ...rest }) => rest);
       vi.mocked(queryMany).mockResolvedValue(breakdownWithoutPercentage);
 
-      const result = await getCategoryBreakdown('income');
+      const _result = await getCategoryBreakdown('income');
 
       expect(queryMany).toHaveBeenCalledWith(
         expect.any(String),
@@ -289,7 +289,7 @@ describe('Cash Flow Analytics', () => {
     it('should include category paths', async () => {
       const { queryMany } = await import('@/lib/db');
 
-      const breakdownWithoutPercentage = mockCategoryBreakdown.map(({ percentage, ...rest }) => rest);
+      const breakdownWithoutPercentage = mockCategoryBreakdown.map(({ percentage: _percentage, ...rest }) => rest);
       vi.mocked(queryMany).mockResolvedValue(breakdownWithoutPercentage);
 
       const result = await getCategoryBreakdown('expense');

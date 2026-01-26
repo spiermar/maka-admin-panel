@@ -24,7 +24,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryOne('SELECT * FROM test WHERE id = $1', [1]);
 
@@ -41,7 +41,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryOne('SELECT * FROM test WHERE id = $1', [999]);
 
@@ -58,7 +58,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryOne('SELECT COUNT(*) as count FROM test');
 
@@ -81,7 +81,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryOne<User>('SELECT * FROM users WHERE id = $1', [1]);
 
@@ -108,7 +108,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryMany('SELECT * FROM test');
 
@@ -125,7 +125,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryMany('SELECT * FROM test WHERE id > $1', [1000]);
 
@@ -143,7 +143,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryMany('SELECT * FROM test WHERE name = $1', ['Test']);
 
@@ -169,7 +169,7 @@ describe('Database Helper Functions', () => {
         command: 'SELECT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await queryMany<Transaction>('SELECT * FROM transactions');
 
@@ -188,7 +188,7 @@ describe('Database Helper Functions', () => {
         command: 'DELETE',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       await execute('DELETE FROM test WHERE id = $1', [1]);
 
@@ -204,7 +204,7 @@ describe('Database Helper Functions', () => {
         command: 'INSERT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       await execute('INSERT INTO test (name) VALUES ($1)', ['Test']);
 
@@ -220,7 +220,7 @@ describe('Database Helper Functions', () => {
         command: 'UPDATE',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       await execute('UPDATE test SET name = $1 WHERE id = $2', ['Updated', 1]);
 
@@ -236,7 +236,7 @@ describe('Database Helper Functions', () => {
         command: 'DELETE',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await execute('DELETE FROM test WHERE id = $1', [1]);
 
@@ -255,7 +255,7 @@ describe('Database Helper Functions', () => {
         command: 'INSERT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await executeReturning('INSERT INTO test (name) VALUES ($1) RETURNING *', ['Test']);
 
@@ -272,7 +272,7 @@ describe('Database Helper Functions', () => {
         command: 'UPDATE',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await executeReturning(
         'UPDATE test SET name = $1 WHERE id = $2 RETURNING *',
@@ -297,7 +297,7 @@ describe('Database Helper Functions', () => {
         command: 'INSERT',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await executeReturning<NewTransaction>(
         'INSERT INTO transactions (amount) VALUES ($1) RETURNING *',
@@ -318,7 +318,7 @@ describe('Database Helper Functions', () => {
         command: 'DELETE',
         oid: 0,
         fields: [],
-      });
+      } as any);
 
       const result = await executeReturning('DELETE FROM test WHERE id = $1 RETURNING *', [1]);
 

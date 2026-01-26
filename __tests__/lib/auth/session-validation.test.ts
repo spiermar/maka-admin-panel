@@ -34,7 +34,7 @@ describe('Session Secret Validation', () => {
   });
 
   it('should throw error if weak secret detected in production', async () => {
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     process.env.SESSION_SECRET = 'your-32-character-secret-key-here-extra';
 
     await expect(async () => {
@@ -51,7 +51,7 @@ describe('Session Secret Validation', () => {
   });
 
   it('should allow weak secrets in development', async () => {
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     process.env.SESSION_SECRET = 'test-secret-that-is-long-enough-32chars';
 
     await expect(
