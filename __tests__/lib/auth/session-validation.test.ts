@@ -2,7 +2,7 @@
  * Tests for session secret validation
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('Session Secret Validation', () => {
   const originalEnv = process.env;
@@ -45,17 +45,17 @@ describe('Session Secret Validation', () => {
   it('should accept valid SESSION_SECRET', async () => {
     process.env.SESSION_SECRET = 'Gx8jK2nP9qR5tU7vW0xY1zA3bC4dE6fH8iJ0kL2mN4o=';
 
-    await expect(async () => {
-      await import('@/lib/auth/session');
-    }).resolves.not.toThrow();
+    await expect(
+      import('@/lib/auth/session')
+    ).resolves.toBeDefined();
   });
 
   it('should allow weak secrets in development', async () => {
     process.env.NODE_ENV = 'development';
     process.env.SESSION_SECRET = 'test-secret-that-is-long-enough-32chars';
 
-    await expect(async () => {
-      await import('@/lib/auth/session');
-    }).resolves.not.toThrow();
+    await expect(
+      import('@/lib/auth/session')
+    ).resolves.toBeDefined();
   });
 });

@@ -26,9 +26,11 @@ describe('Auth Actions', () => {
       const { getSession } = await import('@/lib/auth/session');
       const { verifyPassword } = await import('@/lib/auth/password');
 
-      const mockSession = createSessionMock({});
+      const oldSession = createSessionMock({});
+      const newSession = createSessionMock({});
       vi.mocked(queryOne).mockResolvedValue(mockUser);
-      vi.mocked(getSession).mockResolvedValue(mockSession as any);
+      // First call to destroy old session, second call to create new session
+      vi.mocked(getSession).mockResolvedValueOnce(oldSession as any).mockResolvedValueOnce(newSession as any);
       vi.mocked(verifyPassword).mockResolvedValue(true);
 
       const formData = new FormData();
@@ -39,13 +41,15 @@ describe('Auth Actions', () => {
 
       expect(result).toEqual({ success: true });
       expect(queryOne).toHaveBeenCalledWith(
-        'SELECT * FROM users WHERE username = $1',
+        'SELECT id, username, password_hash, session_version FROM users WHERE username = $1',
         ['testuser']
       );
       expect(verifyPassword).toHaveBeenCalledWith('password123', mockUser.password_hash);
-      expect(mockSession.save).toHaveBeenCalled();
-      expect(mockSession.userId).toBe(1);
-      expect(mockSession.username).toBe('testuser');
+      expect(oldSession.destroy).toHaveBeenCalled();
+      expect(newSession.save).toHaveBeenCalled();
+      expect(newSession.userId).toBe(1);
+      expect(newSession.username).toBe('testuser');
+      expect(newSession.sessionVersion).toBe(1);
     });
 
     it('should reject login with invalid username', async () => {
@@ -64,7 +68,7 @@ describe('Auth Actions', () => {
         error: 'Invalid username or password',
       });
       expect(queryOne).toHaveBeenCalledWith(
-        'SELECT * FROM users WHERE username = $1',
+        'SELECT id, username, password_hash, session_version FROM users WHERE username = $1',
         ['nonexistent']
       );
     });
