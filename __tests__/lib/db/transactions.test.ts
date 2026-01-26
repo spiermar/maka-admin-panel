@@ -4,7 +4,7 @@ import {
   getTransactionsByAccount,
   getRecentTransactions,
 } from '@/lib/db/transactions';
-import { mockTransaction, mockTransactionWithDetails, mockQueryResult } from '../utils/mocks';
+import { mockTransaction, mockTransactionWithDetails } from '../utils/mocks';
 
 // Mock the database module
 vi.mock('@/lib/db', () => ({

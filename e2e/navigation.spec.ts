@@ -151,7 +151,7 @@ test.describe('Navigation Unauthorized', () => {
       const page = await context.newPage();
 
       // Navigate and wait for redirect
-      const response = await page.goto(route);
+      const _response = await page.goto(route);
       await page.waitForURL('/login', { timeout: 5000 });
 
       // Should be on login page
