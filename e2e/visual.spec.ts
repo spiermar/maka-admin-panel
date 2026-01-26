@@ -24,11 +24,44 @@ test.describe('Visual Regression', () => {
     await page.waitForSelector('text=Loading summary...', { state: 'hidden', timeout: 10000 });
     await page.waitForSelector('text=Loading transactions...', { state: 'hidden', timeout: 10000 });
 
+    // Hide Next.js Dev Tools overlay for consistent screenshots
+    await page.evaluate(() => {
+      // Find all buttons containing Next.js Dev Tools text
+      const buttons = Array.from(document.querySelectorAll('button'));
+      buttons.forEach((button) => {
+        const text = button.textContent || '';
+        if (text.includes('Next.js') || text.includes('Issue') || text.includes('Open issues')) {
+          let parent = button.parentElement;
+          while (parent && parent !== document.body) {
+            (parent as HTMLElement).style.display = 'none';
+            parent = parent.parentElement;
+          }
+        }
+      });
+
+      // Also try to find and hide by common attributes
+      const selectors = [
+        '[data-nextjs-dialog]',
+        '[data-nextjs-toast]',
+        '[data-nextjs-errors]',
+        '[id*="nextjs"]',
+        '[class*="nextjs"]'
+      ];
+
+      selectors.forEach((selector) => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach((el) => {
+          (el as HTMLElement).style.display = 'none';
+        });
+      });
+    });
+
     // Take screenshot for visual comparison
     // Note: First run will create baseline, subsequent runs will compare
     await expect(page).toHaveScreenshot('dashboard-full.png', {
       fullPage: true,
       maxDiffPixels: 100, // Allow small differences for dynamic content
+      animations: 'disabled', // Disable animations for consistency
     });
   });
 
@@ -39,8 +72,17 @@ test.describe('Visual Regression', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
 
+    // Hide Next.js Dev Tools overlay
+    await page.evaluate(() => {
+      const devTools = document.querySelector('[data-nextjs-dialog-overlay], [data-nextjs-errors-dialog-overlay], [data-nextjs-toast], [class*="nextjs"]');
+      if (devTools) {
+        (devTools as HTMLElement).style.display = 'none';
+      }
+    });
+
     await expect(page).toHaveScreenshot('login-page.png', {
       fullPage: true,
+      animations: 'disabled',
     });
   });
 
@@ -49,11 +91,27 @@ test.describe('Visual Regression', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForSelector('text=Loading summary...', { state: 'hidden', timeout: 10000 });
 
+    // Hide Next.js Dev Tools overlay
+    await page.evaluate(() => {
+      const devTools = document.querySelector('[data-nextjs-dialog-overlay], [data-nextjs-errors-dialog-overlay], [data-nextjs-toast], [class*="nextjs"]');
+      if (devTools) {
+        (devTools as HTMLElement).style.display = 'none';
+      }
+      const overlays = document.querySelectorAll('[role="dialog"], [class*="overlay"]');
+      overlays.forEach((overlay) => {
+        const element = overlay as HTMLElement;
+        if (element.textContent?.includes('Issue') || element.textContent?.includes('Next.js')) {
+          element.style.display = 'none';
+        }
+      });
+    });
+
     // Desktop
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.waitForTimeout(500); // Allow time for reflow
     await expect(page).toHaveScreenshot('dashboard-desktop.png', {
       maxDiffPixels: 100,
+      animations: 'disabled',
     });
 
     // Tablet
@@ -61,6 +119,7 @@ test.describe('Visual Regression', () => {
     await page.waitForTimeout(500);
     await expect(page).toHaveScreenshot('dashboard-tablet.png', {
       maxDiffPixels: 100,
+      animations: 'disabled',
     });
 
     // Mobile
@@ -68,6 +127,7 @@ test.describe('Visual Regression', () => {
     await page.waitForTimeout(500);
     await expect(page).toHaveScreenshot('dashboard-mobile.png', {
       maxDiffPixels: 100,
+      animations: 'disabled',
     });
   });
 });
