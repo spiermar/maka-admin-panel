@@ -38,6 +38,37 @@ npm run test:e2e:debug  # Debug E2E tests with step-through
 npm run lint         # Run ESLint
 ```
 
+## Continuous Integration
+
+### GitHub Actions CI Workflow
+
+The project uses GitHub Actions for automated testing and validation on every PR.
+
+**Workflow:** `.github/workflows/ci.yml`
+
+**Jobs (run in parallel):**
+1. **Lint & Type Check** - ESLint and TypeScript validation (~20-30s)
+2. **Build** - Next.js production build validation (~1-2min)
+3. **Unit Tests** - Vitest with coverage reporting (~30-60s)
+4. **E2E Tests** - Playwright browser automation (~2-3min, depends on Build)
+
+**Triggers:**
+- Automatically on all PRs to `main`
+- On direct pushes to `main`
+- Manual dispatch via GitHub Actions UI
+
+**Required GitHub Secrets:**
+- `DATABASE_URL` - Neon PostgreSQL connection string
+- `SESSION_SECRET` - iron-session encryption key
+
+**Artifacts:**
+- Coverage reports (retained 30 days)
+- Playwright HTML reports (retained 30 days)
+- Test videos/screenshots on failure (retained 7 days)
+
+**Status Checks:**
+All 4 jobs must pass (green) before PR can be merged.
+
 ## Coding Standards and Conventions
 
 ### Git Branching Rules
