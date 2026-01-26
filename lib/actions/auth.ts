@@ -23,7 +23,7 @@ export async function login(prevState: any, formData: FormData) {
   const { username, password } = result.data;
 
   const user = await queryOne<User>(
-    'SELECT * FROM users WHERE username = $1',
+    'SELECT id, username, password_hash, session_version FROM users WHERE username = $1',
     [username]
   );
 
@@ -43,9 +43,15 @@ export async function login(prevState: any, formData: FormData) {
     };
   }
 
+  // Fix session fixation: destroy existing session and create new one
+  const oldSession = await getSession();
+  await oldSession.destroy();
+
+  // Create fresh session with new session ID
   const session = await getSession();
   session.userId = user.id;
   session.username = user.username;
+  session.sessionVersion = user.session_version || 1;
   await session.save();
 
   return {

@@ -4,6 +4,7 @@ export interface User {
   id: number;
   username: string;
   password_hash: string;
+  session_version?: number;
   created_at: Date;
 }
 
