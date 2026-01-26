@@ -1,11 +1,19 @@
 name: CI
 
+# Recommended branch protection settings:
+# - Required status checks: lint-and-typecheck, build, unit-tests, e2e-tests
+# - Require branches to be up to date before merging: enabled
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-typecheck:
@@ -54,7 +62,7 @@ jobs:
         env:
           NODE_ENV: test
           POSTGRES_URL: ${{ secrets.DATABASE_URL }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-secret-key-for-ci-only-do-not-use-in-production' }}
         run: npm run build
 
   unit-tests:
@@ -114,7 +122,7 @@ jobs:
         env:
           NODE_ENV: test
           POSTGRES_URL: ${{ secrets.DATABASE_URL }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-secret-key-for-ci-only-do-not-use-in-production' }}
         run: npm run test:e2e
 
       - name: Upload Playwright HTML report
