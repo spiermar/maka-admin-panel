@@ -37,6 +37,16 @@ export async function login(prevState: any, formData: FormData) {
     };
   }
 
+  // Check rate limit FIRST for rapid repeated attempts (short-term protection)
+  const rateLimit = checkRateLimit(`login:user:${user.id}`);
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      error: 'Too many login attempts. Please try again later.',
+    };
+  }
+
+  // Check account lockout for sustained failed attempts (long-term protection)
   const lockoutStatus = await getAccountLockoutStatus(user.id);
   if (lockoutStatus.isLocked) {
     const minutesUntil = Math.ceil((lockoutStatus.lockedUntil!.getTime() - Date.now()) / (60 * 1000));
@@ -46,18 +56,13 @@ export async function login(prevState: any, formData: FormData) {
     };
   }
 
-  const rateLimit = checkRateLimit(`login:user:${user.id}`);
-  if (!rateLimit.allowed) {
-    return {
-      success: false,
-      error: 'Too many login attempts. Please try again later.',
-    };
-  }
-
   const isValid = await verifyPassword(password, user.password_hash);
 
   if (!isValid) {
-    await incrementFailedAttempts(user.id);
+    // Only increment account lockout counter if this attempt wasn't rate-limited
+    if (rateLimit.remainingAttempts >= 0) {
+      await incrementFailedAttempts(user.id);
+    }
     return {
       success: false,
       error: 'Invalid username or password',
