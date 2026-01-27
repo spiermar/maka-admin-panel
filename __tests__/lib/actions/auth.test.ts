@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { login, logout } from '@/lib/actions/auth';
 import { mockUser, createSessionMock } from '../utils/mocks';
 
 // Mock dependencies
 vi.mock('@/lib/db', () => ({
   queryOne: vi.fn(),
+  execute: vi.fn(),
 }));
 
 vi.mock('@/lib/auth/session', () => ({
@@ -15,11 +16,18 @@ vi.mock('@/lib/auth/password', () => ({
   verifyPassword: vi.fn(),
 }));
 
-describe('Auth Actions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+vi.mock('@/lib/auth/rate-limit', () => ({
+  checkRateLimit: vi.fn(() => ({ allowed: true, remainingAttempts: 4, resetTime: Date.now() + 60000 })),
+  resetRateLimit: vi.fn(),
+}));
 
+vi.mock('@/lib/auth/account-lockout', () => ({
+  getAccountLockoutStatus: vi.fn(() => ({ isLocked: false, lockedUntil: null, failedAttempts: 0 })),
+  incrementFailedAttempts: vi.fn(),
+  resetFailedAttempts: vi.fn(),
+}));
+
+describe('Auth Actions', () => {
   describe('login', () => {
     it('should successfully login with valid credentials', async () => {
       const { queryOne } = await import('@/lib/db');
