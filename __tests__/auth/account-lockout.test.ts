@@ -42,8 +42,8 @@ describe('Account Lockout', () => {
     await incrementFailedAttempts(99999);
 
     expect(execute).toHaveBeenCalled();
-    const executeCall = vi.mocked(execute).mock.calls[0];
-    const lockUntil = executeCall![1][1] as Date;
+    const executeCall = vi.mocked(execute).mock.calls[0]!;
+    const lockUntil = executeCall[1]![1] as Date;
 
     const lockDuration = lockUntil.getTime() - Date.now();
     expect(lockDuration).toBeGreaterThanOrEqual(4 * 60 * 1000);
@@ -59,8 +59,8 @@ describe('Account Lockout', () => {
     await incrementFailedAttempts(99999);
 
     expect(execute).toHaveBeenCalled();
-    const executeCall = vi.mocked(execute).mock.calls[0];
-    const lockUntil = executeCall![1][1] as Date;
+    const executeCall = vi.mocked(execute).mock.calls[0]!;
+    const lockUntil = executeCall[1]![1] as Date;
 
     const lockDuration = lockUntil.getTime() - Date.now();
     expect(lockDuration).toBeGreaterThanOrEqual(29 * 60 * 1000);
@@ -76,8 +76,8 @@ describe('Account Lockout', () => {
     await incrementFailedAttempts(99999);
 
     expect(execute).toHaveBeenCalled();
-    const executeCall = vi.mocked(execute).mock.calls[0];
-    const lockUntil = executeCall![1][1] as Date;
+    const executeCall = vi.mocked(execute).mock.calls[0]!;
+    const lockUntil = executeCall[1]![1] as Date;
 
     const lockDuration = lockUntil.getTime() - Date.now();
     expect(lockDuration).toBeGreaterThanOrEqual(23 * 60 * 60 * 1000);
