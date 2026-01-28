@@ -170,13 +170,13 @@ export function TransactionForm({
             <Label htmlFor="category_id">Category</Label>
             <Select
               name="category_id"
-              defaultValue={transaction?.category_id?.toString() || ''}
+              defaultValue={transaction?.category_id?.toString() || 'none'}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Uncategorized</SelectItem>
+                <SelectItem value="none">Uncategorized</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.path}

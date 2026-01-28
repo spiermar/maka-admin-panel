@@ -69,11 +69,10 @@ describe('Transaction Validation Schema', () => {
 
   describe('Date Validation', () => {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-    const minDate = new Date(today.getFullYear() - 10, 0, 1);
-    const tenYearsAgoStr = minDate.toISOString().split('T')[0];
-    const tenYearsAndOneDayAgoStr = new Date(minDate.getTime() - 24 * 60 * 60 * 1000)
-      .toISOString().split('T')[0];
+    // Use UTC-based date strings to match validation logic
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const tenYearsAgoStr = `${today.getFullYear() - 10}-01-01`;
+    const tenYearsAndOneDayAgoStr = `${today.getFullYear() - 10 - 1}-12-31`;
 
     it('accepts today\'s date', () => {
       const result = transactionSchema.safeParse({

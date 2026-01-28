@@ -6,13 +6,17 @@ export const transactionSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)')
     .refine(
       (dateStr) => {
-        const date = new Date(dateStr);
-        const now = new Date();
-        const minDate = new Date(now.getFullYear() - 10, 0, 1);
+        // Parse as UTC to avoid timezone issues
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = Date.UTC(year, month - 1, day);
 
-        return !isNaN(date.getTime())
-          && date >= minDate
-          && date <= now;
+        const now = new Date();
+        const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+        const minDateUTC = Date.UTC(now.getFullYear() - 10, 0, 1);
+
+        return !isNaN(date)
+          && date >= minDateUTC
+          && date <= todayUTC;
       },
       {
         message: 'Date must be within last 10 years and not in the future'
