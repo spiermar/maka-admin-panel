@@ -6,6 +6,8 @@ import { User } from '@/lib/db/types';
 import { getSession } from '@/lib/auth/session';
 import { verifyPassword } from '@/lib/auth/password';
 import { loginSchema } from '@/lib/validations/auth';
+import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
+import { getAccountLockoutStatus, incrementFailedAttempts, resetFailedAttempts } from '@/lib/auth/account-lockout';
 
 export async function login(prevState: any, formData: FormData) {
   const result = loginSchema.safeParse({
@@ -28,26 +30,51 @@ export async function login(prevState: any, formData: FormData) {
   );
 
   if (!user) {
+    checkRateLimit(`login:invalid:${username}`);
     return {
       success: false,
       error: 'Invalid username or password',
+    };
+  }
+
+  // Check rate limit FIRST for rapid repeated attempts (short-term protection)
+  const rateLimit = checkRateLimit(`login:user:${user.id}`);
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      error: 'Too many login attempts. Please try again later.',
+    };
+  }
+
+  // Check account lockout for sustained failed attempts (long-term protection)
+  const lockoutStatus = await getAccountLockoutStatus(user.id);
+  if (lockoutStatus.isLocked) {
+    const minutesUntil = Math.ceil((lockoutStatus.lockedUntil!.getTime() - Date.now()) / (60 * 1000));
+    return {
+      success: false,
+      error: `Account temporarily locked. Try again in ${minutesUntil} minutes.`,
     };
   }
 
   const isValid = await verifyPassword(password, user.password_hash);
 
   if (!isValid) {
+    // Only increment account lockout counter if this attempt wasn't rate-limited
+    if (rateLimit.remainingAttempts >= 0) {
+      await incrementFailedAttempts(user.id);
+    }
     return {
       success: false,
       error: 'Invalid username or password',
     };
   }
 
-  // Fix session fixation: destroy existing session and create new one
+  await resetFailedAttempts(user.id);
+  resetRateLimit(`login:user:${user.id}`);
+
   const oldSession = await getSession();
   await oldSession.destroy();
 
-  // Create fresh session with new session ID
   const session = await getSession();
   session.userId = user.id;
   session.username = user.username;

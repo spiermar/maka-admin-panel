@@ -146,6 +146,182 @@ async function changePassword(userId: number, newPassword: string) {
 }
 ```
 
+## Rate Limiting and Brute Force Protection
+
+To protect against authentication attacks, the application implements two layers of protection:
+
+### Layer 1: Rate Limiting (In-Memory)
+
+Rate limiting prevents rapid-fire login attempts using an in-memory LRU cache.
+
+**Implementation:** `lib/auth/rate-limit.ts`
+
+**Configuration:**
+- Max attempts: 5 per minute per user/identifier
+- TTL: 60 seconds (1 minute)
+- Cache size: 500 entries (LRU eviction when full)
+
+**How It Works:**
+```typescript
+import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
+
+// Check if rate limited
+const rateLimit = checkRateLimit(`login:user:${userId}`, 5);
+if (!rateLimit.allowed) {
+  return { error: 'Too many login attempts. Please try again later.' };
+}
+
+// Reset on successful login
+resetRateLimit(`login:user:${userId}`);
+```
+
+**Security Benefits:**
+- ✅ Prevents brute-force attacks from single IP/bot
+- ✅ Fast enforcement (in-memory, no DB query)
+- ✅ Automatically resets after TTL
+- ✅ Different identifiers prevent circumvention
+
+**Limitations:**
+- Lost on server restart (but complemented by Account Lockout)
+- In-memory (not distributed for horizontal scaling)
+
+### Layer 2: Progressive Account Lockout (Database)
+
+Account lockout provides persistent protection that survives server restarts and tracks cumulative failed attempts.
+
+**Implementation:** `lib/auth/account-lockout.ts`
+
+**Progressive Lockout Rules:**
+| Failed Attempts | Lock Duration | Rationale |
+|----------------|---------------|-----------|
+| 5 | 5 minutes | Initial deterrent, quick reset |
+| 10 | 30 minutes | Moderate for persistent attackers |
+| 15 | 24 hours (1440 min) | Strong deterrent, requires admin help |
+| Reset | 0 | Successful login clears counter |
+
+**How It Works:**
+```typescript
+import {
+  getAccountLockoutStatus,
+  incrementFailedAttempts,
+  resetFailedAttempts,
+} from '@/lib/auth/account-lockout';
+
+// Check if account locked first
+const lockoutStatus = await getAccountLockoutStatus(userId);
+if (lockoutStatus.isLocked) {
+  const minutesUntil = Math.ceil(
+    (lockoutStatus.lockedUntil!.getTime() - Date.now()) / (60 * 1000)
+  );
+  return { error: `Account temporarily locked. Try again in ${minutesUntil} minutes.` };
+}
+
+// On failed password
+await incrementFailedAttempts(userId);
+
+// On successful login
+await resetFailedAttempts(userId);
+```
+
+**Database Schema:**
+```sql
+ALTER TABLE users
+  ADD COLUMN failed_login_attempts INTEGER DEFAULT 0,
+  ADD COLUMN locked_until TIMESTAMP;
+
+CREATE INDEX idx_users_locked_until ON users(locked_until) WHERE locked_until IS NOT NULL;
+CREATE INDEX idx_users_failed_attempts ON users(failed_login_attempts) WHERE failed_login_attempts > 0;
+```
+
+**Security Benefits:**
+- ✅ Persistent protection (survives server restarts)
+- ✅ Progressive escalation (harder attacks trigger longer locks)
+- ✅ Prevents distributed attacks (account-level, not IP-level)
+- ✅ Database query is fast (indexed)
+
+### Dual-Layer Protection
+
+Combined, these layers provide defense-in-depth:
+
+1. **Immediate Protection:** Rate limit blocks rapid attempts from single source
+2. **Persistent Protection:** Account lockout tracks cumulative attempts across multiple sources
+3. **Fast Reset:** Successful login immediately resets both rate limit and failed attempts
+4. **Generic Messages:** "Invalid username or password" prevents account enumeration
+
+**Example Attack Scenarios:**
+
+**Single IP Brute-Force:**
+```
+Attacker from IP X → 5 rapid attempts → Rate limit blocks
+                                    → Account NOT locked (not 5+ failures)
+```
+
+**Distributed Attack (Botnet):**
+```
+Attacker from IP 1-10 → Each IP makes 5 attempts → Rate limit NOT triggered
+                                     → Account locks (15+ cumulative failures)
+```
+
+**Slow-Paced Attack (1 attempt/minute):**
+```
+Attacker from IP X → 15 attempts over 15 minutes → Rate limit resets
+                                              → Account locks (threshold reached)
+```
+
+### Managing Locked Accounts
+
+**Check Locked Accounts:**
+```sql
+SELECT id, username, failed_login_attempts, locked_until
+FROM users
+WHERE locked_until > NOW()
+ORDER BY locked_until DESC;
+```
+
+**Unlock an Account:**
+```sql
+UPDATE users
+SET failed_login_attempts = 0, locked_until = NULL
+WHERE username = 'locked_user';
+```
+
+**Reset All Lockouts (Emergency):**
+```sql
+UPDATE users SET failed_login_attempts = 0, locked_until = NULL;
+```
+
+**Monitor Suspicious Activity:**
+```sql
+SELECT username, failed_login_attempts, locked_until
+FROM users
+WHERE failed_login_attempts > 3
+ORDER BY failed_login_attempts DESC;
+```
+
+### Database Migration
+
+**Migration File:** `lib/db/migrations/002_add_account_lockout.sql`
+
+**Run Migration:**
+```bash
+psql $DATABASE_URL -f lib/db/migrations/002_add_account_lockout.sql
+```
+
+**What It Does:**
+1. Adds `failed_login_attempts` column (default: 0)
+2. Adds `locked_until` column (nullable)
+3. Creates indexes for lockout and failed attempts queries
+
+**Rollback:**
+```sql
+DROP INDEX IF EXISTS idx_users_locked_until;
+DROP INDEX IF EXISTS idx_users_failed_attempts;
+ALTER TABLE users DROP COLUMN IF EXISTS failed_login_attempts;
+ALTER TABLE users DROP COLUMN IF EXISTS locked_until;
+```
+
+**Existing Users:** Start with `failed_login_attempts = 0`, no lockouts. All accounts active.
+
 ## Session Lifecycle
 
 ### Login Flow
