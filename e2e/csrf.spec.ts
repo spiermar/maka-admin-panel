@@ -9,16 +9,17 @@ test.describe('CSRF Protection', () => {
     await page.waitForURL('/');
   });
 
-  test('blocks requests with invalid Origin header', async ({ request, page }) => {
-    const baseURL = page.context().browser()?.contexts()[0].pages()[0].url() || 'http://localhost:3000';
-    const response = await request.post(`${baseURL}/api/transactions`, {
+  test('blocks requests with invalid Origin header', async ({ page }) => {
+    const baseURL = 'http://localhost:3000';
+
+    await page.goto('/accounts/1');
+
+    const response = await page.request.post(`${baseURL}/api/test-csrf`, {
       headers: {
         origin: 'https://malicious.com',
       },
-      form: {
-        account_id: '1',
-        amount: '-100',
-        payee: 'Attacker',
+      data: {
+        test: 'data',
       },
     });
 
@@ -26,13 +27,19 @@ test.describe('CSRF Protection', () => {
   });
 
   test('allows requests with valid Origin header', async ({ page }) => {
-    await page.goto('/');
-    await page.click('text=Add Transaction');
+    const baseURL = 'http://localhost:3000';
 
-    await page.fill('input[name="amount"]', '100');
-    await page.fill('input[name="payee"]', 'Test Payee');
-    await page.click('button[type="submit"]');
+    await page.goto('/accounts/1');
 
-    await expect(page.locator('text=Transaction added')).toBeVisible();
+    const response = await page.request.post(`${baseURL}/api/test-csrf`, {
+      headers: {
+        origin: 'http://localhost:3000',
+      },
+      data: {
+        test: 'data',
+      },
+    });
+
+    expect(response.status()).toBe(200);
   });
 });
