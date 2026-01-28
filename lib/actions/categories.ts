@@ -10,10 +10,13 @@ import { categorySchema } from '@/lib/validations/categories';
 export async function createCategory(formData: FormData) {
   await requireAuth();
 
+  const parentIdRaw = formData.get('parent_id');
+  const parentId = parentIdRaw === 'none' || !parentIdRaw ? null : parentIdRaw;
+
   const result = categorySchema.safeParse({
     name: formData.get('name'),
     category_type: formData.get('category_type'),
-    parent_id: formData.get('parent_id') || null,
+    parent_id: parentId,
   });
 
   if (!result.success) {
@@ -60,10 +63,13 @@ export async function createCategory(formData: FormData) {
 export async function updateCategory(id: number, formData: FormData) {
   await requireAuth();
 
+  const parentIdRaw = formData.get('parent_id');
+  const parentId = parentIdRaw === 'none' || !parentIdRaw ? null : parentIdRaw;
+
   const result = categorySchema.safeParse({
     name: formData.get('name'),
     category_type: formData.get('category_type'),
-    parent_id: formData.get('parent_id') || null,
+    parent_id: parentId,
   });
 
   if (!result.success) {
