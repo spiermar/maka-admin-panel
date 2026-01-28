@@ -9,11 +9,14 @@ import { transactionSchema } from '@/lib/validations/transactions';
 export async function createTransaction(formData: FormData) {
   await requireAuth();
 
+  const categoryIdRaw = formData.get('category_id');
+  const categoryId = categoryIdRaw === 'none' || !categoryIdRaw ? null : categoryIdRaw;
+
   const data = {
     account_id: formData.get('account_id'),
     date: formData.get('date'),
     payee: formData.get('payee'),
-    category_id: formData.get('category_id') || null,
+    category_id: categoryId,
     amount: formData.get('amount'),
     comment: formData.get('comment') || '',
   };
@@ -53,11 +56,14 @@ export async function createTransaction(formData: FormData) {
 export async function updateTransaction(id: number, formData: FormData) {
   await requireAuth();
 
+  const categoryIdRaw = formData.get('category_id');
+  const categoryId = categoryIdRaw === 'none' || !categoryIdRaw ? null : categoryIdRaw;
+
   const data = {
     account_id: formData.get('account_id'),
     date: formData.get('date'),
     payee: formData.get('payee'),
-    category_id: formData.get('category_id') || null,
+    category_id: categoryId,
     amount: formData.get('amount'),
     comment: formData.get('comment') || '',
   };

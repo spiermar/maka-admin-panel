@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,20 +40,47 @@ export function TransactionForm({
   defaultAccountId,
 }: TransactionFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) {
       formRef.current?.reset();
+      setErrors({});
+      setSuccessMessage(null);
     }
   }, [open]);
 
   const handleSubmit = async (formData: FormData) => {
-    if (transaction) {
-      await updateTransaction(transaction.id, formData);
-    } else {
-      await createTransaction(formData);
+    setIsSubmitting(true);
+    setErrors({});
+    setSuccessMessage(null);
+
+    try {
+      let result;
+      if (transaction) {
+        result = await updateTransaction(transaction.id, formData);
+      } else {
+        result = await createTransaction(formData);
+      }
+
+      if (result.success) {
+        setSuccessMessage(transaction ? 'Transaction updated' : 'Transaction added');
+        setTimeout(() => {
+          if (result.success) {
+            onClose();
+          }
+        }, 500);
+      } else {
+        setErrors(result.errors || {});
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setErrors({ form: ['An unexpected error occurred. Please try again.'] });
+    } finally {
+      setIsSubmitting(false);
     }
-    onClose();
   };
 
   const today = new Date().toISOString().split('T')[0];
@@ -72,7 +99,19 @@ export function TransactionForm({
           </SheetDescription>
         </SheetHeader>
 
-        <form ref={formRef} action={handleSubmit} className="space-y-4 mt-6">
+        <form ref={formRef} onSubmit={(e) => { e.preventDefault(); handleSubmit(new FormData(e.currentTarget)); }} className="space-y-4 mt-6">
+          {successMessage && (
+            <div className="p-3 bg-green-50 border border-green-200 text-green-800 rounded-md text-sm">
+              {successMessage}
+            </div>
+          )}
+
+          {errors.form && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-sm">
+              {errors.form[0]}
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="account_id">Account</Label>
             <Select
@@ -94,6 +133,9 @@ export function TransactionForm({
                 ))}
               </SelectContent>
             </Select>
+            {errors.account_id && (
+              <p className="text-sm text-red-600">{errors.account_id[0]}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -105,6 +147,9 @@ export function TransactionForm({
               defaultValue={transaction?.date || today}
               required
             />
+            {errors.date && (
+              <p className="text-sm text-red-600">{errors.date[0]}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -116,19 +161,22 @@ export function TransactionForm({
               defaultValue={transaction?.payee}
               required
             />
+            {errors.payee && (
+              <p className="text-sm text-red-600">{errors.payee[0]}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="category_id">Category</Label>
             <Select
               name="category_id"
-              defaultValue={transaction?.category_id?.toString() || ''}
+              defaultValue={transaction?.category_id?.toString() || 'none'}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Uncategorized</SelectItem>
+                <SelectItem value="none">Uncategorized</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.path}
@@ -136,6 +184,9 @@ export function TransactionForm({
                 ))}
               </SelectContent>
             </Select>
+            {errors.category_id && (
+              <p className="text-sm text-red-600">{errors.category_id[0]}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -149,6 +200,9 @@ export function TransactionForm({
               placeholder="Use negative for expenses"
               required
             />
+            {errors.amount && (
+              <p className="text-sm text-red-600">{errors.amount[0]}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -159,13 +213,16 @@ export function TransactionForm({
               defaultValue={transaction?.comment || ''}
               rows={3}
             />
+            {errors.comment && (
+              <p className="text-sm text-red-600">{errors.comment[0]}</p>
+            )}
           </div>
 
           <div className="flex gap-2">
-            <Button type="submit" className="flex-1">
-              {transaction ? 'Update' : 'Create'}
+            <Button type="submit" className="flex-1" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : (transaction ? 'Update' : 'Create')}
             </Button>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
           </div>

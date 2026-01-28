@@ -180,13 +180,13 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                 <Label htmlFor="parent_id">Parent Category (Optional)</Label>
                 <Select
                   name="parent_id"
-                  defaultValue={editingCategory?.parent_id?.toString() || ''}
+                  defaultValue={editingCategory?.parent_id?.toString() || 'none'}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="None (root category)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None (root category)</SelectItem>
+                    <SelectItem value="none">None (root category)</SelectItem>
                     {validParents.map((parent) => (
                       <SelectItem key={parent.id} value={parent.id.toString()}>
                         {parent.path}
