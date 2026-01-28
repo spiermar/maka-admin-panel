@@ -44,6 +44,22 @@ function getOriginFromHeaders(request: NextRequest): string | null {
   }
 }
 
+function getRequestOrigin(request: NextRequest): string | null {
+  const origin = getOriginFromHeaders(request);
+
+  if (origin) {
+    return origin;
+  }
+
+  const host = request.headers.get('host');
+  if (host) {
+    const protocol = request.headers.get('x-forwarded-proto') || 'http';
+    return `${protocol}://${host}`;
+  }
+
+  return null;
+}
+
 export function middleware(request: NextRequest) {
   const allowedOrigins = getAllowedOrigins();
 
@@ -56,7 +72,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const origin = getOriginFromHeaders(request);
+  const origin = getRequestOrigin(request);
 
   if (!isValidOrigin(origin, allowedOrigins)) {
     if (process.env.NODE_ENV === 'development') {
