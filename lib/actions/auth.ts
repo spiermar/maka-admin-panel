@@ -72,7 +72,7 @@ export async function login(prevState: any, formData: FormData) {
   }, targetDelay);
 
   if (!isValid) {
-    logSecureError('login-failed', `Invalid password attempt for user: ${username}`);
+    logSecureError('login-failed', 'Invalid password attempt', { username });
     await wrapWithConstantTime(async () => {
       // Only increment account lockout counter if this attempt wasn't rate-limited
       if (rateLimit.remainingAttempts >= 0) {
@@ -117,9 +117,8 @@ export async function logout() {
   try {
     const session = await getSession();
     session.destroy();
-    redirect('/login');
   } catch (error) {
     logSecureError('logout-error', error);
-    redirect('/login');
   }
+  redirect('/login');
 }
