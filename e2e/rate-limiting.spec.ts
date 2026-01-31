@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Rate Limiting and Brute Force Protection', () => {
   test.describe.configure({ mode: 'serial' });
