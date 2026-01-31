@@ -9,12 +9,22 @@
 
 ### 1. Set up Neon Database
 
-1. Create a new Neon project at [neon.tech](https://neon.tech)
+ 1. Create a new Neon project at [neon.tech](https://neon.tech)
 2. Note your connection string
-3. Run the initialization script:
+3. Set DATABASE_URL environment variable
+4. Run the initialization script:
    ```bash
-   psql <connection-string> -f scripts/init-db.sql
+   export DATABASE_URL="your-neon-connection-string"
+   npm run script:init-db
    ```
+
+   The script will display random admin credentials - save them securely:
+   ```
+   Username: admin
+   Password: <random-16-char-password>
+   ```
+
+5. Store the generated password securely in a password manager
 
 ### 2. Deploy to Vercel
 
@@ -30,8 +40,9 @@
 ### 3. Verify Deployment
 
 1. Visit your deployed URL
-2. Log in with default credentials (admin/admin123)
-3. Test creating accounts, categories, and transactions
+2. Log in with the admin credentials displayed during initialization
+3. Change the password immediately after first login
+4. Test creating accounts, categories, and transactions
 
 ## Environment Variables
 

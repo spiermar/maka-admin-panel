@@ -1,13 +1,6 @@
 -- Run schema
 \i lib/db/schema.sql
 
--- Seed admin user (password: admin123)
--- Password hash generated with: bcrypt.hash('admin123', 12)
-INSERT INTO users (username, password_hash) VALUES
-  ('admin', '$2b$12$33IAwrMlVq40YQ3xN.sf4.BvKPHmM8Dx/.XLCryjf/ONDw7cDOfGq')
-ON CONFLICT (username) DO UPDATE
-  SET password_hash = EXCLUDED.password_hash;
-
 -- Seed default categories
 INSERT INTO categories (name, category_type, parent_id, depth) VALUES
   -- Income categories

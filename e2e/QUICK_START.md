@@ -79,7 +79,9 @@ npx playwright show-trace test-results/[test-name]/trace.zip
 
 **Login fails:**
 - Ensure database is seeded with admin user
-- Verify credentials: `admin` / `admin123`
+- Verify credentials match what was generated during initialization
+
+**Port already in use:**
 
 **Port already in use:**
 ```bash
@@ -89,9 +91,8 @@ lsof -ti:3000 | xargs kill -9
 
 ## Test Data
 
-Default test credentials:
-- Username: `admin`
-- Password: `admin123`
+Default test credentials are generated during database initialization.
+Run `npm run script:init-db` to create the admin user and display the credentials.
 
 To reset database:
 ```bash

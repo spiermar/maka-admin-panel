@@ -101,26 +101,10 @@ test.describe('Feature Name', () => {
 Use the `login()` helper from `helpers/auth.ts` to avoid repetitive login code:
 
 ```typescript
-import { login, DEFAULT_CREDENTIALS } from './helpers/auth';
+import { login } from './helpers/auth';
 
-// Login with default credentials (admin/admin123)
+// Login with credentials from .env.local or database initialization
 await login(page);
-
-// Login with custom credentials
-await login(page, { username: 'testuser', password: 'testpass' });
-```
-
-## Test Data
-
-Tests use the default admin account created during database initialization:
-
-- **Username**: `admin`
-- **Password**: `admin123`
-
-Ensure your database is seeded with this account:
-
-```bash
-psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 ## Debugging Tests
