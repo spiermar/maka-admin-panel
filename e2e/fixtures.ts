@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { resetTestDatabase } from './database';
+import { resetTestDatabase } from './helpers/database';
 
 export type E2EFixtures = {
   // Add any custom fixtures here

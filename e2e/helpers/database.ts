@@ -7,7 +7,13 @@ export async function cleanupTestDatabase() {
     // Delete all transactions (depends on accounts and categories)
     await sql`DELETE FROM transactions`;
 
-    console.log('✅ Cleaned transactions');
+    // Delete all accounts
+    await sql`DELETE FROM accounts`;
+
+    // Delete all categories
+    await sql`DELETE FROM categories`;
+
+    console.log('✅ Cleaned all test data');
   } catch (error) {
     console.error('❌ Error cleaning database:', error);
     throw error;
@@ -26,23 +32,28 @@ export async function seedTestDatabase() {
     `;
     console.log('✅ Seeded admin user');
 
-    // Seed default categories
-    const categoryResult = await sql`
+    // Seed default categories - using same approach as init-db.sql
+    await sql`
       INSERT INTO categories (name, category_type, parent_id, depth) VALUES
+        -- Income categories
         ('Salary', 'income', NULL, 1),
         ('Business Income', 'income', NULL, 1),
         ('Investments', 'income', NULL, 1),
+        -- Expense categories (depth 1)
         ('Food & Dining', 'expense', NULL, 1),
         ('Transportation', 'expense', NULL, 1),
         ('Housing', 'expense', NULL, 1),
         ('Utilities', 'expense', NULL, 1),
         ('Entertainment', 'expense', NULL, 1),
-        ('Groceries', 'expense', (SELECT id FROM categories WHERE name = 'Food & Dining'), 2),
-        ('Restaurants', 'expense', (SELECT id FROM categories WHERE name = 'Food & Dining'), 2),
-        ('Gas', 'expense', (SELECT id FROM categories WHERE name = 'Transportation'), 2),
-        ('Public Transit', 'expense', (SELECT id FROM categories WHERE name = 'Transportation'), 2),
-        ('Rent', 'expense', (SELECT id FROM categories WHERE name = 'Housing'), 2),
-        ('Mortgage', 'expense', (SELECT id FROM categories WHERE name = 'Housing'), 2)
+        -- Food subcategories (depth 2) - NULL parent_id initially
+        ('Groceries', 'expense', NULL, 2),
+        ('Restaurants', 'expense', NULL, 2),
+        -- Transportation subcategories (depth 2) - NULL parent_id initially
+        ('Gas', 'expense', NULL, 2),
+        ('Public Transit', 'expense', NULL, 2),
+        -- Housing subcategories (depth 2) - NULL parent_id initially
+        ('Rent', 'expense', NULL, 2),
+        ('Mortgage', 'expense', NULL, 2)
       ON CONFLICT DO NOTHING
     `;
     console.log('✅ Seeded categories');
