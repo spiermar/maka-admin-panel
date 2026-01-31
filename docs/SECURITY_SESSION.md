@@ -304,7 +304,7 @@ ORDER BY failed_login_attempts DESC;
 
 **Run Migration:**
 ```bash
-psql $DATABASE_URL -f lib/db/migrations/002_add_account_lockout.sql
+psql $POSTGRES_URL -f lib/db/migrations/002_add_account_lockout.sql
 ```
 
 **What It Does:**
@@ -381,7 +381,7 @@ The session versioning feature requires adding a `session_version` column to the
 
 **Manual Execution:**
 ```bash
-psql $DATABASE_URL -f lib/db/migrations/001_add_session_version.sql
+psql $POSTGRES_URL -f lib/db/migrations/001_add_session_version.sql
 ```
 
 **What It Does:**

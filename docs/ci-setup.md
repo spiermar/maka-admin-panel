@@ -21,7 +21,7 @@ The CI workflow requires the following repository secrets to be configured.
 3. Click **New repository secret**
 4. Add each of the following secrets:
 
-#### `DATABASE_URL`
+#### `POSTGRES_URL`
 
 **Purpose**: PostgreSQL connection string for the CI test database
 
@@ -77,7 +77,7 @@ dGhpc2lzYXJhbmRvbWx5Z2VuZXJhdGVkc2VjcmV0a2V5Zm9ydGVzdGluZw==
 
 After adding secrets, verify they appear in **Settings** → **Secrets and variables** → **Actions**:
 
-- ✅ `DATABASE_URL`
+- ✅ `POSTGRES_URL`
 - ✅ `SESSION_SECRET`
 
 The secret values will be masked and not visible after creation.
@@ -169,7 +169,7 @@ To download:
 **Error**: `Error: connect ECONNREFUSED` or `FATAL: password authentication failed`
 
 **Solutions**:
-1. Verify `DATABASE_URL` secret is set correctly
+1. Verify `POSTGRES_URL` secret is set correctly
 2. Ensure connection string includes `?sslmode=require`
 3. Check Neon project is active and not suspended
 4. Verify network access (Neon allows connections from GitHub Actions by default)
