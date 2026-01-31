@@ -61,7 +61,7 @@ jobs:
       - name: Build Next.js app
         env:
           NODE_ENV: test
-          POSTGRES_URL: ${{ secrets.DATABASE_URL }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-secret-key-for-ci-only-do-not-use-in-production' }}
         run: npm run build
 
@@ -121,7 +121,7 @@ jobs:
       - name: Run E2E tests
         env:
           NODE_ENV: test
-          POSTGRES_URL: ${{ secrets.DATABASE_URL }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-secret-key-for-ci-only-do-not-use-in-production' }}
           ALLOWED_ORIGINS: http://localhost:3000
         run: npm run test:e2e

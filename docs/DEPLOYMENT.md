@@ -31,7 +31,7 @@
 1. Push your code to GitHub
 2. Import the repository in Vercel
 3. Configure environment variables:
-   - `DATABASE_URL`: Your Neon connection string
+   - `POSTGRES_URL`: Your Neon connection string
    - `SESSION_SECRET`: Generate with `openssl rand -base64 32`
    - `NODE_ENV`: `production`
 
@@ -48,7 +48,7 @@
 
 ### Required
 
-- `DATABASE_URL`: PostgreSQL connection string (from Neon)
+- `POSTGRES_URL`: PostgreSQL connection string (from Neon)
 - `SESSION_SECRET`: 32+ character random string for session encryption
 
 ### Optional
@@ -60,13 +60,13 @@
 ### Creating a Backup
 
 ```bash
-pg_dump $DATABASE_URL > backup.sql
+pg_dump $POSTGRES_URL > backup.sql
 ```
 
 ### Restoring from Backup
 
 ```bash
-psql $DATABASE_URL < backup.sql
+psql $POSTGRES_URL < backup.sql
 ```
 
 ## Security Considerations
@@ -87,7 +87,7 @@ psql $DATABASE_URL < backup.sql
 
 ### Database Connection Errors
 
-- Verify DATABASE_URL is correct
+- Verify POSTGRES_URL is correct
 - Check Neon project is active
 - Ensure IP allowlist is configured (if applicable)
 

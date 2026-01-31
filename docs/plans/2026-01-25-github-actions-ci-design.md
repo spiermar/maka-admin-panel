@@ -65,7 +65,7 @@ All jobs use:
 **Runtime:** ~1-2 minutes
 **Environment:**
 - `NODE_ENV=test`
-- `POSTGRES_URL=${{ secrets.DATABASE_URL }}`
+- `POSTGRES_URL=${{ secrets.POSTGRES_URL }}`
 - `SESSION_SECRET=${{ secrets.SESSION_SECRET }}`
 
 ### Job 3: Unit Tests
@@ -105,7 +105,7 @@ All jobs use:
 **Runtime:** ~2-3 minutes
 **Environment:**
 - `NODE_ENV=test`
-- `POSTGRES_URL=${{ secrets.DATABASE_URL }}`
+- `POSTGRES_URL=${{ secrets.POSTGRES_URL }}`
 - `SESSION_SECRET=${{ secrets.SESSION_SECRET }}`
 
 **Artifacts:**
@@ -121,9 +121,8 @@ All jobs use:
 
 Must be configured in repository settings (Settings → Secrets and variables → Actions):
 
-1. **DATABASE_URL**
+1. **POSTGRES_URL**
    - Neon PostgreSQL connection string
-   - Value: `postgresql://neondb_owner:npg_B3WQXepYF6uV@ep-small-king-ahp7ao4n-pooler.c-3.us-east-1.aws.neon.tech/ledger?sslmode=require&channel_binding=require`
 
 2. **SESSION_SECRET**
    - iron-session encryption key
@@ -172,7 +171,7 @@ Individual job timings:
 ## Implementation Tasks
 
 1. Create `.github/workflows/ci.yml` workflow file
-2. Configure GitHub secrets (DATABASE_URL, SESSION_SECRET)
+2. Configure GitHub secrets (POSTGRES_URL, SESSION_SECRET)
 3. Delete `.github/workflows/e2e-tests.yml.template` (obsolete)
 4. Test workflow on a PR
 5. Configure branch protection rules to require all 4 status checks

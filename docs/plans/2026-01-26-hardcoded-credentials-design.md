@@ -191,7 +191,7 @@ After MVP, consider:
 
 1. **Initial initialization:**
    ```bash
-   psql $DATABASE_URL -f scripts/init-db.sql
+   psql $POSTGRES_URL -f scripts/init-db.sql
    ```
    - Verify random password displayed in console
    - Verify warning message displayed
@@ -201,7 +201,7 @@ After MVP, consider:
 2. **Re-run protection:**
    ```bash
    # Run initialization again
-   psql $DATABASE_URL -f scripts/init-db.sql
+   psql $POSTGRES_URL -f scripts/init-db.sql
    ```
    - Verify password does NOT change (ON CONFLICT)
    - Verify existing admin account unchanged
@@ -289,7 +289,7 @@ const bcrypt = require('bcrypt');
 const hash = bcrypt.hash('newpassword', 12);
 
 // Update database
-psql $DATABASE_URL -c "UPDATE users SET password_hash = '$hash' WHERE username = 'admin';"
+psql $POSTGRES_URL -c "UPDATE users SET password_hash = '$hash' WHERE username = 'admin';"
 ```
 
 **Option 2: Reset script** (create in future)

@@ -1,6 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
+import { sql } from '@vercel/postgres';
+import { getAccountIdByName } from './helpers/database';
 
 test.describe('Transaction Input Validation', () => {
+  test.afterAll(async () => {
+    // Clean up transactions created during tests
+    console.log('🧹 Cleaning up input-validation test data...');
+    await sql`DELETE FROM transactions`;
+    console.log('✅ Cleanup complete');
+  });
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="username"]', 'admin');
@@ -10,7 +18,8 @@ test.describe('Transaction Input Validation', () => {
   });
 
   test('prevents submission of amount exceeding limit', async ({ page }) => {
-    await page.goto('/accounts/1');
+    const accountId = await getAccountIdByName('Checking Account');
+    await page.goto(`/accounts/${accountId}`);
     await page.waitForSelector('button:has-text("Add Transaction")', { state: 'visible', timeout: 5000 });
     await page.click('button:has-text("Add Transaction")');
 
@@ -24,7 +33,8 @@ test.describe('Transaction Input Validation', () => {
   });
 
   test('allows submission of amount at limit', async ({ page }) => {
-    await page.goto('/accounts/1');
+    const accountId = await getAccountIdByName('Checking Account');
+    await page.goto(`/accounts/${accountId}`);
     await page.click('button:has-text("Add Transaction")');
 
     await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
@@ -39,8 +49,9 @@ test.describe('Transaction Input Validation', () => {
   test('prevents submission of future date', async ({ page }) => {
     const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000)
       .toISOString().split('T')[0];
+    const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto('/accounts/1');
+    await page.goto(`/accounts/${accountId}`);
     await page.click('button:has-text("Add Transaction")');
 
     await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
@@ -55,8 +66,9 @@ test.describe('Transaction Input Validation', () => {
 
   test('prevents submission of date older than 10 years', async ({ page }) => {
     const oldDate = '2015-01-01';
+    const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto('/accounts/1');
+    await page.goto(`/accounts/${accountId}`);
     await page.click('button:has-text("Add Transaction")');
 
     await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
@@ -70,7 +82,8 @@ test.describe('Transaction Input Validation', () => {
   });
 
   test('shows specific error messages for each invalid field', async ({ page }) => {
-    await page.goto('/accounts/1');
+    const accountId = await getAccountIdByName('Checking Account');
+    await page.goto(`/accounts/${accountId}`);
     await page.click('button:has-text("Add Transaction")');
 
     await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
@@ -94,8 +107,9 @@ test.describe('Transaction Input Validation', () => {
 
   test('allows submission of valid transaction', async ({ page }) => {
     const today = new Date().toISOString().split('T')[0];
+    const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto('/accounts/1');
+    await page.goto(`/accounts/${accountId}`);
     await page.click('button:has-text("Add Transaction")');
 
     await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });

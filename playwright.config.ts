@@ -1,16 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
-
-/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: './e2e',
+  // Load fixtures file for global test setup
+  testMatch: '**/*.{spec,fixtures}.{ts,js}',
   // Maximum time one test can run for
   timeout: 30 * 1000,
   expect: {
@@ -19,8 +15,8 @@ export default defineConfig({
      */
     timeout: 5000,
   },
-  // Run tests in files in parallel
-  fullyParallel: true,
+  // Run tests in files in order (to minimize database cleanup)
+  fullyParallel: false,
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
   // Retry on CI only

@@ -7,7 +7,7 @@ Quick reference for running Playwright end-to-end tests.
 - [ ] Node.js installed (v18+)
 - [ ] Dependencies installed: `npm install`
 - [ ] PostgreSQL database running
-- [ ] Database seeded: `psql $DATABASE_URL -f scripts/init-db.sql`
+- [ ] Database seeded: `psql $POSTGRES_URL -f scripts/init-db.sql`
 - [ ] Environment variables configured in `.env.local`
 
 ## Quick Commands
@@ -96,7 +96,7 @@ Run `npm run script:init-db` to create the admin user and display the credential
 
 To reset database:
 ```bash
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 ## CI/CD Integration

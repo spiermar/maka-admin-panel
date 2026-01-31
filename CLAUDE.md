@@ -58,7 +58,7 @@ The project uses GitHub Actions for automated testing and validation on every PR
 - Manual dispatch via GitHub Actions UI
 
 **Required GitHub Secrets:**
-- `DATABASE_URL` - Neon PostgreSQL connection string
+- `POSTGRES_URL` - Neon PostgreSQL connection string
 - `SESSION_SECRET` - iron-session encryption key
 
 **Artifacts:**
@@ -218,7 +218,7 @@ Server Components pass data as props to Client Components. This maximizes perfor
 
 ```bash
 # Initialize database (requires PostgreSQL connection)
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 
 # This runs:
 # 1. lib/db/schema.sql - Creates tables and schema
@@ -239,7 +239,7 @@ npm run reset-admin-password
 
 Copy `.env.example` to `.env.local` and configure:
 
-- `POSTGRES_URL` - PostgreSQL connection string (Neon or local)
+- `DATABASE_URL` - PostgreSQL connection string (Neon or local)
 - `SESSION_SECRET` - Generate with: `openssl rand -base64 32`
 - `NODE_ENV` - Set to `development` or `production`
 
