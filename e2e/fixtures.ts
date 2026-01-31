@@ -1,5 +1,9 @@
 import { test as base } from '@playwright/test';
 import { resetTestDatabase } from './helpers/database';
+import { config } from 'dotenv';
+
+// Load environment variables from .env.local for E2E worker
+config({ path: '.env.local' });
 
 export type E2EFixtures = {
   // Add any custom fixtures here
