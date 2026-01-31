@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { getAccountIdByName } from './helpers/database';
 
 test.describe('CSRF Protection', () => {
   test.beforeEach(async ({ page }) => {
@@ -11,8 +12,9 @@ test.describe('CSRF Protection', () => {
 
   test('blocks requests with invalid Origin header', async ({ page }) => {
     const baseURL = 'http://localhost:3000';
+    const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto('/accounts/1');
+    await page.goto(`/accounts/${accountId}`);
 
     const response = await page.request.post(`${baseURL}/api/test-csrf`, {
       headers: {
@@ -28,8 +30,9 @@ test.describe('CSRF Protection', () => {
 
   test('allows requests with valid Origin header', async ({ page }) => {
     const baseURL = 'http://localhost:3000';
+    const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto('/accounts/1');
+    await page.goto(`/accounts/${accountId}`);
 
     const response = await page.request.post(`${baseURL}/api/test-csrf`, {
       headers: {

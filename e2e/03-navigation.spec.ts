@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers/auth';
+import { getAccountIdByName } from './helpers/database';
 
 /**
  * Navigation and Protected Routes End-to-End Tests
@@ -49,20 +50,14 @@ test.describe('Navigation and Protected Routes', () => {
   });
 
   test('should maintain session across navigation', async ({ page }) => {
-    // Start on dashboard
+    const accountId = await getAccountIdByName('Checking Account');
     await expect(page).toHaveURL('/');
 
-    // Navigate to different routes that exist
-    const routes = ['/settings', '/accounts/1'];
+    const routes = ['/settings', `/accounts/${accountId}`];
 
     for (const route of routes) {
-      // Try navigating to each route
       await page.goto(route);
-
-      // Wait for load
       await page.waitForLoadState('networkidle');
-
-      // Should not redirect to login (session maintained)
       expect(page.url()).not.toContain('/login');
     }
   });
@@ -93,18 +88,16 @@ test.describe('Navigation and Protected Routes', () => {
   });
 
   test('should handle direct URL access for protected routes', async ({ page }) => {
-    // Directly navigate to various protected routes
+    const accountId = await getAccountIdByName('Checking Account');
     const protectedRoutes = [
       '/',
       '/settings',
-      '/accounts/1',
+      `/accounts/${accountId}`,
     ];
 
     for (const route of protectedRoutes) {
       await page.goto(route);
       await page.waitForLoadState('networkidle');
-
-      // Should not redirect to login since we're authenticated
       expect(page.url()).not.toContain('/login');
     }
   });
@@ -139,25 +132,20 @@ test.describe('Navigation Unauthorized', () => {
   });
 
   test('should redirect to login for all protected routes when not authenticated', async ({ browser }) => {
+    const accountId = await getAccountIdByName('Checking Account');
     const protectedRoutes = [
       '/',
       '/settings',
-      '/accounts/1', // Dynamic route with example ID
+      `/accounts/${accountId}`,
     ];
 
-    // Test each route with a fresh context to avoid chunk loading issues
     for (const route of protectedRoutes) {
       const context = await browser.newContext();
       const page = await context.newPage();
-
-      // Navigate and wait for redirect
       const _response = await page.goto(route);
       await page.waitForURL('/login', { timeout: 5000 });
-
-      // Should be on login page
       await expect(page).toHaveURL('/login');
       await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
-
       await context.close();
     }
   });

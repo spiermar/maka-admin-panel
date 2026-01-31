@@ -79,3 +79,23 @@ export async function resetTestDatabase() {
   await cleanupTestDatabase();
   await seedTestDatabase();
 }
+
+const accountCache = new Map<string, number>();
+
+export async function getAccountIdByName(accountName: string): Promise<number> {
+  if (accountCache.has(accountName)) {
+    return accountCache.get(accountName)!;
+  }
+
+  const result = await sql`
+    SELECT id FROM accounts WHERE name = ${accountName} LIMIT 1
+  `;
+
+  if (result.rows.length === 0) {
+    throw new Error(`Account '${accountName}' not found in database`);
+  }
+
+  const accountId = Number(result.rows[0].id);
+  accountCache.set(accountName, accountId);
+  return accountId;
+}
