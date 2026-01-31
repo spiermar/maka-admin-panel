@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { login } from './helpers/auth';
 
 /**
  * Authentication End-to-End Tests
@@ -46,30 +47,13 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should successfully login with valid credentials', async ({ page }) => {
-    // Fill in the login form with test credentials
-    await page.getByLabel(/username/i).fill('admin');
-    await page.getByLabel(/password/i).fill('admin123');
-
-    // Submit the form
-    await page.getByRole('button', { name: /sign in/i }).click();
-
-    // Wait for navigation to dashboard
-    await page.waitForURL('/');
-
-    // Verify we're on the dashboard
+    await login(page);
     await expect(page).toHaveURL('/');
-
-    // Verify dashboard heading is visible
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
   });
 
   test('should redirect to dashboard if already logged in', async ({ page }) => {
-    // First login
-    await page.getByLabel(/username/i).fill('admin');
-    await page.getByLabel(/password/i).fill('admin123');
-    await page.getByRole('button', { name: /sign in/i }).click();
-
-    // Wait for dashboard to load
+    await login(page);
     await page.waitForURL('/');
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
 
@@ -82,12 +66,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should persist session across page reloads', async ({ page }) => {
-    // Login
-    await page.getByLabel(/username/i).fill('admin');
-    await page.getByLabel(/password/i).fill('admin123');
-    await page.getByRole('button', { name: /sign in/i }).click();
-
-    // Wait for dashboard
+    await login(page);
     await page.waitForURL('/');
 
     // Reload the page

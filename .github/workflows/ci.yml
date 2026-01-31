@@ -124,6 +124,7 @@ jobs:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET || 'test-secret-key-for-ci-only-do-not-use-in-production' }}
           ALLOWED_ORIGINS: http://localhost:3000
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
         run: npm run test:e2e
 
       - name: Upload Playwright HTML report

@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { login } from './helpers/auth';
 
 test.describe('Rate Limiting and Brute Force Protection', () => {
   test.describe.configure({ mode: 'serial' });
@@ -24,11 +25,7 @@ test.describe('Rate Limiting and Brute Force Protection', () => {
   });
 
   test('normal login works correctly', async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'admin123');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('/');
+    await login(page);
 
     expect(page.url()).toBe('http://localhost:3000/');
   });
@@ -38,6 +35,8 @@ test.describe('Rate Limiting and Brute Force Protection', () => {
     // Unit tests in __tests__/lib/auth/account-lockout.test.ts fully cover this behavior
     test.skip(true, 'Requires test isolation infrastructure - see unit tests for full coverage');
 
+    await page.goto('/login');
+
     for (let i = 0; i < 15; i++) {
       await page.fill('input[name="username"]', 'admin');
       await page.fill('input[name="password"]', `wrong${i}`);
@@ -46,7 +45,7 @@ test.describe('Rate Limiting and Brute Force Protection', () => {
     }
 
     await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'admin123');
+    await page.fill('input[name="password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
     await page.click('button[type="submit"]');
 
     await expect(page.locator('text=locked')).toBeVisible();

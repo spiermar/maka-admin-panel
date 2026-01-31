@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import { sql } from '@vercel/postgres';
+import { login } from './helpers/auth';
 import { getAccountIdByName } from './helpers/database';
 
 test.describe('Transaction Input Validation', () => {
@@ -10,11 +11,7 @@ test.describe('Transaction Input Validation', () => {
     console.log('✅ Cleanup complete');
   });
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'admin123');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('/', { timeout: 10000 });
+    await login(page);
   });
 
   test('prevents submission of amount exceeding limit', async ({ page }) => {

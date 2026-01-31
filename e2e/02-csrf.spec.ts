@@ -1,13 +1,10 @@
 import { test, expect } from './fixtures';
+import { login } from './helpers/auth';
 import { getAccountIdByName } from './helpers/database';
 
 test.describe('CSRF Protection', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'admin123');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('/');
+    await login(page);
   });
 
   test('blocks requests with invalid Origin header', async ({ page }) => {
