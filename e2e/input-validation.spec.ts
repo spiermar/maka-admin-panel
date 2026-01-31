@@ -1,6 +1,13 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
+import { sql } from '@vercel/postgres';
 
 test.describe('Transaction Input Validation', () => {
+  test.afterAll(async () => {
+    // Clean up transactions created during tests
+    console.log('🧹 Cleaning up input-validation test data...');
+    await sql`DELETE FROM transactions`;
+    console.log('✅ Cleanup complete');
+  });
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="username"]', 'admin');

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('CSRF Protection', () => {
   test.beforeEach(async ({ page }) => {
