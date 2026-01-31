@@ -60,7 +60,7 @@ Expected: UI components added to components/ui
 
 Create `.env.example`:
 ```
-DATABASE_URL=postgresql://user:password@localhost:5432/ledger
+POSTGRES_URL=postgresql://user:password@localhost:5432/ledger
 SESSION_SECRET=your-32-character-secret-key-here
 ```
 
@@ -195,7 +195,7 @@ INSERT INTO accounts (name) VALUES
 
 Run:
 ```bash
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 Expected: Tables created, seed data inserted
@@ -204,9 +204,9 @@ Expected: Tables created, seed data inserted
 
 Run:
 ```bash
-psql $DATABASE_URL -c "SELECT * FROM users;"
-psql $DATABASE_URL -c "SELECT * FROM accounts;"
-psql $DATABASE_URL -c "SELECT id, name, category_type, depth FROM categories;"
+psql $POSTGRES_URL -c "SELECT * FROM users;"
+psql $POSTGRES_URL -c "SELECT * FROM accounts;"
+psql $POSTGRES_URL -c "SELECT id, name, category_type, depth FROM categories;"
 ```
 
 Expected: See seeded users, accounts, and categories
@@ -3241,7 +3241,7 @@ A web-based ledger application for managing, categorizing, and analyzing financi
 
 4. Initialize the database:
    ```bash
-   psql $DATABASE_URL -f scripts/init-db.sql
+   psql $POSTGRES_URL -f scripts/init-db.sql
    ```
 
 5. Run the development server:
@@ -3290,7 +3290,7 @@ MIT
 Modify `.env.example`:
 ```
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/ledger
+POSTGRES_URL=postgresql://user:password@localhost:5432/ledger
 
 # Session (generate with: openssl rand -base64 32)
 SESSION_SECRET=your-32-character-secret-key-here
@@ -3326,7 +3326,7 @@ Create `docs/DEPLOYMENT.md`:
 1. Push your code to GitHub
 2. Import the repository in Vercel
 3. Configure environment variables:
-   - `DATABASE_URL`: Your Neon connection string
+   - `POSTGRES_URL`: Your Neon connection string
    - `SESSION_SECRET`: Generate with `openssl rand -base64 32`
    - `NODE_ENV`: `production`
 
@@ -3342,7 +3342,7 @@ Create `docs/DEPLOYMENT.md`:
 
 ### Required
 
-- `DATABASE_URL`: PostgreSQL connection string (from Neon)
+- `POSTGRES_URL`: PostgreSQL connection string (from Neon)
 - `SESSION_SECRET`: 32+ character random string for session encryption
 
 ### Optional
@@ -3354,13 +3354,13 @@ Create `docs/DEPLOYMENT.md`:
 ### Creating a Backup
 
 ```bash
-pg_dump $DATABASE_URL > backup.sql
+pg_dump $POSTGRES_URL > backup.sql
 ```
 
 ### Restoring from Backup
 
 ```bash
-psql $DATABASE_URL < backup.sql
+psql $POSTGRES_URL < backup.sql
 ```
 
 ## Security Considerations
@@ -3381,7 +3381,7 @@ psql $DATABASE_URL < backup.sql
 
 ### Database Connection Errors
 
-- Verify DATABASE_URL is correct
+- Verify POSTGRES_URL is correct
 - Check Neon project is active
 - Ensure IP allowlist is configured (if applicable)
 

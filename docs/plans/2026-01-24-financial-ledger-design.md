@@ -323,7 +323,7 @@ INSERT INTO categories (name, category_type, parent_id, depth) VALUES
 
 **Environment Variables**
 ```
-DATABASE_URL=<neon_connection_string>
+POSTGRES_URL=<neon_connection_string>
 SESSION_SECRET=<random_32_char_string>
 NODE_ENV=production
 ```

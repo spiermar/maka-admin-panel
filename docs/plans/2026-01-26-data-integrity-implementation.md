@@ -528,7 +528,7 @@ Before committing:
 Before deploying, check production (or staging) for existing circular references:
 
 ```bash
-psql $DATABASE_URL -c "
+psql $POSTGRES_URL -c "
 WITH RECURSIVE cycles AS (
   SELECT id, parent_id, ARRAY[id] as path
   FROM categories WHERE parent_id IS NOT NULL
@@ -618,13 +618,13 @@ npm test
 npm run test:e2e
 
 # Test database queries manually
-psql $DATABASE_URL -c "SELECT * FROM categories ORDER BY id;"
+psql $POSTGRES_URL -c "SELECT * FROM categories ORDER BY id;"
 
 # Check for circular references
-psql $DATABASE_URL -f docs/queries/check-circular-references.sql
+psql $POSTGRES_URL -f docs/queries/check-circular-references.sql
 
 # Delete test category
-psql $DATABASE_URL -c "DELETE FROM categories WHERE name = 'Test Category';"
+psql $POSTGRES_URL -c "DELETE FROM categories WHERE name = 'Test Category';"
 ```
 
 ## Success Criteria
