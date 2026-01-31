@@ -5,15 +5,6 @@ import { queryOne, execute } from '@/lib/db';
 // Load .env.local file
 dotenv.config({ path: resolve(process.cwd(), '.env.local') });
 
-interface TestTransaction {
-  account_id: number;
-  date: string;
-  payee: string;
-  category_id: number | null;
-  amount: number;
-  comment?: string;
-}
-
 const testTransactionsRaw = [
   {
     account_name: 'Checking Account',
