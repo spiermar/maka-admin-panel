@@ -563,8 +563,8 @@ VACUUM FULL audit_log;
 Before committing:
 
 - [ ] Create `lib/db/migrations/003_add_audit_log.sql`
-- [ ] Run migration: `psql $DATABASE_URL -f lib/db/migrations/003_add_audit_log.sql`
-- [ ] Verify table created: `psql $DATABASE_URL -c "\d audit_log"`
+- [ ] Run migration: `psql $POSTGRES_URL -f lib/db/migrations/003_add_audit_log.sql`
+- [ ] Verify table created: `psql $POSTGRES_URL -c "\d audit_log"`
 - [ ] Create `lib/audit/logger.ts`
 - [ ] Integrate into `lib/actions/auth.ts`
 - [ ] Create `__tests__/audit/logger.test.ts`
@@ -650,13 +650,13 @@ gh pr create --title "feat: add audit logging for authentication events" \
 
 ```bash
 # Run migration
-psql $DATABASE_URL -f lib/db/migrations/003_add_audit_log.sql
+psql $POSTGRES_URL -f lib/db/migrations/003_add_audit_log.sql
 
 # Verify table structure
-psql $DATABASE_URL -c "\d audit_log"
+psql $POSTGRES_URL -c "\d audit_log"
 
 # Check indexes
-psql $DATABASE_URL -c "\di idx_audit_log*"
+psql $POSTGRES_URL -c "\di idx_audit_log*"
 
 # Run unit tests
 npm test
@@ -665,10 +665,10 @@ npm test
 npm run test:e2e
 
 # Check audit log entries
-psql $DATABASE_URL -c "SELECT * FROM audit_log ORDER BY created_at DESC LIMIT 10;"
+psql $POSTGRES_URL -c "SELECT * FROM audit_log ORDER BY created_at DESC LIMIT 10;"
 
 # Failed logins per IP
-psql $DATABASE_URL -f docs/queries/security-monitoring.sql
+psql $POSTGRES_URL -f docs/queries/security-monitoring.sql
 ```
 
 ## Success Criteria

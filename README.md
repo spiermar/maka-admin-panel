@@ -44,7 +44,7 @@ A web-based ledger application for managing, categorizing, and analyzing financi
 
 4. Initialize the database:
    ```bash
-   psql $DATABASE_URL -f scripts/init-db.sql
+   psql $POSTGRES_URL -f scripts/init-db.sql
    ```
 
 5. Run the development server:

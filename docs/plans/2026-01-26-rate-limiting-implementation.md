@@ -496,7 +496,7 @@ Before committing:
 - [ ] Install `lru-cache` dependency
 - [ ] Create `lib/auth/rate-limit.ts`
 - [ ] Create migration file locally
-- [ ] Run migration: `psql $DATABASE_URL -f lib/db/migrations/002_add_account_lockout.sql`
+- [ ] Run migration: `psql $POSTGRES_URL -f lib/db/migrations/002_add_account_lockout.sql`
 - [ ] Create `lib/auth/account-lockout.ts`
 - [ ] Modify `lib/actions/auth.ts`
 - [ ] Run `npm test` - all pass
@@ -577,7 +577,7 @@ gh pr create --title "fix: add rate limiting and brute force protection" \
 
 ```bash
 # Run migration
-psql $DATABASE_URL -f lib/db/migrations/002_add_account_lockout.sql
+psql $POSTGRES_URL -f lib/db/migrations/002_add_account_lockout.sql
 
 # Run unit tests
 npm test
@@ -586,7 +586,7 @@ npm test
 npm run test:e2e
 
 # Check migration status
-psql $DATABASE_URL -c "\d users" | grep failed_login_attempts
+psql $POSTGRES_URL -c "\d users" | grep failed_login_attempts
 ```
 
 ## Success Criteria

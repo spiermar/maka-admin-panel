@@ -213,7 +213,7 @@ Dual keys prevent:
 
 ### Pre-deployment
 1. Database backup (precaution, though migration is safe)
-2. Run migration in staging: `psql $DATABASE_URL -f lib/db/migrations/002_add_account_lockout.sql`
+2. Run migration in staging: `psql $POSTGRES_URL -f lib/db/migrations/002_add_account_lockout.sql`
 3. Test authentication flow with staging credentials
 4. Verify existing users start with `failed_login_attempts = 0`
 

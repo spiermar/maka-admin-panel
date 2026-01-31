@@ -108,7 +108,7 @@ Add or update database initialization section:
 Run the initialization script to create database schema, seed data, and generate admin credentials:
 
 ```bash
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 **Important:** The script will display admin credentials in the console output:
@@ -150,7 +150,7 @@ const bcrypt = require('bcrypt');
 const hash = await bcrypt.hash('newpassword', 12);
 
 // Update database
-psql $DATABASE_URL -c "UPDATE users SET password_hash = '$hash' WHERE username = 'admin';"
+psql $POSTGRES_URL -c "UPDATE users SET password_hash = '$hash' WHERE username = 'admin';"
 ```
 
 ### Development Setup
@@ -173,7 +173,7 @@ For new production deployments:
 
 ```bash
 # Initialize database (in CI/CD pipeline or manually)
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 **For production:**
@@ -208,7 +208,7 @@ require('dotenv').config({ path: '.env.local' });
 const { Pool } = require('pg');
 
 async function resetAdminPassword() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
   
   try {
     // Prompt for new password (or use CLI argument)
@@ -289,7 +289,7 @@ Each developer's local environment has a unique admin password generated on init
 ```bash
 # Create and initialize database
 createdb maka_admin_panel
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 
 # Save the admin password from console output
 ```
@@ -318,7 +318,7 @@ Before committing:
   ```bash
   dropdb maka_admin_panel_test
   createdb maka_admin_panel_test
-  psql $DATABASE_URL_TEST -f scripts/init-db.sql
+  psql $POSTGRES_URL_TEST -f scripts/init-db.sql
   ```
 - [ ] Verify random password displayed in console output
 - [ ] Verify warning message displayed prominently
@@ -330,7 +330,7 @@ Before committing:
 - [ ] Test password change (if feature available)
 - [ ] Test re-run protection:
   ```bash
-  psql $DATABASE_URL_TEST -f scripts/init-db.sql
+  psql $POSTGRES_URL_TEST -f scripts/init-db.sql
   ```
   - Verify password does NOT change
   - Verify existing admin account unchanged
@@ -350,7 +350,7 @@ import bcrypt from 'bcrypt';
 
 describe('Database Initialization', () => {
   let pool: Pool;
-  const testDbUrl = process.env.DATABASE_URL_TEST;
+  const testDbUrl = process.env.POSTGRES_URL_TEST;
 
   beforeAll(async () => {
     pool = new Pool({ connectionString: testDbUrl });
@@ -472,18 +472,18 @@ gh pr create --title "fix: replace hardcoded admin credentials with random passw
 # Test initialization on fresh database
 dropdb test_db
 createdb test_db
-export DATABASE_URL="postgres://user:pass@localhost/test_db"
-psql $DATABASE_URL -f scripts/init-db.sql
+export POSTGRES_URL="postgres://user:pass@localhost/test_db"
+psql $POSTGRES_URL -f scripts/init-db.sql
 
 # Verify admin user created
-psql $DATABASE_URL -c "SELECT username, password_hash FROM users WHERE username = 'admin';"
+psql $POSTGRES_URL -c "SELECT username, password_hash FROM users WHERE username = 'admin';"
 
 # Verify bcrypt hash format
-psql $DATABASE_URL -c "SELECT username, LEFT(password_hash, 7) as hash_prefix FROM users WHERE username = 'admin';"
+psql $POSTGRES_URL -c "SELECT username, LEFT(password_hash, 7) as hash_prefix FROM users WHERE username = 'admin';"
 # Should output: | admin | $2b$12$ |
 
 # Verify only one admin
-psql $DATABASE_URL -c "SELECT COUNT(*) FROM users WHERE username = 'admin';"
+psql $POSTGRES_URL -c "SELECT COUNT(*) FROM users WHERE username = 'admin';"
 
 # Test login (after starting app)
 npm run dev

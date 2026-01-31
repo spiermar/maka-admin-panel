@@ -120,7 +120,7 @@ Tests use the default admin account created during database initialization:
 Ensure your database is seeded with this account:
 
 ```bash
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 ## Debugging Tests
@@ -211,7 +211,7 @@ Tests expect a seeded database. If tests fail due to missing data:
 
 ```bash
 # Reinitialize database
-psql $DATABASE_URL -f scripts/init-db.sql
+psql $POSTGRES_URL -f scripts/init-db.sql
 ```
 
 ## Coverage
