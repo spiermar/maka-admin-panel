@@ -172,7 +172,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
         env:
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       - uses: actions/upload-artifact@v3
         if: always()
