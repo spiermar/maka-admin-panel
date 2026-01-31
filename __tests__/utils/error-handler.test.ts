@@ -54,7 +54,7 @@ describe('Secure Error Handler', () => {
       const error = new Error('Test error');
       logSecureError('test-context', error);
 
-      const calls = mockConsoleError.mock.calls.map(call => call[0]);
+      const calls = mockConsoleError.mock.calls.map((call: unknown[]) => call[0]);
       expect(calls).not.toContain('[test-context] Metadata:');
     });
   });
