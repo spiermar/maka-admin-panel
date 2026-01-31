@@ -9,6 +9,7 @@ import { wrapWithConstantTime, getConstantTimeDelay } from '@/lib/auth/timing-sa
 import { loginSchema } from '@/lib/validations/auth';
 import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
 import { getAccountLockoutStatus, incrementFailedAttempts, resetFailedAttempts } from '@/lib/auth/account-lockout';
+import { logSecureError } from '@/lib/utils/error-handler';
 
 export async function login(prevState: any, formData: FormData) {
   const targetDelay = getConstantTimeDelay();
@@ -71,6 +72,7 @@ export async function login(prevState: any, formData: FormData) {
   }, targetDelay);
 
   if (!isValid) {
+    logSecureError('login-failed', `Invalid password attempt for user: ${username}`);
     await wrapWithConstantTime(async () => {
       // Only increment account lockout counter if this attempt wasn't rate-limited
       if (rateLimit.remainingAttempts >= 0) {
@@ -83,27 +85,41 @@ export async function login(prevState: any, formData: FormData) {
     };
   }
 
-  await wrapWithConstantTime(async () => {
-    await resetFailedAttempts(user.id);
-    resetRateLimit(`login:user:${user.id}`);
+  try {
+    await wrapWithConstantTime(async () => {
+      await resetFailedAttempts(user.id);
+      resetRateLimit(`login:user:${user.id}`);
 
-    const oldSession = await getSession();
-    await oldSession.destroy();
+      const oldSession = await getSession();
+      await oldSession.destroy();
 
-    const session = await getSession();
-    session.userId = user.id;
-    session.username = user.username;
-    session.sessionVersion = user.session_version || 1;
-    await session.save();
-  }, targetDelay);
+      const session = await getSession();
+      session.userId = user.id;
+      session.username = user.username;
+      session.sessionVersion = user.session_version || 1;
+      await session.save();
+    }, targetDelay);
 
-  return {
-    success: true,
-  };
+    return {
+      success: true,
+    };
+  } catch (error) {
+    logSecureError('login-session-error', error);
+    await wrapWithConstantTime(async () => {}, targetDelay);
+    return {
+      success: false,
+      error: 'Authentication failed',
+    };
+  }
 }
 
 export async function logout() {
-  const session = await getSession();
-  session.destroy();
-  redirect('/login');
+  try {
+    const session = await getSession();
+    session.destroy();
+    redirect('/login');
+  } catch (error) {
+    logSecureError('logout-error', error);
+    redirect('/login');
+  }
 }
