@@ -42,10 +42,23 @@ A web-based ledger application for managing, categorizing, and analyzing financi
    - `POSTGRES_URL` - PostgreSQL connection string (Neon or local)
    - `SESSION_SECRET` - Generate with: `openssl rand -base64 32`
 
-4. Initialize the database:
-   ```bash
-   psql $DATABASE_URL -f scripts/init-db.sql
-   ```
+ 4. Initialize the database:
+    ```bash
+    npm run script:init-db
+    ```
+
+    **Important:** The script will display admin credentials in the console output:
+    ```
+    ========================================
+    ADMIN USER CREDENTIALS GENERATED
+    Username: admin
+    Password: abcXYZ123def456
+    ========================================
+    ⚠️  CHANGE THIS PASSWORD IMMEDIATELY! ⚠️
+    ========================================
+    ```
+
+    Copy the displayed password for login. The password is unique to each database installation.
 
 5. Run the development server:
    ```bash
@@ -74,10 +87,53 @@ npm run test:ui
 
 See `__tests__/README.md` for detailed testing documentation.
 
-### Default Login
+### Database Setup
 
-- **Username:** admin
-- **Password:** admin123
+#### Initial Setup
+
+Initialize the database schema, seed default data, and generate admin credentials:
+
+```bash
+npm run script:init-db
+```
+
+The script displays a random 16-character password in the console:
+
+```
+========================================
+ADMIN USER CREDENTIALS GENERATED
+Username: admin
+Password: abcXYZ123def456
+========================================
+⚠️  CHANGE THIS PASSWORD IMMEDIATELY! ⚠️
+========================================
+```
+
+**Steps:**
+1. Copy the displayed password
+2. Login at `http://localhost:3000/login` with username `admin` and the displayed password
+3. Change your password immediately after first login
+
+**Notes:**
+- The password is unique to each database installation
+- The password is only displayed once, during initialization
+- Re-running the script will **not** change the password (preserves existing admin)
+
+#### Password Reset
+
+If you lose the admin password:
+
+```bash
+npm run reset-admin-password [password]
+```
+
+- Without argument: Interactive prompt to enter password
+- With argument: Direct password (less secure)
+- Leave blank or omitted to generate a random password
+
+#### Development Notes
+
+Each developer's local environment has a unique admin password generated on initialization. For reproducible development setups, document your local admin password in a password manager.
 
 ## Project Structure
 

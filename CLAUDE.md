@@ -226,8 +226,14 @@ psql $DATABASE_URL -f scripts/init-db.sql
 ```
 
 **Default credentials:**
-- Username: `admin`
-- Password: `admin123`
+- Run `npm run script:init-db` to initialize the database and generate admin credentials
+- The script will display a random password in the console
+- Use the displayed password to login with username `admin`
+
+If you lose the password, reset it with:
+```bash
+npm run reset-admin-password
+```
 
 ### Environment Variables
 
