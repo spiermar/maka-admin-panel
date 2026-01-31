@@ -123,7 +123,6 @@ Must be configured in repository settings (Settings â†’ Secrets and variables â†
 
 1. **POSTGRES_URL**
    - Neon PostgreSQL connection string
-   - Value: `postgresql://neondb_owner:npg_B3WQXepYF6uV@ep-small-king-ahp7ao4n-pooler.c-3.us-east-1.aws.neon.tech/ledger?sslmode=require&channel_binding=require`
 
 2. **SESSION_SECRET**
    - iron-session encryption key
