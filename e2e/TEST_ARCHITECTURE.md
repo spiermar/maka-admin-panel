@@ -125,15 +125,15 @@ Test Start
 └───────┬────────┘
         │
         ▼
-┌────────────────┐     ┌─────────────────────────────────┐
-│ Fill Form      │────►│ Username: admin                 │
-│                │     │ Password: admin123              │
-└───────┬────────┘     └─────────────────────────────────┘
-        │
-        ▼
-┌────────────────┐
-│ Submit Form    │ ──────────► Server Action: login()
-└───────┬────────┘
+ ┌────────────────┐     ┌─────────────────────────────────┐
+ │ Fill Form      │────►│ Username: admin                 │
+ │                │     │ Password: <from env variable>    │
+ └───────┬────────┘     └─────────────────────────────────┘
+         │
+         ▼
+ ┌────────────────┐
+ │ Submit Form    │ ──────────► Server Action: login()
+ └───────┬────────┘
         │
         ▼
 ┌────────────────┐     ┌─────────────────────────────────┐
@@ -239,11 +239,11 @@ Database (PostgreSQL)
     │ Seeded via: scripts/init-db.sql
     │
     ▼
-┌────────────────────────────────────┐
-│ Test Data                          │
-│ ├─ Users                          │
-│ │  └─ admin / admin123            │
-│ ├─ Accounts                       │
+ ┌────────────────────────────────────┐
+ │ Test Data                          │
+ │ ├─ Users                          │
+ │ │  └─ admin / (from TEST_ADMIN_PASSWORD env var) │
+ │ ├─ Accounts                       │
 │ │  └─ Sample checking/savings     │
 │ ├─ Categories                     │
 │ │  └─ Expense/income categories   │

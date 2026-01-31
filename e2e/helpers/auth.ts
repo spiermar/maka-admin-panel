@@ -16,7 +16,7 @@ export interface LoginCredentials {
  */
 export const DEFAULT_CREDENTIALS: LoginCredentials = {
   username: 'admin',
-  password: 'admin123',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
 };
 
 /**

@@ -1,4 +1,5 @@
-import { test, expect, type Page } from './fixtures';
+import { test, expect } from './fixtures';
+import { login } from './helpers/auth';
 
 /**
  * Dashboard End-to-End Tests
@@ -11,15 +12,6 @@ import { test, expect, type Page } from './fixtures';
  * - Recent transactions table
  * - Data accuracy and visibility
  */
-
-// Helper function to login before each test
-async function login(page: Page) {
-  await page.goto('/login');
-  await page.getByLabel(/username/i).fill('admin');
-  await page.getByLabel(/password/i).fill('admin123');
-  await page.getByRole('button', { name: /sign in/i }).click();
-  await page.waitForURL('/');
-}
 
 test.describe('Dashboard Visualization', () => {
   test.beforeEach(async ({ page }) => {

@@ -1,4 +1,5 @@
 import { sql } from '@vercel/postgres';
+import bcrypt from 'bcrypt';
 
 export async function cleanupTestDatabase() {
   console.log('🧹 Cleaning test database...');
@@ -24,13 +25,15 @@ export async function seedTestDatabase() {
   console.log('🌱 Seeding test database...');
 
   try {
-    // Seed admin user (password: admin123)
+    const testPassword = process.env.TEST_ADMIN_PASSWORD || 'admin123';
+    const passwordHash = await bcrypt.hash(testPassword, 12);
+
     await sql`
       INSERT INTO users (username, password_hash)
-      VALUES ('admin', '$2b$12$33IAwrMlVq40YQ3xN.sf4.BvKPHmM8Dx/.XLCryjf/ONDw7cDOfGq')
+      VALUES ('admin', ${passwordHash})
       ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash
     `;
-    console.log('✅ Seeded admin user');
+    console.log(`✅ Seeded admin user with password: ${testPassword}`);
 
     // Seed default categories - using same approach as init-db.sql
     await sql`
