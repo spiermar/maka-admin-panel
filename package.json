@@ -17,7 +17,7 @@
     "test:e2e:debug": "playwright test --debug",
     "script:seed-transactions": "tsx scripts/seed-transactions.ts",
     "script:init-db": "node scripts/init-db.js",
-    "reset-admin-password": "node scripts/reset-admin-password.js"
+    "script:reset-admin-password": "node scripts/reset-admin-password.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-// Load environment variables
-require('dotenv').config({ path: '.env.local' });
+import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
+import { sql } from '@vercel/postgres';
+import crypto from 'crypto';
+import readline from 'readline';
 
-const bcrypt = require('bcrypt');
-const { sql } = require('@vercel/postgres');
+dotenv.config({ path: '.env.local' });
 
 function generateRandomPassword() {
-  const crypto = require('crypto');
   const randomBytes = crypto.randomBytes(12);
   const base64 = randomBytes.toString('base64');
   const alphanumeric = base64.replace(/[^a-zA-Z0-9]/g, '');
@@ -15,7 +16,6 @@ function generateRandomPassword() {
 }
 
 async function promptPassword() {
-  const readline = require('readline');
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
