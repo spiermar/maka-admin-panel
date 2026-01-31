@@ -233,7 +233,7 @@ psql $POSTGRES_URL -f scripts/init-db.sql
 
 Copy `.env.example` to `.env.local` and configure:
 
-- `POSTGRES_URL` - PostgreSQL connection string (Neon or local)
+- `DATABASE_URL` - PostgreSQL connection string (Neon or local)
 - `SESSION_SECRET` - Generate with: `openssl rand -base64 32`
 - `NODE_ENV` - Set to `development` or `production`
 
