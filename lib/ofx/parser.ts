@@ -44,7 +44,6 @@ export async function parseOfxFile(content: string): Promise<ParsedOfxImport> {
   const transactions: OfxTransaction[] = (Array.isArray(stmt) ? stmt : stmt ? [stmt] : []).map(
     (tx: unknown) => {
       const txObj = tx as Record<string, unknown>;
-      const fitid = String(txObj.TRNTYPE || '');
       const trnType = String(txObj.TRNTYPE || 'DEBIT');
       const id = String(txObj.FITID || '');
       
