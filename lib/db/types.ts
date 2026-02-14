@@ -33,6 +33,9 @@ export interface Transaction {
   comment: string | null;
   created_at: Date;
   updated_at: Date;
+  ofx_fitid: string | null;
+  ofx_memo: string | null;
+  ofx_refnum: string | null;
 }
 
 export interface TransactionWithDetails extends Transaction {
