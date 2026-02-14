@@ -10,8 +10,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { TransactionWithDetails } from '@/lib/db/types';
 import { deleteTransaction } from '@/lib/actions/transactions';
+import { Info } from 'lucide-react';
 
 interface TransactionTableProps {
   transactions: TransactionWithDetails[];
@@ -23,6 +30,8 @@ export function TransactionTable({
   onEdit,
 }: TransactionTableProps) {
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [infoTransaction, setInfoTransaction] =
+    useState<TransactionWithDetails | null>(null);
 
   const handleDelete = async (id: number, accountId: number) => {
     if (!confirm('Are you sure you want to delete this transaction?')) {
@@ -35,6 +44,7 @@ export function TransactionTable({
   };
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -87,6 +97,16 @@ export function TransactionTable({
                 {transaction.comment}
               </TableCell>
               <TableCell className="text-right space-x-2">
+                {transaction.ofx_fitid && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setInfoTransaction(transaction)}
+                    title="View OFX details"
+                  >
+                    <Info className="w-4 h-4" />
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -110,5 +130,33 @@ export function TransactionTable({
         )}
       </TableBody>
     </Table>
+
+    {infoTransaction && (
+      <Dialog
+        open={!!infoTransaction}
+        onOpenChange={() => setInfoTransaction(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>OFX Transaction Details</DialogTitle>
+          </DialogHeader>
+          <dl className="space-y-3">
+            <div>
+              <dt className="font-medium text-sm text-muted-foreground">FITID</dt>
+              <dd className="text-sm break-all">{infoTransaction.ofx_fitid ?? ''}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-sm text-muted-foreground">REFNUM</dt>
+              <dd className="text-sm break-all">{infoTransaction.ofx_refnum ?? ''}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-sm text-muted-foreground">Original MEMO</dt>
+              <dd className="text-sm">{infoTransaction.ofx_memo ?? ''}</dd>
+            </div>
+          </dl>
+        </DialogContent>
+      </Dialog>
+    )}
+    </>
   );
 }

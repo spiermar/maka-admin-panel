@@ -5,7 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TransactionTable } from '@/components/transactions/transaction-table';
 import { TransactionForm } from '@/components/transactions/transaction-form';
+import { OfxImportDialog } from '@/components/ofx-import-dialog';
 import { Account, CategoryWithPath, TransactionWithDetails } from '@/lib/db/types';
+import { ImportResult } from '@/lib/actions/ofx-import';
 
 interface AccountDetailClientProps {
   account: Account;
@@ -25,6 +27,11 @@ export function AccountDetailClient({
   const [formOpen, setFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] =
     useState<TransactionWithDetails | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+
+  const handleImportComplete = (result: ImportResult) => {
+    console.log(`Imported ${result.imported}, skipped ${result.skipped}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -35,14 +42,22 @@ export function AccountDetailClient({
             Account details and transactions
           </p>
         </div>
-        <Button
-          onClick={() => {
-            setEditingTransaction(null);
-            setFormOpen(true);
-          }}
-        >
-          Add Transaction
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setImportOpen(true)}
+          >
+            Import OFX
+          </Button>
+          <Button
+            onClick={() => {
+              setEditingTransaction(null);
+              setFormOpen(true);
+            }}
+          >
+            Add Transaction
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -85,6 +100,13 @@ export function AccountDetailClient({
         categories={categories}
         transaction={editingTransaction}
         defaultAccountId={account.id}
+      />
+
+      <OfxImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        accountId={account.id}
+        onImportComplete={handleImportComplete}
       />
     </div>
   );
