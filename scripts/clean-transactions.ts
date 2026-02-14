@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { resolve } from 'path';
+
 import { queryOne, queryMany, execute } from '@/lib/db';
 
 dotenv.config({ path: '.env.local' });
