@@ -10,6 +10,9 @@ export function DashboardNav() {
             <Link href="/">Dashboard</Link>
           </Button>
           <Button variant="ghost" size="sm" asChild>
+            <Link href="/accounts">Accounts</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
             <Link href="/settings">Settings</Link>
           </Button>
         </div>
