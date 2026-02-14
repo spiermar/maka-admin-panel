@@ -16,6 +16,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "script:seed-transactions": "tsx scripts/seed-transactions.ts",
+    "script:clean-transactions": "tsx scripts/clean-transactions.ts",
     "script:init-db": "node scripts/init-db.js",
     "script:reset-admin-password": "node scripts/reset-admin-password.js"
   },
