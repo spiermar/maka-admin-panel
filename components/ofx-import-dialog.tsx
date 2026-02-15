@@ -195,7 +195,6 @@ export function OfxImportDialog({
                     <TableRow>
                       <TableHead className="w-10"></TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead>Payee (REFNUM)</TableHead>
                       <TableHead className="text-right">Amount</TableHead>
                       <TableHead>Memo</TableHead>
                     </TableRow>
@@ -212,9 +211,6 @@ export function OfxImportDialog({
                           />
                         </TableCell>
                         <TableCell>{tx.date}</TableCell>
-                        <TableCell className="max-w-xs truncate" title={tx.refnum}>
-                          {tx.refnum}
-                        </TableCell>
                         <TableCell
                           className={`text-right font-medium ${
                             tx.amount >= 0 ? 'text-green-600' : 'text-red-600'
