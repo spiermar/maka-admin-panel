@@ -1,5 +1,6 @@
 import { parse as parseOfx } from 'ofx-parser';
 import { ParsedOfxImport, OfxTransaction } from './types';
+import { extractPayeeFromMemo } from './utils';
 
 function parseOfxDate(dateStr: string | Date): string {
   const dateString = dateStr instanceof Date ? dateStr.toISOString() : String(dateStr);
@@ -53,11 +54,14 @@ export async function parseOfxFile(content: string): Promise<ParsedOfxImport> {
       const amount = parseAmount(txObj.TRNAMT as string | number);
       const refnum = String(txObj.REFNUM || cleanFitid);
       const memo = String(txObj.MEMO || '');
+      const { payee: extractedPayee, cleanedMemo } = extractPayeeFromMemo(memo);
 
       return {
         fitid: cleanFitid,
         refnum,
         memo,
+        payee: extractedPayee,
+        cleanedMemo,
         date: parseOfxDate(txObj.DTPOSTED as string | Date),
         amount,
         type: trnType.toUpperCase() === 'CREDIT' ? 'CREDIT' : 'DEBIT',

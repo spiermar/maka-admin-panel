@@ -36,9 +36,9 @@ async function insertTransaction(
     [
       accountId,
       tx.date,
-      tx.refnum,
+      tx.payee ?? '',
       tx.amount.toFixed(2),
-      tx.memo,
+      tx.payee ? tx.cleanedMemo : tx.memo,
       tx.fitid,
       tx.memo,
       tx.refnum,
