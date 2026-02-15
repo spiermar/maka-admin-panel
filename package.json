@@ -18,7 +18,8 @@
     "script:seed-transactions": "tsx scripts/seed-transactions.ts",
     "script:clean-transactions": "tsx scripts/clean-transactions.ts",
     "script:init-db": "node scripts/init-db.js",
-    "script:reset-admin-password": "node scripts/reset-admin-password.js"
+    "script:reset-admin-password": "node scripts/reset-admin-password.js",
+    "script:add-user": "node scripts/add-user.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
