@@ -2,6 +2,8 @@ export interface OfxTransaction {
   fitid: string;
   refnum: string;
   memo: string;
+  payee: string | null;
+  cleanedMemo: string;
   date: string; // YYYY-MM-DD
   amount: number; // positive = credit, negative = debit
   type: 'CREDIT' | 'DEBIT';
