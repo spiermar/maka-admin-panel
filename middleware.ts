@@ -15,7 +15,16 @@ function isValidOrigin(origin: string | null, allowedOrigins: string[]): boolean
 
   try {
     const originUrl = new URL(origin);
+    const originHostname = originUrl.hostname;
+
     return allowedOrigins.some(allowed => {
+      // Handle wildcard patterns like https://*.vercel.app
+      if (allowed.startsWith('https://*.') || allowed.startsWith('http://*.')) {
+        const domain = allowed.replace(/^https?:\/\/\*\./, '');
+        return originHostname.endsWith(domain);
+      }
+
+      // Exact match
       const allowedUrl = new URL(allowed);
       return originUrl.origin === allowedUrl.origin;
     });
