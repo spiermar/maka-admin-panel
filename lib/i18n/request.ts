@@ -1,14 +1,14 @@
 import { getRequestConfig } from 'next-intl/server';
 import { headers } from 'next/headers';
-import { locales, defaultLocale } from './config';
+import { locales, defaultLocale, type Locale } from './config';
 
 export default getRequestConfig(async () => {
   const headerStore = await headers();
   const url = new URL(headerStore.get('x-url') || 'http://localhost');
   const urlLang = url.searchParams.get('lang');
   
-  const locale = (urlLang && locales.includes(urlLang as any)) 
-    ? urlLang as any 
+  const locale = (urlLang && locales.includes(urlLang as Locale)) 
+    ? urlLang as Locale 
     : defaultLocale;
 
   return {
