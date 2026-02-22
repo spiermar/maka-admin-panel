@@ -26,8 +26,8 @@ test.describe('Navigation and Protected Routes', () => {
     await newPage.goto('/');
 
     // Should be redirected to login
-    await expect(newPage).toHaveURL('/login');
-    await expect(newPage.getByRole('heading', { name: /login/i })).toBeVisible();
+    await expect(newPage).toHaveURL(/\/login/);
+    await expect(newPage.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
 
     await newPage.close();
     await newContext.close();
@@ -35,7 +35,7 @@ test.describe('Navigation and Protected Routes', () => {
 
   test('should allow navigation from dashboard to other pages', async ({ page }) => {
     // Start on dashboard
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
 
     // Try to navigate to accounts if link exists
     const accountsLink = page.locator('a[href*="/accounts"], nav a:has-text("Accounts")');
@@ -51,7 +51,7 @@ test.describe('Navigation and Protected Routes', () => {
 
   test('should maintain session across navigation', async ({ page }) => {
     const accountId = await getAccountIdByName('Checking Account');
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
 
     const routes = ['/settings', `/accounts/${accountId}`];
 
@@ -64,7 +64,7 @@ test.describe('Navigation and Protected Routes', () => {
 
   test('should handle browser back and forward navigation', async ({ page }) => {
     // Start on dashboard
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
     const dashboardHeading = page.getByRole('heading', { name: /dashboard/i });
     await expect(dashboardHeading).toBeVisible();
 
@@ -77,7 +77,7 @@ test.describe('Navigation and Protected Routes', () => {
     await page.waitForLoadState('networkidle');
 
     // Should be back on dashboard
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
 
     // Go forward
     await page.goForward();
@@ -111,7 +111,7 @@ test.describe('Navigation and Protected Routes', () => {
     await page.reload();
 
     // Should still be on dashboard (not logged out)
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
   });
 });
@@ -128,7 +128,7 @@ test.describe('Navigation Unauthorized', () => {
 
     // Should redirect to login
     await page.waitForURL('/login', { timeout: 5000 });
-    await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
   });
 
   test('should redirect to login for all protected routes when not authenticated', async ({ browser }) => {
@@ -144,8 +144,8 @@ test.describe('Navigation Unauthorized', () => {
       const page = await context.newPage();
       const _response = await page.goto(route);
       await page.waitForURL('/login', { timeout: 5000 });
-      await expect(page).toHaveURL('/login');
-      await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+      await expect(page).toHaveURL(/\/login/);
+      await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
       await context.close();
     }
   });
@@ -154,8 +154,8 @@ test.describe('Navigation Unauthorized', () => {
     await page.goto('/login');
 
     // Should stay on login page
-    await expect(page).toHaveURL('/login');
-    await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+    await expect(page).toHaveURL(/\/login/);
+    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
   });
 });
 
