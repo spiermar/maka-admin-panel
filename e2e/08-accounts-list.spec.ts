@@ -52,8 +52,6 @@ test.describe('Accounts List Page', () => {
   });
 
   test('should navigate to account detail when clicking account card', async ({ page }) => {
-    const accountId = await getAccountIdByName('Checking Account');
-
     await page.goto('/accounts');
     await page.waitForLoadState('networkidle');
 

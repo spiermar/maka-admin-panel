@@ -30,7 +30,6 @@ interface TransactionFormProps {
   categories: CategoryWithPath[];
   transaction?: TransactionWithDetails | null;
   defaultAccountId?: number;
-  lang?: string;
 }
 
 export function TransactionForm({
@@ -40,7 +39,6 @@ export function TransactionForm({
   categories,
   transaction,
   defaultAccountId,
-  lang = 'en',
 }: TransactionFormProps) {
   const t = useTranslations('transactions');
   const tCommon = useTranslations('common');
