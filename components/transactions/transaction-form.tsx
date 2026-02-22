@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,8 +42,6 @@ export function TransactionForm({
   defaultAccountId,
   lang = 'en',
 }: TransactionFormProps) {
-  const searchParams = useSearchParams();
-  const locale = lang || searchParams.get('lang') || 'en';
   const t = useTranslations('transactions');
   const tCommon = useTranslations('common');
 
