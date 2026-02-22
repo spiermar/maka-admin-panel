@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,6 +40,8 @@ interface CategoryManagerProps {
 }
 
 export function CategoryManager({ categories }: CategoryManagerProps) {
+  const t = useTranslations('settings');
+  const tCommon = useTranslations('common');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryWithPath | null>(
     null
@@ -56,39 +59,36 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
 
   const handleDelete = async (id: number) => {
     if (
-      !confirm(
-        'Are you sure? This will also delete all child categories and unlink transactions.'
-      )
+      !confirm(t('deleteCategoryConfirm'))
     ) {
       return;
     }
     await deleteCategory(id);
   };
 
-  // Filter valid parent options (depth < 3)
   const validParents = categories.filter((c) => c.depth < 3);
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Categories</CardTitle>
+        <CardTitle>{t('categories')}</CardTitle>
         <Button
           onClick={() => {
             setEditingCategory(null);
             setDialogOpen(true);
           }}
         >
-          Add Category
+          {t('addCategory')}
         </Button>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>{t('name')}</TableHead>
+              <TableHead>{t('categoryType')}</TableHead>
               <TableHead>Depth</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">{t('actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -107,7 +107,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {category.category_type}
+                    {t(category.category_type)}
                   </span>
                 </TableCell>
                 <TableCell>{category.depth}</TableCell>
@@ -120,14 +120,14 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                       setDialogOpen(true);
                     }}
                   >
-                    Edit
+                    {t('edit')}
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(category.id)}
                   >
-                    Delete
+                    {t('delete')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -139,18 +139,18 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingCategory ? 'Edit Category' : 'Add Category'}
+                {editingCategory ? t('editCategory') : t('addCategory')}
               </DialogTitle>
               <DialogDescription>
                 {editingCategory
-                  ? 'Update category details'
-                  : 'Create a new category'}
+                  ? t('updateCategory')
+                  : t('createCategory')}
               </DialogDescription>
             </DialogHeader>
 
             <form action={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Category Name</Label>
+                <Label htmlFor="name">{t('categoryName')}</Label>
                 <Input
                   id="name"
                   name="name"
@@ -160,7 +160,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category_type">Type</Label>
+                <Label htmlFor="category_type">{t('categoryType')}</Label>
                 <Select
                   name="category_type"
                   defaultValue={editingCategory?.category_type || 'expense'}
@@ -170,23 +170,23 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="income">Income</SelectItem>
-                    <SelectItem value="expense">Expense</SelectItem>
+                    <SelectItem value="income">{t('income')}</SelectItem>
+                    <SelectItem value="expense">{t('expense')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="parent_id">Parent Category (Optional)</Label>
+                <Label htmlFor="parent_id">{t('parentCategory')}</Label>
                 <Select
                   name="parent_id"
                   defaultValue={editingCategory?.parent_id?.toString() || 'none'}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="None (root category)" />
+                    <SelectValue placeholder={t('noneRootCategory')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">None (root category)</SelectItem>
+                    <SelectItem value="none">{t('noneRootCategory')}</SelectItem>
                     {validParents.map((parent) => (
                       <SelectItem key={parent.id} value={parent.id.toString()}>
                         {parent.path}
@@ -198,14 +198,14 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
 
               <div className="flex gap-2">
                 <Button type="submit" className="flex-1">
-                  {editingCategory ? 'Update' : 'Create'}
+                  {editingCategory ? t('update') : t('create')}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setDialogOpen(false)}
                 >
-                  Cancel
+                  {tCommon('cancel')}
                 </Button>
               </div>
             </form>

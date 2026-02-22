@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,6 +33,8 @@ interface AccountManagerProps {
 }
 
 export function AccountManager({ accounts }: AccountManagerProps) {
+  const t = useTranslations('settings');
+  const tCommon = useTranslations('common');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
@@ -46,7 +49,7 @@ export function AccountManager({ accounts }: AccountManagerProps) {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this account?')) {
+    if (!confirm(t('deleteAccountConfirm'))) {
       return;
     }
     const result = await deleteAccount(id);
@@ -58,22 +61,22 @@ export function AccountManager({ accounts }: AccountManagerProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Accounts</CardTitle>
+        <CardTitle>{t('accounts')}</CardTitle>
         <Button
           onClick={() => {
             setEditingAccount(null);
             setDialogOpen(true);
           }}
         >
-          Add Account
+          {t('addAccount')}
         </Button>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('name')}</TableHead>
+              <TableHead className="text-right">{t('actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -89,14 +92,14 @@ export function AccountManager({ accounts }: AccountManagerProps) {
                       setDialogOpen(true);
                     }}
                   >
-                    Edit
+                    {t('edit')}
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(account.id)}
                   >
-                    Delete
+                    {t('delete')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -108,18 +111,18 @@ export function AccountManager({ accounts }: AccountManagerProps) {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingAccount ? 'Edit Account' : 'Add Account'}
+                {editingAccount ? t('editAccount') : t('addAccount')}
               </DialogTitle>
               <DialogDescription>
                 {editingAccount
-                  ? 'Update account name'
-                  : 'Create a new account'}
+                  ? t('updateAccount')
+                  : t('createAccount')}
               </DialogDescription>
             </DialogHeader>
 
             <form action={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Account Name</Label>
+                <Label htmlFor="name">{t('accountName')}</Label>
                 <Input
                   id="name"
                   name="name"
@@ -130,14 +133,14 @@ export function AccountManager({ accounts }: AccountManagerProps) {
 
               <div className="flex gap-2">
                 <Button type="submit" className="flex-1">
-                  {editingAccount ? 'Update' : 'Create'}
+                  {editingAccount ? t('update') : t('create')}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setDialogOpen(false)}
                 >
-                  Cancel
+                  {tCommon('cancel')}
                 </Button>
               </div>
             </form>
