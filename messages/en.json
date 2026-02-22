@@ -22,6 +22,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "loading": "Loading...",
     "totalBalance": "Total Balance",
     "monthlyIncome": "Monthly Income",
     "monthlyExpenses": "Monthly Expenses",

@@ -22,6 +22,7 @@
   },
   "dashboard": {
     "title": "Painel",
+    "loading": "Carregando...",
     "totalBalance": "Saldo Total",
     "monthlyIncome": "Receita Mensal",
     "monthlyExpenses": "Despesas Mensais",

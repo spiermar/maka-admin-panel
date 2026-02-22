@@ -1,23 +1,31 @@
+'use client';
+
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 
 export function DashboardNav() {
+  const t = useTranslations('nav');
+  const searchParams = useSearchParams();
+  const lang = searchParams.get('lang') || 'en';
+
+  const navLinks = [
+    { href: `/?lang=${lang}`, label: t('dashboard') },
+    { href: `/accounts?lang=${lang}`, label: t('accounts') },
+    { href: `/expense-reports?lang=${lang}`, label: t('expenseReports') },
+    { href: `/settings?lang=${lang}`, label: t('settings') },
+  ];
+
   return (
     <nav className="border-b bg-muted/40">
       <div className="container mx-auto px-4 py-2">
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/">Dashboard</Link>
-          </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/accounts">Accounts</Link>
-          </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/expense-reports">Expense Reports</Link>
-          </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/settings">Settings</Link>
-          </Button>
+          {navLinks.map((link) => (
+            <Button key={link.href} variant="ghost" size="sm" asChild>
+              <Link href={link.href}>{link.label}</Link>
+            </Button>
+          ))}
         </div>
       </div>
     </nav>
