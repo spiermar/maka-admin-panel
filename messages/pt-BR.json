@@ -1,0 +1,76 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "confirm": "Confirmar",
+    "error": "Ocorreu um erro"
+  },
+  "auth": {
+    "signIn": "Entrar",
+    "signingIn": "Entrando...",
+    "username": "Usuário",
+    "password": "Senha",
+    "logout": "Sair"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "accounts": "Contas",
+    "expenseReports": "Relatórios de Despesas",
+    "settings": "Configurações"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "totalBalance": "Saldo Total",
+    "monthlyIncome": "Receita Mensal",
+    "monthlyExpenses": "Despesas Mensais",
+    "netCashFlow": "Fluxo de Caixa Líquido",
+    "topExpenses": "Maiores Despesas do Mês",
+    "incomeSources": "Fontes de Receita do Mês"
+  },
+  "accounts": {
+    "title": "Contas",
+    "manageAccounts": "Gerencie suas contas financeiras",
+    "noAccounts": "Nenhuma conta encontrada."
+  },
+  "transactions": {
+    "title": "Transações",
+    "noTransactions": "Nenhuma transação ainda",
+    "addTransaction": "Adicionar Transação",
+    "editTransaction": "Editar Transação",
+    "deleteConfirm": "Tem certeza que deseja excluir esta transação?",
+    "date": "Data",
+    "description": "Descrição",
+    "amount": "Valor",
+    "category": "Categoria",
+    "selectAccount": "Selecionar conta",
+    "selectCategory": "Selecionar categoria (opcional)",
+    "amountPlaceholder": "Use negativo para despesas"
+  },
+  "expenseReports": {
+    "title": "Relatórios de Despesas",
+    "createReport": "Criar Relatório",
+    "submitForApproval": "Enviar para Aprovação",
+    "markAsReimbursed": "Marcar como Reembolsado",
+    "noExpenses": "Nenhuma despesa ainda. Adicione despesas a este relatório.",
+    "deleteConfirm": "Excluir esta despesa?",
+    "submittedBy": "Enviado por",
+    "created": "Criado"
+  },
+  "settings": {
+    "title": "Configurações",
+    "manageCategories": "Gerenciar Categorias",
+    "manageAccounts": "Gerenciar Contas",
+    "createCategory": "Criar nova categoria",
+    "updateCategory": "Atualizar detalhes da categoria",
+    "createAccount": "Criar nova conta",
+    "updateAccount": "Atualizar nome da conta",
+    "deleteCategoryConfirm": "Tem certeza? Isso também excluirá todas as subcategorias e desvinculadas transações.",
+    "deleteAccountConfirm": "Tem certeza que deseja excluir esta conta?"
+  },
+  "login": {
+    "title": "Livro Razão Financeiro",
+    "subtitle": "Digite suas credenciais para acessar seu livro razão"
+  }
+}

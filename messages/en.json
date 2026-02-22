@@ -1,0 +1,76 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "error": "An error occurred"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "username": "Username",
+    "password": "Password",
+    "logout": "Logout"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "accounts": "Accounts",
+    "expenseReports": "Expense Reports",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalBalance": "Total Balance",
+    "monthlyIncome": "Monthly Income",
+    "monthlyExpenses": "Monthly Expenses",
+    "netCashFlow": "Net Cash Flow",
+    "topExpenses": "Top Expenses This Month",
+    "incomeSources": "Income Sources This Month"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "manageAccounts": "Manage your financial accounts",
+    "noAccounts": "No accounts found."
+  },
+  "transactions": {
+    "title": "Transactions",
+    "noTransactions": "No transactions yet",
+    "addTransaction": "Add Transaction",
+    "editTransaction": "Edit Transaction",
+    "deleteConfirm": "Are you sure you want to delete this transaction?",
+    "date": "Date",
+    "description": "Description",
+    "amount": "Amount",
+    "category": "Category",
+    "selectAccount": "Select account",
+    "selectCategory": "Select category (optional)",
+    "amountPlaceholder": "Use negative for expenses"
+  },
+  "expenseReports": {
+    "title": "Expense Reports",
+    "createReport": "Create Report",
+    "submitForApproval": "Submit for Approval",
+    "markAsReimbursed": "Mark as Reimbursed",
+    "noExpenses": "No expenses yet. Add expenses to this report.",
+    "deleteConfirm": "Delete this expense?",
+    "submittedBy": "Submitted by",
+    "created": "Created"
+  },
+  "settings": {
+    "title": "Settings",
+    "manageCategories": "Manage Categories",
+    "manageAccounts": "Manage Accounts",
+    "createCategory": "Create a new category",
+    "updateCategory": "Update category details",
+    "createAccount": "Create a new account",
+    "updateAccount": "Update account name",
+    "deleteCategoryConfirm": "Are you sure? This will also delete all child categories and unlink transactions.",
+    "deleteAccountConfirm": "Are you sure you want to delete this account?"
+  },
+  "login": {
+    "title": "Financial Ledger",
+    "subtitle": "Enter your credentials to access your ledger"
+  }
+}
