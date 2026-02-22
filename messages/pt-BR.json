@@ -97,6 +97,7 @@
     "editCategory": "Editar Categoria",
     "categoryName": "Nome da Categoria",
     "categoryType": "Tipo de Categoria",
+    "depth": "Profundidade",
     "parentCategory": "Categoria Pai (Opcional)",
     "income": "Receita",
     "expense": "Despesa",

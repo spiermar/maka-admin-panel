@@ -97,6 +97,7 @@
     "editCategory": "Edit Category",
     "categoryName": "Category Name",
     "categoryType": "Category Type",
+    "depth": "Depth",
     "parentCategory": "Parent Category (Optional)",
     "income": "Income",
     "expense": "Expense",

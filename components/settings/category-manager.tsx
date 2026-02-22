@@ -87,7 +87,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             <TableRow>
               <TableHead>{t('name')}</TableHead>
               <TableHead>{t('categoryType')}</TableHead>
-              <TableHead>Depth</TableHead>
+              <TableHead>{t('depth')}</TableHead>
               <TableHead className="text-right">{t('actions')}</TableHead>
             </TableRow>
           </TableHeader>
