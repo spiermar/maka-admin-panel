@@ -49,3 +49,9 @@ tmp/
 
 # worktrees
 .worktrees/
+
+# local data
+data/
+
+# codenomad
+.codenomad/
