@@ -45,9 +45,44 @@ CREATE TABLE transactions (
   ofx_refnum VARCHAR(255)
 );
 
+-- Expense Reports table
+CREATE TABLE expense_reports (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'approved', 'rejected')),
+  submitted_at TIMESTAMP,
+  approved_at TIMESTAMP,
+  approved_by INTEGER REFERENCES users(id),
+  reimbursed_at TIMESTAMP,
+  total_amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Expenses table (line items in a report)
+CREATE TABLE expenses (
+  id SERIAL PRIMARY KEY,
+  expense_report_id INTEGER NOT NULL REFERENCES expense_reports(id) ON DELETE CASCADE,
+  transaction_id INTEGER REFERENCES transactions(id) ON DELETE SET NULL,
+  payee VARCHAR(200) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL,
+  date DATE NOT NULL,
+  category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+  memo TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX idx_transactions_account_date ON transactions(account_id, date DESC);
 CREATE INDEX idx_transactions_category ON transactions(category_id);
 CREATE INDEX idx_transactions_date ON transactions(date DESC);
 CREATE INDEX idx_transactions_ofx_fitid ON transactions(ofx_fitid);
 CREATE INDEX idx_categories_parent ON categories(parent_id);
+
+-- Indexes for expense reports
+CREATE INDEX idx_expense_reports_user ON expense_reports(user_id);
+CREATE INDEX idx_expense_reports_status ON expense_reports(status);
+CREATE INDEX idx_expenses_report ON expenses(expense_report_id);
+CREATE INDEX idx_expenses_transaction ON expenses(transaction_id);

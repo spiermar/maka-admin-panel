@@ -13,6 +13,9 @@ export function DashboardNav() {
             <Link href="/accounts">Accounts</Link>
           </Button>
           <Button variant="ghost" size="sm" asChild>
+            <Link href="/expense-reports">Expense Reports</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
             <Link href="/settings">Settings</Link>
           </Button>
         </div>

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "proc_2026-02-14T2104_19d363",
+    "workspaceId": "mlmqkkxu",
+    "title": "Next.js dev server",
+    "command": "cd .worktrees/ofx-import && npm run dev",
+    "cwd": "/home/opencode/workspace/maka-admin-panel",
+    "status": "running",
+    "pid": 5006,
+    "startedAt": "2026-02-14T21:04:54.836Z",
+    "outputSizeBytes": 0
+  }
+]
