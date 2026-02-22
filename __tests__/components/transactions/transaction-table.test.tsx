@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { TransactionTable } from '@/components/transactions/transaction-table';
 import { TransactionWithDetails } from '@/lib/db/types';
+import { NextIntlClientProvider } from 'next-intl';
+import enMessages from '@/messages/en.json';
 
 describe('TransactionTable', () => {
   const mockTransactions: TransactionWithDetails[] = [
@@ -25,8 +27,16 @@ describe('TransactionTable', () => {
 
   const mockOnEdit = vi.fn();
 
+  const renderWithI18n = (ui: React.ReactElement) => {
+    return render(
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        {ui}
+      </NextIntlClientProvider>
+    );
+  };
+
   it('renders transaction date as formatted string', () => {
-    render(
+    renderWithI18n(
       <TransactionTable
         transactions={mockTransactions}
         onEdit={mockOnEdit}
@@ -47,7 +57,7 @@ describe('TransactionTable', () => {
       },
     ];
 
-    render(
+    renderWithI18n(
       <TransactionTable
         transactions={transactionsWithDateObject}
         onEdit={mockOnEdit}
@@ -64,7 +74,7 @@ describe('TransactionTable', () => {
   });
 
   it('renders empty state when no transactions', () => {
-    render(
+    renderWithI18n(
       <TransactionTable transactions={[]} onEdit={mockOnEdit} />
     );
 
