@@ -47,3 +47,43 @@ export interface TransactionWithDetails extends Transaction {
 export interface CategoryWithPath extends Category {
   path: string;
 }
+
+export type ExpenseReportStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
+
+export interface ExpenseReport {
+  id: number;
+  user_id: number;
+  title: string;
+  description: string | null;
+  status: ExpenseReportStatus;
+  submitted_at: Date | null;
+  approved_at: Date | null;
+  approved_by: number | null;
+  reimbursed_at: Date | null;
+  total_amount: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ExpenseReportWithDetails extends ExpenseReport {
+  username: string;
+  approved_by_username: string | null;
+}
+
+export interface Expense {
+  id: number;
+  expense_report_id: number;
+  transaction_id: number | null;
+  payee: string;
+  amount: string;
+  date: string;
+  category_id: number | null;
+  memo: string | null;
+  created_at: Date;
+}
+
+export interface ExpenseWithDetails extends Expense {
+  category_name: string | null;
+  category_path: string | null;
+  transaction_date: string | null;
+}
