@@ -82,7 +82,12 @@ export function middleware(request: NextRequest) {
         path: request.nextUrl.pathname,
       });
     } else {
-      console.error('[CSRF] Invalid request origin blocked');
+      // console.error('[CSRF] Invalid request origin blocked');
+      console.error('[CSRF] Invalid origin:', {
+        origin,
+        allowedOrigins,
+        path: request.nextUrl.pathname,
+      });
     }
 
     return NextResponse.json(
