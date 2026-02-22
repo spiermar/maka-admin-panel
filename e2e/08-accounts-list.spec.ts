@@ -1,6 +1,5 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers/auth';
-import { getAccountIdByName } from './helpers/database';
 
 /**
  * Accounts List Page End-to-End Tests

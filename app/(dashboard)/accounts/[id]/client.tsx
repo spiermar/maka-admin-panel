@@ -117,7 +117,6 @@ export function AccountDetailClient({
         categories={categories}
         transaction={editingTransaction}
         defaultAccountId={account.id}
-        lang={lang}
       />
 
       <OfxImportDialog
