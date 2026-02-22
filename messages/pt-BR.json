@@ -33,13 +33,18 @@
   "accounts": {
     "title": "Contas",
     "manageAccounts": "Gerencie suas contas financeiras",
-    "noAccounts": "Nenhuma conta encontrada."
+    "noAccounts": "Nenhuma conta encontrada.",
+    "balance": "Saldo",
+    "accountDetails": "Detalhes da conta e transações"
   },
   "transactions": {
     "title": "Transações",
     "noTransactions": "Nenhuma transação ainda",
     "addTransaction": "Adicionar Transação",
     "editTransaction": "Editar Transação",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "importOfx": "Importar OFX",
     "deleteConfirm": "Tem certeza que deseja excluir esta transação?",
     "date": "Data",
     "description": "Descrição",
