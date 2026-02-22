@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { expenseReportSchema, expenseSchema } from '@/lib/validations/expense-reports';
 
 vi.mock('@/lib/db/expense-reports', () => ({
