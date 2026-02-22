@@ -2,14 +2,28 @@ import { getRequestConfig } from 'next-intl/server';
 import { headers } from 'next/headers';
 import { locales, defaultLocale, type Locale } from './config';
 
-export default getRequestConfig(async () => {
+async function getLocaleFromHeaders(): Promise<Locale> {
   const headerStore = await headers();
-  const url = new URL(headerStore.get('x-url') || 'http://localhost');
-  const urlLang = url.searchParams.get('lang');
   
-  const locale = (urlLang && locales.includes(urlLang as Locale)) 
-    ? urlLang as Locale 
-    : defaultLocale;
+  // Try x-url header first
+  const xUrl = headerStore.get('x-url');
+  if (xUrl) {
+    try {
+      const url = new URL(xUrl);
+      const urlLang = url.searchParams.get('lang');
+      if (urlLang && locales.includes(urlLang as Locale)) {
+        return urlLang as Locale;
+      }
+    } catch {
+      // Invalid URL, continue
+    }
+  }
+  
+  return defaultLocale;
+}
+
+export default getRequestConfig(async () => {
+  const locale = await getLocaleFromHeaders();
 
   return {
     locale,

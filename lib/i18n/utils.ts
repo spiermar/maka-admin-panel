@@ -1,18 +1,28 @@
 import { headers } from 'next/headers';
 import { locales, defaultLocale, type Locale } from './config';
 
-export async function getLangFromUrl() {
+export async function getLangFromUrl(): Promise<Locale> {
   const headerStore = await headers();
-  const url = new URL(headerStore.get('x-url') || 'http://localhost');
-  const urlLang = url.searchParams.get('lang');
-  return (urlLang && locales.includes(urlLang as Locale)) 
-    ? urlLang 
-    : defaultLocale;
+  
+  const xUrl = headerStore.get('x-url');
+  if (xUrl) {
+    try {
+      const url = new URL(xUrl);
+      const urlLang = url.searchParams.get('lang');
+      if (urlLang && locales.includes(urlLang as Locale)) {
+        return urlLang as Locale;
+      }
+    } catch {
+      // Invalid URL, continue
+    }
+  }
+  
+  return defaultLocale;
 }
 
-export function getLangFromSearchParams(searchParams: { get: (key: string) => string | null }) {
+export function getLangFromSearchParams(searchParams: { get: (key: string) => string | null }): Locale {
   const urlLang = searchParams.get('lang');
   return (urlLang && locales.includes(urlLang as Locale)) 
-    ? urlLang 
+    ? urlLang as Locale 
     : defaultLocale;
 }
