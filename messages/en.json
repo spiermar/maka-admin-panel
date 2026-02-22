@@ -48,11 +48,19 @@
     "deleteConfirm": "Are you sure you want to delete this transaction?",
     "date": "Date",
     "description": "Description",
+    "payee": "Payee",
     "amount": "Amount",
     "category": "Category",
     "selectAccount": "Select account",
     "selectCategory": "Select category (optional)",
-    "amountPlaceholder": "Use negative for expenses"
+    "amountPlaceholder": "Use negative for expenses",
+    "comment": "Comment",
+    "uncategorized": "Uncategorized",
+    "added": "Transaction added",
+    "updated": "Transaction updated",
+    "selectAccountPlaceholder": "Select account",
+    "updateTransactionDetails": "Update transaction details",
+    "enterTransactionDetails": "Enter transaction details"
   },
   "expenseReports": {
     "title": "Expense Reports",

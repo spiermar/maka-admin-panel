@@ -48,11 +48,19 @@
     "deleteConfirm": "Tem certeza que deseja excluir esta transação?",
     "date": "Data",
     "description": "Descrição",
+    "payee": "Beneficiário",
     "amount": "Valor",
     "category": "Categoria",
     "selectAccount": "Selecionar conta",
     "selectCategory": "Selecionar categoria (opcional)",
-    "amountPlaceholder": "Use negativo para despesas"
+    "amountPlaceholder": "Use negativo para despesas",
+    "comment": "Comentário",
+    "uncategorized": "Sem categoria",
+    "added": "Transação adicionada",
+    "updated": "Transação atualizada",
+    "selectAccountPlaceholder": "Selecionar conta",
+    "updateTransactionDetails": "Atualizar detalhes da transação",
+    "enterTransactionDetails": "Digite os detalhes da transação"
   },
   "expenseReports": {
     "title": "Relatórios de Despesas",

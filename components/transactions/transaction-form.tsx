@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +31,7 @@ interface TransactionFormProps {
   categories: CategoryWithPath[];
   transaction?: TransactionWithDetails | null;
   defaultAccountId?: number;
+  lang?: string;
 }
 
 export function TransactionForm({
@@ -38,7 +41,13 @@ export function TransactionForm({
   categories,
   transaction,
   defaultAccountId,
+  lang = 'en',
 }: TransactionFormProps) {
+  const searchParams = useSearchParams();
+  const locale = lang || searchParams.get('lang') || 'en';
+  const t = useTranslations('transactions');
+  const tCommon = useTranslations('common');
+
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,7 +75,7 @@ export function TransactionForm({
       }
 
       if (result.success) {
-        setSuccessMessage(transaction ? 'Transaction updated' : 'Transaction added');
+        setSuccessMessage(transaction ? t('updated') : t('added'));
         setTimeout(() => {
           if (result.success) {
             onClose();
@@ -77,7 +86,7 @@ export function TransactionForm({
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      setErrors({ form: ['An unexpected error occurred. Please try again.'] });
+      setErrors({ form: [tCommon('error')] });
     } finally {
       setIsSubmitting(false);
     }
@@ -90,12 +99,12 @@ export function TransactionForm({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>
-            {transaction ? 'Edit Transaction' : 'Add Transaction'}
+            {transaction ? t('editTransaction') : t('addTransaction')}
           </SheetTitle>
           <SheetDescription>
             {transaction
-              ? 'Update transaction details'
-              : 'Enter transaction details'}
+              ? t('updateTransactionDetails')
+              : t('enterTransactionDetails')}
           </SheetDescription>
         </SheetHeader>
 
@@ -123,7 +132,7 @@ export function TransactionForm({
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select account" />
+                <SelectValue placeholder={t('selectAccountPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {accounts.map((account) => (
@@ -139,7 +148,7 @@ export function TransactionForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">{t('date')}</Label>
             <Input
               id="date"
               name="date"
@@ -153,7 +162,7 @@ export function TransactionForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="payee">Payee</Label>
+            <Label htmlFor="payee">{t('payee')}</Label>
             <Input
               id="payee"
               name="payee"
@@ -167,16 +176,16 @@ export function TransactionForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category_id">Category</Label>
+            <Label htmlFor="category_id">{t('category')}</Label>
             <Select
               name="category_id"
               defaultValue={transaction?.category_id?.toString() || 'none'}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select category (optional)" />
+                <SelectValue placeholder={t('selectCategory')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">Uncategorized</SelectItem>
+                <SelectItem value="none">{t('uncategorized')}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.path}
@@ -190,14 +199,14 @@ export function TransactionForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount</Label>
+            <Label htmlFor="amount">{t('amount')}</Label>
             <Input
               id="amount"
               name="amount"
               type="number"
               step="0.01"
               defaultValue={transaction?.amount}
-              placeholder="Use negative for expenses"
+              placeholder={t('amountPlaceholder')}
               required
             />
             {errors.amount && (
@@ -206,7 +215,7 @@ export function TransactionForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="comment">Comment</Label>
+            <Label htmlFor="comment">{t('comment')}</Label>
             <Textarea
               id="comment"
               name="comment"
@@ -220,10 +229,10 @@ export function TransactionForm({
 
           <div className="flex gap-2">
             <Button type="submit" className="flex-1" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : (transaction ? 'Update' : 'Create')}
+              {isSubmitting ? tCommon('loading') : (transaction ? tCommon('save') : tCommon('save'))}
             </Button>
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
           </div>
         </form>
