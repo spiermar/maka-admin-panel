@@ -1,9 +1,11 @@
+import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCurrentUser } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { LoginForm } from './login-form';
 
 export default async function LoginPage() {
+  const t = await getTranslations('login');
   const user = await getCurrentUser();
 
   if (user) {
@@ -13,9 +15,9 @@ export default async function LoginPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Login</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          Enter your credentials to access your ledger
+          {t('subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent>
