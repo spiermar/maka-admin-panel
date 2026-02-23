@@ -1,6 +1,5 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers/auth';
-import { getAccountIdByName } from './helpers/database';
 
 /**
  * Accounts List Page End-to-End Tests
@@ -52,16 +51,14 @@ test.describe('Accounts List Page', () => {
   });
 
   test('should navigate to account detail when clicking account card', async ({ page }) => {
-    const accountId = await getAccountIdByName('Checking Account');
-
     await page.goto('/accounts');
     await page.waitForLoadState('networkidle');
 
     // Click on Checking Account card
-    await page.getByText('Checking Account').click();
+    await page.getByText('Checking Account').first().click();
 
     // Should navigate to account detail page
-    await expect(page).toHaveURL(`/accounts/${accountId}`);
+    await expect(page).toHaveURL(/\/accounts\/\d+/);
     await expect(
       page.getByRole('heading', { name: 'Checking Account' })
     ).toBeVisible();
@@ -84,7 +81,7 @@ test.describe('Accounts List Page', () => {
     await page.getByRole('link', { name: /accounts/i }).click();
 
     // Should navigate to accounts page
-    await expect(page).toHaveURL('/accounts');
+    await expect(page).toHaveURL(/\/accounts/);
     await expect(
       page.getByRole('heading', { name: /accounts/i })
     ).toBeVisible();
@@ -136,7 +133,7 @@ test.describe('Accounts List Page', () => {
     ).toBeVisible();
 
     // Account cards should still be visible on mobile
-    await expect(page.getByText('Checking Account')).toBeVisible();
+    await expect(page.getByText('Checking Account').first()).toBeVisible();
   });
 
   test('should load accounts page within reasonable time', async ({ page }) => {

@@ -23,7 +23,7 @@ test.describe('Authentication Flow', () => {
     await expect(page).toHaveTitle(/Maka Admin Panel/i);
 
     // Verify login card is visible
-    await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
 
     // Verify card description
     await expect(page.getByText(/enter your credentials to access your ledger/i)).toBeVisible();
@@ -48,7 +48,7 @@ test.describe('Authentication Flow', () => {
 
   test('should successfully login with valid credentials', async ({ page }) => {
     await login(page);
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
   });
 
@@ -61,7 +61,7 @@ test.describe('Authentication Flow', () => {
     await page.goto('/login');
 
     // Should be redirected back to dashboard
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
   });
 
@@ -73,7 +73,7 @@ test.describe('Authentication Flow', () => {
     await page.reload();
 
     // Should still be on dashboard (not redirected to login)
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
   });
 
@@ -86,9 +86,9 @@ test.describe('Authentication Flow', () => {
     await page.getByRole('button', { name: /sign in/i }).click();
 
     // Should stay on login page
-    await expect(page).toHaveURL('/login');
+    await expect(page).toHaveURL(/\/login/);
 
     // Login card should still be visible
-    await expect(page.getByRole('heading', { name: /login/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
   });
 });

@@ -294,12 +294,25 @@ When implementing fixes or new features, follow this workflow IN ORDER:
    # If output shows '* main', STOP and create a feature branch first
    ```
 
-5. **FIFTH: Push your branch** to remote:
+5. **FIFTH: Verify your changes** by running all quality checks locally:
+   ```bash
+   # Run lint and typecheck
+   npm run lint
+
+   # Run unit tests (CI mode)
+   npm test -- --run
+
+   # Run E2E tests
+   npm run test:e2e
+   ```
+   All checks must pass before proceeding.
+
+6. **SIXTH: Push your branch** to remote:
    ```bash
    git push -u origin feat/your-feature-description
    ```
 
-6. **SIXTH: Open a Pull Request**:
+7. **SEVENTH: Open a Pull Request**:
    - Use the `/pr` command or create PR manually via GitHub CLI:
      ```bash
      gh pr create --title "feat: your feature description" --body "Description of changes"

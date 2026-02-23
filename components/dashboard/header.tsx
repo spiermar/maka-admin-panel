@@ -1,9 +1,11 @@
+import { getTranslations } from 'next-intl/server';
 import { logout } from '@/lib/actions/auth';
 import { Button } from '@/components/ui/button';
 import { requireAuth } from '@/lib/auth/session';
 
 export async function DashboardHeader() {
   const user = await requireAuth();
+  const t = await getTranslations('auth');
 
   return (
     <header className="border-b">
@@ -15,7 +17,7 @@ export async function DashboardHeader() {
           </span>
           <form action={logout}>
             <Button variant="outline" size="sm" type="submit">
-              Logout
+              {t('logout')}
             </Button>
           </form>
         </div>

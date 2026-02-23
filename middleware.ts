@@ -1,4 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { locales } from './lib/i18n/config';
+
+const LOCALE_COOKIE = 'locale';
+
+function getLocaleFromParams(request: NextRequest): string | null {
+  const langParam = request.nextUrl.searchParams.get('lang');
+  if (langParam && locales.includes(langParam as typeof locales[number])) {
+    return langParam;
+  }
+  return null;
+}
+
+function getLocaleFromCookie(request: NextRequest): string | null {
+  const cookie = request.cookies.get(LOCALE_COOKIE);
+  if (cookie && locales.includes(cookie.value as typeof locales[number])) {
+    return cookie.value;
+  }
+  return null;
+}
 
 function getAllowedOrigins(): string[] {
   const allowedOrigins = process.env.ALLOWED_ORIGINS;
@@ -70,15 +89,36 @@ function getRequestOrigin(request: NextRequest): string | null {
 }
 
 export function middleware(request: NextRequest) {
+  let locale = getLocaleFromParams(request);
+  
+  if (!locale) {
+    locale = getLocaleFromCookie(request);
+  }
+  
+  const response = NextResponse.next();
+
+  if (locale) {
+    response.headers.set('x-locale', locale);
+    
+    response.cookies.set({
+      name: LOCALE_COOKIE,
+      value: locale,
+      path: '/',
+      httpOnly: false,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365, 
+    });
+  }
+
   const allowedOrigins = getAllowedOrigins();
 
   if (allowedOrigins.length === 0) {
-    return NextResponse.next();
+    return response;
   }
 
   const method = request.method;
   if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
-    return NextResponse.next();
+    return response;
   }
 
   const origin = getRequestOrigin(request);
@@ -100,7 +140,7 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

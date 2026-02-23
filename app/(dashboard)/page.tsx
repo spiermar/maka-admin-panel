@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { getTranslations } from 'next-intl/server';
 import { SummaryCards } from '@/components/dashboard/summary-cards';
 import { CashFlowChart } from '@/components/dashboard/cash-flow-chart';
 import { CategoryChart } from '@/components/dashboard/category-chart';
@@ -9,6 +10,7 @@ import {
 } from '@/lib/analytics/cash-flow';
 
 export default async function DashboardPage() {
+  const t = await getTranslations('dashboard');
   const [monthlyData, expenseBreakdown, incomeBreakdown] = await Promise.all([
     getMonthlyCashFlow(6),
     getCategoryBreakdown('expense', 5),
@@ -17,9 +19,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold">Dashboard</h2>
+      <h2 className="text-3xl font-bold">{t('title')}</h2>
 
-      <Suspense fallback={<div>Loading summary...</div>}>
+      <Suspense fallback={<div>{t('loading')}</div>}>
         <SummaryCards />
       </Suspense>
 
@@ -28,17 +30,17 @@ export default async function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <CategoryChart
           data={expenseBreakdown}
-          title="Top Expenses This Month"
+          title={t('topExpenses')}
           color="#ef4444"
         />
         <CategoryChart
           data={incomeBreakdown}
-          title="Income Sources This Month"
+          title={t('incomeSources')}
           color="#22c55e"
         />
       </div>
 
-      <Suspense fallback={<div>Loading transactions...</div>}>
+      <Suspense fallback={<div>{t('loading')}</div>}>
         <RecentTransactions />
       </Suspense>
     </div>

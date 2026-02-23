@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Table,
   TableBody,
@@ -22,19 +23,41 @@ import { Info } from 'lucide-react';
 
 interface TransactionTableProps {
   transactions: TransactionWithDetails[];
+  lang?: string;
   onEdit: (transaction: TransactionWithDetails) => void;
 }
 
 export function TransactionTable({
   transactions,
+  lang = 'en',
   onEdit,
 }: TransactionTableProps) {
+  const t = useTranslations('transactions');
   const [deleting, setDeleting] = useState<number | null>(null);
   const [infoTransaction, setInfoTransaction] =
     useState<TransactionWithDetails | null>(null);
 
+  const formatCurrency = useMemo(() => {
+    return (amount: string) => {
+      return new Intl.NumberFormat(lang, {
+        style: 'currency',
+        currency: lang === 'pt-BR' ? 'BRL' : 'USD',
+      }).format(parseFloat(amount));
+    };
+  }, [lang]);
+
+  const formatDate = (date: string) => {
+    return new Date(
+      typeof date === 'string' ? date + 'T00:00:00' : date
+    ).toLocaleDateString(lang, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   const handleDelete = async (id: number, accountId: number) => {
-    if (!confirm('Are you sure you want to delete this transaction?')) {
+    if (!confirm(t('deleteConfirm'))) {
       return;
     }
 
@@ -48,10 +71,10 @@ export function TransactionTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Date</TableHead>
+          <TableHead>{t('date')}</TableHead>
           <TableHead>Payee</TableHead>
-          <TableHead>Category</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead>{t('category')}</TableHead>
+          <TableHead className="text-right">{t('amount')}</TableHead>
           <TableHead>Comment</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -63,22 +86,14 @@ export function TransactionTable({
               colSpan={6}
               className="text-center text-muted-foreground"
             >
-              No transactions yet
+              {t('noTransactions')}
             </TableCell>
           </TableRow>
         ) : (
           transactions.map((transaction) => (
             <TableRow key={transaction.id}>
               <TableCell>
-                {new Date(
-                  typeof transaction.date === 'string'
-                    ? transaction.date + 'T00:00:00'
-                    : transaction.date
-                ).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                {formatDate(transaction.date)}
               </TableCell>
               <TableCell>{transaction.payee}</TableCell>
               <TableCell>
@@ -91,7 +106,7 @@ export function TransactionTable({
                     : 'text-red-600'
                 }`}
               >
-                ${parseFloat(transaction.amount).toFixed(2)}
+                {formatCurrency(transaction.amount)}
               </TableCell>
               <TableCell className="max-w-xs truncate">
                 {transaction.comment}
@@ -112,7 +127,7 @@ export function TransactionTable({
                   size="sm"
                   onClick={() => onEdit(transaction)}
                 >
-                  Edit
+                  {t('edit')}
                 </Button>
                 <Button
                   variant="destructive"
@@ -122,7 +137,7 @@ export function TransactionTable({
                   }
                   disabled={deleting === transaction.id}
                 >
-                  {deleting === transaction.id ? 'Deleting...' : 'Delete'}
+                  {deleting === transaction.id ? 'Deleting...' : t('delete')}
                 </Button>
               </TableCell>
             </TableRow>
