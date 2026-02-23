@@ -1,4 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { locales } from './lib/i18n/config';
+
+function getLocaleFromParams(request: NextRequest): string | null {
+  const langParam = request.nextUrl.searchParams.get('lang');
+  if (langParam && locales.includes(langParam as typeof locales[number])) {
+    return langParam;
+  }
+  return null;
+}
 
 function getAllowedOrigins(): string[] {
   const allowedOrigins = process.env.ALLOWED_ORIGINS;
@@ -70,15 +79,22 @@ function getRequestOrigin(request: NextRequest): string | null {
 }
 
 export function middleware(request: NextRequest) {
+  const locale = getLocaleFromParams(request);
+  const response = NextResponse.next();
+
+  if (locale) {
+    response.headers.set('x-locale', locale);
+  }
+
   const allowedOrigins = getAllowedOrigins();
 
   if (allowedOrigins.length === 0) {
-    return NextResponse.next();
+    return response;
   }
 
   const method = request.method;
   if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
-    return NextResponse.next();
+    return response;
   }
 
   const origin = getRequestOrigin(request);
@@ -100,7 +116,7 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

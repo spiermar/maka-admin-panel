@@ -1,5 +1,5 @@
 import { getRequestConfig } from 'next-intl/server';
-import { defaultLocale, type Locale } from './config';
+import { defaultLocale } from './config';
 
 // This config is used by next-intl for message loading
 // The actual locale detection happens in the layout via getLangFromUrl
