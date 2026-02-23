@@ -45,7 +45,7 @@ export function AccountDetailClient({
     };
   }, [lang]);
 
-  const handleImportComplete = (result: ImportResult) => {
+  const handleImportComplete = (_result: ImportResult) => {
     // Import completed
   };
 
