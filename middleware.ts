@@ -3,8 +3,6 @@ import { locales } from './lib/i18n/config';
 
 function getLocaleFromParams(request: NextRequest): string | null {
   const langParam = request.nextUrl.searchParams.get('lang');
-  console.log('[i18n] Middleware - URL:', request.nextUrl.href);
-  console.log('[i18n] Middleware - lang param:', langParam);
   if (langParam && locales.includes(langParam as typeof locales[number])) {
     return langParam;
   }
@@ -86,9 +84,6 @@ export function middleware(request: NextRequest) {
 
   if (locale) {
     response.headers.set('x-locale', locale);
-    console.log('[i18n] Middleware - setting x-locale:', locale);
-  } else {
-    console.log('[i18n] Middleware - no locale found, using default');
   }
 
   const allowedOrigins = getAllowedOrigins();
