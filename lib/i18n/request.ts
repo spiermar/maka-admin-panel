@@ -1,13 +1,24 @@
 import { getRequestConfig } from 'next-intl/server';
-import { defaultLocale } from './config';
+import { headers } from 'next/headers';
+import { locales, defaultLocale, type Locale } from './config';
 
-// This config is used by next-intl for message loading
-// The actual locale detection happens in the layout via getLangFromUrl
+async function getLocaleFromHeaders(): Promise<Locale> {
+  const headerStore = await headers();
+  const xLocale = headerStore.get('x-locale');
+  
+  if (xLocale && locales.includes(xLocale as Locale)) {
+    return xLocale as Locale;
+  }
+  
+  return defaultLocale;
+}
+
 export default getRequestConfig(async () => {
-  // Return default locale - actual locale is determined in layout.tsx
-  // by reading the URL query parameter
+  const locale = await getLocaleFromHeaders();
+  const messages = (await import(`../../messages/${locale}.json`)).default;
+
   return {
-    locale: defaultLocale,
-    messages: (await import(`../../messages/${defaultLocale}.json`)).default,
+    locale,
+    messages,
   };
 });

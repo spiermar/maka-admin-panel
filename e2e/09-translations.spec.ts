@@ -11,6 +11,10 @@ import { login } from './helpers/auth';
  */
 
 test.describe('Translations', () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page);
+  });
+
   test('uses English by default when no lang param is provided', async ({ page }) => {
     await page.goto('/');
     
@@ -39,7 +43,7 @@ test.describe('Translations', () => {
   test('maintains Portuguese locale when navigating to accounts page', async ({ page }) => {
     await page.goto('/?lang=pt-BR');
     
-    await page.waitForURL(/\/$/);
+    await page.waitForURL(/\/\?.*/);
     
     await page.goto('/accounts');
     await page.waitForURL(/.*\/accounts/);
@@ -50,7 +54,7 @@ test.describe('Translations', () => {
   test('maintains Portuguese locale when navigating to settings page', async ({ page }) => {
     await page.goto('/?lang=pt-BR');
     
-    await page.waitForURL(/\/$/);
+    await page.waitForURL(/\/\?.*/);
     
     await page.goto('/settings');
     await page.waitForURL(/.*\/settings/);
@@ -59,10 +63,6 @@ test.describe('Translations', () => {
   });
 
   test.describe('Authenticated pages', () => {
-    test.beforeEach(async ({ page }) => {
-      await login(page);
-    });
-
     test('displays Portuguese translations on dashboard when lang=pt-BR', async ({ page }) => {
       await page.goto('/?lang=pt-BR');
       
@@ -85,6 +85,10 @@ test.describe('Translations', () => {
   });
 
   test.describe('Login page', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.context().clearCookies();
+    });
+
     test('displays Portuguese translations on login page when lang=pt-BR', async ({ page }) => {
       await page.goto('/login?lang=pt-BR');
       
@@ -112,11 +116,17 @@ test.describe('Translations', () => {
       await expect(page.getByText('Total Balance')).toBeVisible();
     });
 
-    test('falls back to English when invalid locale is provided on login', async ({ page }) => {
-      await page.goto('/login?lang=invalid');
-      
-      await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
-      await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
+    test.describe('Login page', () => {
+      test.beforeEach(async ({ page }) => {
+        await page.context().clearCookies();
+      });
+
+      test('falls back to English when invalid locale is provided on login', async ({ page }) => {
+        await page.goto('/login?lang=invalid');
+        
+        await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+        await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
+      });
     });
   });
 });
