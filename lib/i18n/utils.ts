@@ -12,10 +12,3 @@ export async function getLangFromUrl(): Promise<Locale> {
   
   return defaultLocale;
 }
-
-export function getLangFromSearchParams(searchParams: { get: (key: string) => string | null }): Locale {
-  const urlLang = searchParams.get('lang');
-  return (urlLang && locales.includes(urlLang as Locale)) 
-    ? urlLang as Locale 
-    : defaultLocale;
-}

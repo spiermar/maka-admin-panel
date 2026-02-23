@@ -46,7 +46,7 @@ export function AccountDetailClient({
   }, [lang]);
 
   const handleImportComplete = (result: ImportResult) => {
-    console.log(`Imported ${result.imported}, skipped ${result.skipped}`);
+    // Import completed
   };
 
   return (
