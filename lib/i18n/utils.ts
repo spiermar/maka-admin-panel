@@ -5,10 +5,14 @@ export async function getLangFromUrl(): Promise<Locale> {
   const headerStore = await headers();
   
   const xLocale = headerStore.get('x-locale');
+  console.log('[i18n] getLangFromUrl - x-locale header:', xLocale);
+  
   if (xLocale && locales.includes(xLocale as Locale)) {
+    console.log('[i18n] getLangFromUrl - returning locale:', xLocale);
     return xLocale as Locale;
   }
   
+  console.log('[i18n] getLangFromUrl - using default:', defaultLocale);
   return defaultLocale;
 }
 

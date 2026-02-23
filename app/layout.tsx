@@ -18,6 +18,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const locale = await getLangFromUrl();
+  console.log('[i18n] Layout - using locale:', locale);
   const messages = await getMessages();
 
   return (
