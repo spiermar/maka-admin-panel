@@ -33,6 +33,7 @@ export function TransactionTable({
   onEdit,
 }: TransactionTableProps) {
   const t = useTranslations('transactions');
+  const tCommon = useTranslations('common');
   const [deleting, setDeleting] = useState<number | null>(null);
   const [infoTransaction, setInfoTransaction] =
     useState<TransactionWithDetails | null>(null);
@@ -127,7 +128,7 @@ export function TransactionTable({
                   size="sm"
                   onClick={() => onEdit(transaction)}
                 >
-                  {t('edit')}
+                  {tCommon('edit')}
                 </Button>
                 <Button
                   variant="destructive"
@@ -137,7 +138,7 @@ export function TransactionTable({
                   }
                   disabled={deleting === transaction.id}
                 >
-                  {deleting === transaction.id ? 'Deleting...' : t('delete')}
+                  {deleting === transaction.id ? 'Deleting...' : tCommon('delete')}
                 </Button>
               </TableCell>
             </TableRow>

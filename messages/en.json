@@ -5,6 +5,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "confirm": "Confirm",
+    "edit": "Edit",
+    "add": "Add",
     "error": "An error occurred"
   },
   "auth": {
@@ -42,8 +44,6 @@
     "noTransactions": "No transactions yet",
     "addTransaction": "Add Transaction",
     "editTransaction": "Edit Transaction",
-    "edit": "Edit",
-    "delete": "Delete",
     "importOfx": "Import OFX",
     "deleteConfirm": "Are you sure you want to delete this transaction?",
     "date": "Date",
@@ -87,8 +87,6 @@
     "editAccount": "Edit Account",
     "name": "Name",
     "actions": "Actions",
-    "edit": "Edit",
-    "delete": "Delete",
     "accountName": "Account Name",
     "create": "Create",
     "update": "Update",

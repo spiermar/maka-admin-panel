@@ -120,14 +120,14 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
                       setDialogOpen(true);
                     }}
                   >
-                    {t('edit')}
+                    {tCommon('edit')}
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(category.id)}
                   >
-                    {t('delete')}
+                    {tCommon('delete')}
                   </Button>
                 </TableCell>
               </TableRow>
