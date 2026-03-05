@@ -60,7 +60,14 @@
     "updated": "Transação atualizada",
     "selectAccountPlaceholder": "Selecionar conta",
     "updateTransactionDetails": "Atualizar detalhes da transação",
-    "enterTransactionDetails": "Digite os detalhes da transação"
+    "enterTransactionDetails": "Digite os detalhes da transação",
+    "actions": "Ações",
+    "viewOfxDetails": "Ver detalhes OFX",
+    "deleting": "Excluindo...",
+    "ofxTransactionDetails": "Detalhes da Transação OFX",
+    "fitid": "FITID",
+    "refnum": "REFNUM",
+    "originalMemo": "MEMO Original"
   },
   "expenseReports": {
     "title": "Relatórios de Despesas",
