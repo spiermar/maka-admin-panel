@@ -23,10 +23,10 @@ test.describe('Authentication Flow', () => {
     await expect(page).toHaveTitle(/Maka Admin Panel/i);
 
     // Verify login card is visible
-    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
 
     // Verify card description
-    await expect(page.getByText(/enter your credentials to access your ledger/i)).toBeVisible();
+    await expect(page.getByText(/enter your credentials to access your account/i)).toBeVisible();
 
     // Verify form inputs are present
     await expect(page.getByLabel(/username/i)).toBeVisible();
@@ -89,6 +89,6 @@ test.describe('Authentication Flow', () => {
     await expect(page).toHaveURL(/\/login/);
 
     // Login card should still be visible
-    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
   });
 });

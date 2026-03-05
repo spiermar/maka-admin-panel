@@ -6,11 +6,17 @@ import { requireAuth } from '@/lib/auth/session';
 export async function DashboardHeader() {
   const user = await requireAuth();
   const t = await getTranslations('auth');
+  const app = await getTranslations('app');
 
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Financial Ledger</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">{app('name')}</h1>
+          <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">
+            {app('company')}
+          </span>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground">
             {user.username}

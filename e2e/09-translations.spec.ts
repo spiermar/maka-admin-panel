@@ -92,7 +92,7 @@ test.describe('Translations', () => {
     test('displays Portuguese translations on login page when lang=pt-BR', async ({ page }) => {
       await page.goto('/login?lang=pt-BR');
       
-      await expect(page.getByRole('heading', { name: /livro razão financeiro/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /console de gerenciamento/i })).toBeVisible();
       await expect(page.getByRole('button', { name: /entrar/i })).toBeVisible();
       await expect(page.getByLabel(/usuário/i)).toBeVisible();
       await expect(page.getByLabel(/senha/i)).toBeVisible();
@@ -101,7 +101,7 @@ test.describe('Translations', () => {
     test('displays English translations on login page when lang=en', async ({ page }) => {
       await page.goto('/login?lang=en');
       
-      await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
       await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
       await expect(page.getByLabel(/username/i)).toBeVisible();
       await expect(page.getByLabel(/password/i)).toBeVisible();
@@ -124,7 +124,7 @@ test.describe('Translations', () => {
       test('falls back to English when invalid locale is provided on login', async ({ page }) => {
         await page.goto('/login?lang=invalid');
         
-        await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
         await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
       });
     });
