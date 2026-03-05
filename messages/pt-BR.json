@@ -103,8 +103,12 @@
     "expense": "Despesa",
     "noneRootCategory": "Nenhuma (categoria raiz)"
   },
+  "app": {
+    "name": "Console de Gerenciamento",
+    "company": "MAKA"
+  },
   "login": {
-    "title": "Livro Razão Financeiro",
-    "subtitle": "Digite suas credenciais para acessar seu livro razão"
+    "title": "Console de Gerenciamento",
+    "subtitle": "Digite suas credenciais para acessar sua conta"
   }
 }

@@ -27,7 +27,7 @@ test.describe('Navigation and Protected Routes', () => {
 
     // Should be redirected to login
     await expect(newPage).toHaveURL(/\/login/);
-    await expect(newPage.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+    await expect(newPage.getByRole('heading', { name: /Management Console/i })).toBeVisible();
 
     await newPage.close();
     await newContext.close();
@@ -128,7 +128,7 @@ test.describe('Navigation Unauthorized', () => {
 
     // Should redirect to login
     await page.waitForURL('/login', { timeout: 5000 });
-    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
   });
 
   test('should redirect to login for all protected routes when not authenticated', async ({ browser }) => {
@@ -145,7 +145,7 @@ test.describe('Navigation Unauthorized', () => {
       const _response = await page.goto(route);
       await page.waitForURL('/login', { timeout: 5000 });
       await expect(page).toHaveURL(/\/login/);
-      await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
       await context.close();
     }
   });
@@ -155,7 +155,7 @@ test.describe('Navigation Unauthorized', () => {
 
     // Should stay on login page
     await expect(page).toHaveURL(/\/login/);
-    await expect(page.getByRole('heading', { name: /financial ledger/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Management Console/i })).toBeVisible();
   });
 });
 
