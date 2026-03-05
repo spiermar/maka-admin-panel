@@ -103,8 +103,12 @@
     "expense": "Expense",
     "noneRootCategory": "None (root category)"
   },
+  "app": {
+    "name": "Management Console",
+    "company": "MAKA"
+  },
   "login": {
-    "title": "Financial Ledger",
-    "subtitle": "Enter your credentials to access your ledger"
+    "title": "Management Console",
+    "subtitle": "Enter your credentials to access your account"
   }
 }
