@@ -5,6 +5,8 @@
     "cancel": "Cancelar",
     "delete": "Excluir",
     "confirm": "Confirmar",
+    "edit": "Editar",
+    "add": "Adicionar",
     "error": "Ocorreu um erro"
   },
   "auth": {
@@ -42,8 +44,6 @@
     "noTransactions": "Nenhuma transação ainda",
     "addTransaction": "Adicionar Transação",
     "editTransaction": "Editar Transação",
-    "edit": "Editar",
-    "delete": "Excluir",
     "importOfx": "Importar OFX",
     "deleteConfirm": "Tem certeza que deseja excluir esta transação?",
     "date": "Data",
@@ -94,8 +94,6 @@
     "editAccount": "Editar Conta",
     "name": "Nome",
     "actions": "Ações",
-    "edit": "Editar",
-    "delete": "Excluir",
     "accountName": "Nome da Conta",
     "create": "Criar",
     "update": "Atualizar",

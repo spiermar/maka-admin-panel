@@ -92,14 +92,14 @@ export function AccountManager({ accounts }: AccountManagerProps) {
                       setDialogOpen(true);
                     }}
                   >
-                    {t('edit')}
+                    {tCommon('edit')}
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(account.id)}
                   >
-                    {t('delete')}
+                    {tCommon('delete')}
                   </Button>
                 </TableCell>
               </TableRow>
