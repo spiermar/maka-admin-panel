@@ -5,9 +5,9 @@ import { getTransactionsForExpenseReport } from '@/lib/db/transactions';
 import { notFound } from 'next/navigation';
 import ExpenseReportDetail from './ExpenseReportDetail';
 
-export default async function ExpenseReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ExpenseReportDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   await requireAuth();
-  const { id } = await params;
+  const { id, locale } = await params;
   const reportId = parseInt(id);
   
   if (isNaN(reportId)) {
@@ -22,5 +22,5 @@ export default async function ExpenseReportDetailPage({ params }: { params: Prom
   const expenses = await getExpensesByReport(reportId);
   const transactions = await getTransactionsForExpenseReport();
   
-  return <ExpenseReportDetail report={report} expenses={expenses} transactions={transactions} />;
+  return <ExpenseReportDetail report={report} expenses={expenses} transactions={transactions} locale={locale} />;
 }

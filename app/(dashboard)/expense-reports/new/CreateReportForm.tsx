@@ -1,23 +1,30 @@
 'use client';
 
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 import { createExpenseReport } from '@/lib/actions/expense-reports';
 import { useRouter } from 'next/navigation';
 
+interface Props {
+  locale: string;
+}
+
 const initialState = { success: false, error: '', errors: {} as Record<string, string[]> };
 
-export default function CreateReportForm() {
+export default function CreateReportForm({ locale }: Props) {
+  const t = useTranslations('expenseReports');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
     async (prevState: typeof initialState, formData: FormData) => {
       const result = await createExpenseReport(formData);
       if (result.success && 'reportId' in result && result.reportId) {
-        router.push(`/expense-reports/${result.reportId}`);
+        router.push(`/expense-reports/${result.reportId}?lang=${locale}`);
         return prevState;
       }
       return {
         success: false,
-        error: (result as any).error || 'Failed to create report',
+        error: (result as any).error || tCommon('error'),
         errors: (result as any).errors || {},
       };
     },
@@ -26,7 +33,7 @@ export default function CreateReportForm() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6">New Expense Report</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('newExpenseReport')}</h1>
       
       {state.error && (
         <div className="bg-red-50 text-red-800 p-3 rounded-md mb-4">{state.error}</div>
@@ -34,7 +41,7 @@ export default function CreateReportForm() {
 
       <form action={formAction} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="block text-sm font-medium mb-1">{t('titleLabel')}</label>
           <input
             name="title"
             type="text"
@@ -48,7 +55,7 @@ export default function CreateReportForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Description (optional)</label>
+          <label className="block text-sm font-medium mb-1">{t('descriptionOptional')}</label>
           <textarea
             name="description"
             rows={3}
@@ -63,14 +70,14 @@ export default function CreateReportForm() {
             disabled={pending}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
           >
-            {pending ? 'Creating...' : 'Create Report'}
+            {pending ? t('creating') : t('createReport')}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
             className="px-4 py-2 border rounded-md hover:bg-muted"
           >
-            Cancel
+            {t('cancel')}
           </button>
         </div>
       </form>
