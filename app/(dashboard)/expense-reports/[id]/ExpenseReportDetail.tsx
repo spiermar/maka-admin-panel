@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { 
   submitExpenseReport, 
   approveExpenseReport, 
@@ -16,6 +17,7 @@ interface Props {
   report: ExpenseReportWithDetails;
   expenses: ExpenseWithDetails[];
   transactions: TransactionWithDetails[];
+  locale: string;
 }
 
 const statusColors = {
@@ -27,17 +29,27 @@ const statusColors = {
 
 const initialState = { success: false, error: '' };
 
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString('en-US', {
+function formatDate(date: Date, locale: string): string {
+  return new Date(date).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
 }
 
-export default function ExpenseReportDetail({ report, expenses: initialExpenses, transactions }: Props) {
+export default function ExpenseReportDetail({ report, expenses: initialExpenses, transactions, locale }: Props) {
+  const t = useTranslations('expenseReports');
+  const tTransactions = useTranslations('transactions');
+  
   const [expenses, setExpenses] = useState(initialExpenses);
   const [showAddForm, setShowAddForm] = useState(false);
+  
+  const formatCurrency = (amount: string | number) => {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: locale === 'pt-BR' ? 'BRL' : 'USD',
+    }).format(parseFloat(amount.toString()));
+  };
   
   const [, submitAction, submitPending] = useActionState(
     async () => await submitExpenseReport(report.id),
@@ -60,7 +72,7 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
   );
 
   const handleDeleteExpense = async (expenseId: number) => {
-    if (!confirm('Delete this expense?')) return;
+    if (!confirm(t('deleteConfirm'))) return;
     const result = await deleteExpense(expenseId, report.id);
     if (result.success) {
       setExpenses(expenses.filter(e => e.id !== expenseId));
@@ -91,13 +103,13 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
             <p className="text-muted-foreground mt-1">{report.description}</p>
           )}
           <p className="text-sm text-muted-foreground mt-2">
-            Submitted by {report.username} • Created {formatDate(new Date(report.created_at))}
+            {t('submittedBy')} {report.username} • {t('created')} {formatDate(new Date(report.created_at), locale)}
           </p>
         </div>
         
         <div className="text-right">
-          <p className="text-2xl font-bold">${totalAmount.toFixed(2)}</p>
-          <p className="text-sm text-muted-foreground">Total</p>
+          <p className="text-2xl font-bold">{formatCurrency(totalAmount)}</p>
+          <p className="text-sm text-muted-foreground">{t('total')}</p>
         </div>
       </div>
 
@@ -110,7 +122,7 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
                 disabled={submitPending || expenses.length === 0}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
-                {submitPending ? 'Submitting...' : 'Submit for Approval'}
+                {submitPending ? t('submitting') : t('submitForApproval')}
               </button>
             </form>
           </>
@@ -124,7 +136,7 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
                 disabled={approvePending}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
               >
-                {approvePending ? 'Approving...' : 'Approve'}
+                {approvePending ? t('approving') : t('approve')}
               </button>
             </form>
             <form action={rejectAction}>
@@ -133,7 +145,7 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
                 disabled={rejectPending}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
               >
-                {rejectPending ? 'Rejecting...' : 'Reject'}
+                {rejectPending ? t('rejecting') : t('reject')}
               </button>
             </form>
           </>
@@ -146,27 +158,27 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
               disabled={reimbursePending}
               className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
             >
-              {reimbursePending ? 'Marking...' : 'Mark as Reimbursed'}
+              {reimbursePending ? t('marking') : t('markAsReimbursed')}
             </button>
           </form>
         )}
         
         {report.reimbursed_at && (
           <span className="px-4 py-2 bg-purple-100 text-purple-800 rounded-md">
-            Reimbursed {formatDate(new Date(report.reimbursed_at))}
+            {t('reimbursed')} {formatDate(new Date(report.reimbursed_at), locale)}
           </span>
         )}
       </div>
 
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Expenses ({expenses.length})</h2>
+          <h2 className="text-lg font-semibold">{t('expenses')} ({expenses.length})</h2>
           {report.status === 'draft' && (
             <button
               onClick={() => setShowAddForm(!showAddForm)}
               className="px-3 py-1 text-sm border rounded-md hover:bg-muted"
             >
-              {showAddForm ? 'Cancel' : '+ Add Expense'}
+              {showAddForm ? t('cancel') : t('addExpense')}
             </button>
           )}
         </div>
@@ -176,49 +188,52 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
             onSubmit={handleAddExpense} 
             onCancel={() => setShowAddForm(false)}
             transactions={transactions}
+            locale={locale}
+            t={t}
+            tTransactions={tTransactions}
           />
         )}
 
         {expenses.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">
-            No expenses yet. Add expenses to this report.
+            {t('noExpenses')}
           </p>
         ) : (
           <div className="border rounded-md">
             <table className="w-full">
               <thead>
                 <tr className="border-b bg-muted/50">
-                  <th className="text-left p-3">Date</th>
-                  <th className="text-left p-3">Payee</th>
-                  <th className="text-left p-3">Category</th>
-                  <th className="text-left p-3">Memo</th>
-                  <th className="text-right p-3">Amount</th>
-                  {report.status === 'draft' && <th className="text-right p-3">Actions</th>}
+                  <th className="text-left p-3">{tTransactions('date')}</th>
+                  <th className="text-left p-3">{tTransactions('payee')}</th>
+                  <th className="text-left p-3">{tTransactions('category')}</th>
+                  <th className="text-left p-3">{t('memo')}</th>
+                  <th className="text-right p-3">{tTransactions('amount')}</th>
+                  {report.status === 'draft' && <th className="text-right p-3">{t('actions')}</th>}
                 </tr>
               </thead>
               <tbody>
                 {expenses.map((expense) => (
                   <tr key={expense.id} className="border-b">
-                    <td className="p-3">{formatDate(new Date(expense.date))}</td>
+                    <td className="p-3">{formatDate(new Date(expense.date), locale)}</td>
                     <td className="p-3">{expense.payee}</td>
-                    <td className="p-3">{expense.category_path || 'Uncategorized'}</td>
+                    <td className="p-3">{expense.category_path || tTransactions('uncategorized')}</td>
                     <td className="p-3">{expense.memo || '-'}</td>
-                    <td className="p-3 text-right">${parseFloat(expense.amount).toFixed(2)}</td>
+                    <td className="p-3 text-right">{formatCurrency(expense.amount)}</td>
                     {report.status === 'draft' && (
                       <td className="p-3 text-right">
                         <button
                           onClick={() => handleDeleteExpense(expense.id)}
                           className="text-red-600 hover:text-red-800 text-sm"
                         >
-                          Delete
+                          {t('delete')}
                         </button>
                       </td>
                     )}
                   </tr>
                 ))}
                 <tr className="font-bold bg-muted/30">
-                  <td colSpan={4} className="p-3 text-right">Total:</td>
-                  <td className="p-3 text-right">${totalAmount.toFixed(2)}</td>
+                  <td colSpan={4} className="p-3 text-right">{t('total')}:</td>
+                  <td className="p-3 text-right">{formatCurrency(totalAmount)}</td>
                   {report.status === 'draft' && <td />}
                 </tr>
               </tbody>
@@ -233,14 +248,27 @@ export default function ExpenseReportDetail({ report, expenses: initialExpenses,
 function AddExpenseForm({ 
   onSubmit, 
   onCancel, 
-  transactions 
+  transactions,
+  locale,
+  t,
+  tTransactions
 }: { 
   onSubmit: (fd: FormData) => void; 
   onCancel: () => void;
   transactions: TransactionWithDetails[];
+  locale: string;
+  t: ReturnType<typeof useTranslations>;
+  tTransactions: ReturnType<typeof useTranslations>;
 }) {
   const [pending, setPending] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<string>('');
+
+  const formatCurrency = (amount: string | number) => {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: locale === 'pt-BR' ? 'BRL' : 'USD',
+    }).format(parseFloat(amount.toString()));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -272,16 +300,16 @@ function AddExpenseForm({
     <form onSubmit={handleSubmit} className="border p-4 rounded-md space-y-4 bg-muted/20">
       {transactions.length > 0 && (
         <div>
-          <label className="block text-sm font-medium mb-1">Link from Transaction (optional)</label>
+          <label className="block text-sm font-medium mb-1">{t('linkFromTransaction')}</label>
           <select 
             value={selectedTransaction}
             onChange={handleTransactionChange}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="">Select a transaction to import</option>
+            <option value="">{t('selectTransaction')}</option>
             {transactions.map((tx) => (
               <option key={tx.id} value={tx.id.toString()}>
-                {tx.date} - {tx.payee} - ${parseFloat(tx.amount).toFixed(2)} ({tx.account_name})
+                {tx.date} - {tx.payee} - {formatCurrency(tx.amount)} ({tx.account_name})
               </option>
             ))}
           </select>
@@ -290,33 +318,33 @@ function AddExpenseForm({
       
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Payee</label>
+          <label className="block text-sm font-medium mb-1">{tTransactions('payee')}</label>
           <input name="payee" required className="w-full px-3 py-2 border rounded-md" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Amount</label>
+          <label className="block text-sm font-medium mb-1">{tTransactions('amount')}</label>
           <input name="amount" type="number" step="0.01" required className="w-full px-3 py-2 border rounded-md" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Date</label>
+          <label className="block text-sm font-medium mb-1">{tTransactions('date')}</label>
           <input name="date" type="date" required className="w-full px-3 py-2 border rounded-md" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
+          <label className="block text-sm font-medium mb-1">{tTransactions('category')}</label>
           <select name="category_id" className="w-full px-3 py-2 border rounded-md">
-            <option value="none">Select category</option>
+            <option value="none">{t('selectCategory')}</option>
           </select>
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium mb-1">Memo</label>
+        <label className="block text-sm font-medium mb-1">{t('memo')}</label>
         <input name="memo" className="w-full px-3 py-2 border rounded-md" />
       </div>
       <div className="flex gap-3">
         <button type="submit" disabled={pending} className="px-4 py-2 bg-primary text-primary-foreground rounded-md">
-          {pending ? 'Adding...' : 'Add Expense'}
+          {pending ? t('adding') : t('addExpense')}
         </button>
-        <button type="button" onClick={onCancel} className="px-4 py-2 border rounded-md">Cancel</button>
+        <button type="button" onClick={onCancel} className="px-4 py-2 border rounded-md">{t('cancel')}</button>
       </div>
     </form>
   );
