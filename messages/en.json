@@ -60,7 +60,14 @@
     "updated": "Transaction updated",
     "selectAccountPlaceholder": "Select account",
     "updateTransactionDetails": "Update transaction details",
-    "enterTransactionDetails": "Enter transaction details"
+    "enterTransactionDetails": "Enter transaction details",
+    "actions": "Actions",
+    "viewOfxDetails": "View OFX details",
+    "deleting": "Deleting...",
+    "ofxTransactionDetails": "OFX Transaction Details",
+    "fitid": "FITID",
+    "refnum": "REFNUM",
+    "originalMemo": "Original MEMO"
   },
   "expenseReports": {
     "title": "Expense Reports",

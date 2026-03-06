@@ -71,14 +71,14 @@ export function TransactionTable({
     <>
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>{t('date')}</TableHead>
-          <TableHead>Payee</TableHead>
-          <TableHead>{t('category')}</TableHead>
-          <TableHead className="text-right">{t('amount')}</TableHead>
-          <TableHead>Comment</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
+         <TableRow>
+           <TableHead>{t('date')}</TableHead>
+           <TableHead>{t('payee')}</TableHead>
+           <TableHead>{t('category')}</TableHead>
+           <TableHead className="text-right">{t('amount')}</TableHead>
+           <TableHead>{t('comment')}</TableHead>
+           <TableHead className="text-right">{t('actions')}</TableHead>
+         </TableRow>
       </TableHeader>
       <TableBody>
         {transactions.length === 0 ? (
@@ -98,7 +98,7 @@ export function TransactionTable({
               </TableCell>
               <TableCell>{transaction.payee}</TableCell>
               <TableCell>
-                {transaction.category_path || 'Uncategorized'}
+                 {transaction.category_path || t('uncategorized')}
               </TableCell>
               <TableCell
                 className={`text-right font-medium ${
@@ -113,16 +113,16 @@ export function TransactionTable({
                 {transaction.comment}
               </TableCell>
               <TableCell className="text-right space-x-2">
-                {transaction.ofx_fitid && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setInfoTransaction(transaction)}
-                    title="View OFX details"
-                  >
-                    <Info className="w-4 h-4" />
-                  </Button>
-                )}
+                 {transaction.ofx_fitid && (
+                   <Button
+                     variant="ghost"
+                     size="sm"
+                     onClick={() => setInfoTransaction(transaction)}
+                     title={t('viewOfxDetails')}
+                   >
+                     <Info className="w-4 h-4" />
+                   </Button>
+                 )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -138,7 +138,7 @@ export function TransactionTable({
                   }
                   disabled={deleting === transaction.id}
                 >
-                  {deleting === transaction.id ? 'Deleting...' : tCommon('delete')}
+                  {deleting === transaction.id ? t('deleting') : t('delete')}
                 </Button>
               </TableCell>
             </TableRow>
@@ -152,25 +152,25 @@ export function TransactionTable({
         open={!!infoTransaction}
         onOpenChange={() => setInfoTransaction(null)}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>OFX Transaction Details</DialogTitle>
-          </DialogHeader>
-          <dl className="space-y-3">
-            <div>
-              <dt className="font-medium text-sm text-muted-foreground">FITID</dt>
-              <dd className="text-sm break-all">{infoTransaction.ofx_fitid ?? ''}</dd>
-            </div>
-            <div>
-              <dt className="font-medium text-sm text-muted-foreground">REFNUM</dt>
-              <dd className="text-sm break-all">{infoTransaction.ofx_refnum ?? ''}</dd>
-            </div>
-            <div>
-              <dt className="font-medium text-sm text-muted-foreground">Original MEMO</dt>
-              <dd className="text-sm">{infoTransaction.ofx_memo ?? ''}</dd>
-            </div>
-          </dl>
-        </DialogContent>
+         <DialogContent>
+           <DialogHeader>
+             <DialogTitle>{t('ofxTransactionDetails')}</DialogTitle>
+           </DialogHeader>
+           <dl className="space-y-3">
+             <div>
+               <dt className="font-medium text-sm text-muted-foreground">{t('fitid')}</dt>
+               <dd className="text-sm break-all">{infoTransaction.ofx_fitid ?? ''}</dd>
+             </div>
+             <div>
+               <dt className="font-medium text-sm text-muted-foreground">{t('refnum')}</dt>
+               <dd className="text-sm break-all">{infoTransaction.ofx_refnum ?? ''}</dd>
+             </div>
+             <div>
+               <dt className="font-medium text-sm text-muted-foreground">{t('originalMemo')}</dt>
+               <dd className="text-sm">{infoTransaction.ofx_memo ?? ''}</dd>
+             </div>
+           </dl>
+         </DialogContent>
       </Dialog>
     )}
     </>
