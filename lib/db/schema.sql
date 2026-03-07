@@ -115,6 +115,35 @@ CREATE TABLE unit_occupancy_statuses (
   )
 );
 
+-- Tenants table
+CREATE TABLE tenants (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  phone VARCHAR(20),
+  email VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Leases table
+CREATE TABLE leases (
+  id SERIAL PRIMARY KEY,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  unit_id INTEGER NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+  status VARCHAR(20) NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Pending', 'Active', 'Expired', 'Terminated')),
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  monthly_rent DECIMAL(10,2) NOT NULL,
+  security_deposit DECIMAL(10,2) NOT NULL,
+  lease_type VARCHAR(50),
+  pets_allowed BOOLEAN,
+  parking_spot VARCHAR(100),
+  utilities_included BOOLEAN,
+  previous_lease_id INTEGER REFERENCES leases(id),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX idx_transactions_account_date ON transactions(account_id, date DESC);
 CREATE INDEX idx_transactions_category ON transactions(category_id);
@@ -131,3 +160,9 @@ CREATE INDEX idx_expense_reports_user ON expense_reports(user_id);
 CREATE INDEX idx_expense_reports_status ON expense_reports(status);
 CREATE INDEX idx_expenses_report ON expenses(expense_report_id);
 CREATE INDEX idx_expenses_transaction ON expenses(transaction_id);
+
+-- Indexes for leases
+CREATE INDEX idx_leases_tenant_id ON leases(tenant_id);
+CREATE INDEX idx_leases_unit_id ON leases(unit_id);
+CREATE INDEX idx_leases_status ON leases(status);
+CREATE INDEX idx_leases_start_end ON leases(unit_id, start_date, end_date);
