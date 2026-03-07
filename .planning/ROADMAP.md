@@ -49,7 +49,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can create leases with required residential terms (start/end dates, monthly rent, security deposit).
   3. User can renew, terminate, and move out leases with explicit lifecycle statuses.
   4. User cannot activate overlapping leases for the same unit and overlapping dates.
-**Plans**: TBD
+**Plans**: 5 plans
+
+- [ ] 03-01-PLAN.md — Database schema + Types + Validations
+- [ ] 03-02-PLAN.md — Tenant and Lease DB Operations
+- [ ] 03-03-PLAN.md — Tenant UI pages
+- [ ] 03-04-PLAN.md — Lease UI pages with status transitions
+- [ ] 03-05-PLAN.md — Integration: Navigation + Unit detail
 
 ### Phase 4: Rent Charges, Payments, and Delinquency
 **Goal**: Landlord can run monthly rent operations, record manual payments, and monitor balances and overdue accounts.
@@ -81,6 +87,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Rental Access Control Baseline | 2/2 | Complete    | 2026-03-07 |
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
-| 3. Tenant and Lease Lifecycle Integrity | 0/TBD | Not started | - |
+| 3. Tenant and Lease Lifecycle Integrity | 0/5 | Not started | - |
 | 4. Rent Charges, Payments, and Delinquency | 0/TBD | Not started | - |
 | 5. Operational Visibility and Auditability | 0/TBD | Not started | - |
