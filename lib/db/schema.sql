@@ -4,6 +4,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create category_type enum
 CREATE TYPE category_type AS ENUM ('income', 'expense');
 
+-- Create unit_status enum
+CREATE TYPE unit_status AS ENUM ('Occupied', 'Vacant', 'Unavailable');
+
 -- Users table
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
@@ -74,12 +77,37 @@ CREATE TABLE expenses (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Properties table
+CREATE TABLE properties (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Units table
+CREATE TABLE units (
+  id SERIAL PRIMARY KEY,
+  property_id INTEGER NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  unit_number VARCHAR(50) NOT NULL,
+  building_label VARCHAR(100),
+  unit_type VARCHAR(100) NOT NULL,
+  bedrooms DECIMAL(4,1) NOT NULL CHECK (bedrooms >= 0),
+  bathrooms DECIMAL(4,1) NOT NULL CHECK (bathrooms >= 0),
+  status unit_status NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE (property_id, unit_number)
+);
+
 -- Indexes for performance
 CREATE INDEX idx_transactions_account_date ON transactions(account_id, date DESC);
 CREATE INDEX idx_transactions_category ON transactions(category_id);
 CREATE INDEX idx_transactions_date ON transactions(date DESC);
 CREATE INDEX idx_transactions_ofx_fitid ON transactions(ofx_fitid);
 CREATE INDEX idx_categories_parent ON categories(parent_id);
+CREATE INDEX idx_units_property_id ON units(property_id);
+CREATE INDEX idx_units_status ON units(status);
 
 -- Indexes for expense reports
 CREATE INDEX idx_expense_reports_user ON expense_reports(user_id);
