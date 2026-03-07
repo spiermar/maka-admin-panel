@@ -80,7 +80,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Rental Access Control Baseline | 2/2 | Complete    | 2026-03-07 |
-| 2. Portfolio and Unit Occupancy Management | 3/3 | Complete | 2026-03-07 |
+| 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
 | 3. Tenant and Lease Lifecycle Integrity | 0/TBD | Not started | - |
 | 4. Rent Charges, Payments, and Delinquency | 0/TBD | Not started | - |
 | 5. Operational Visibility and Auditability | 0/TBD | Not started | - |
