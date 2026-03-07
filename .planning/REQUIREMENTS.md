@@ -13,10 +13,10 @@
 
 ### Tenants & Leases
 
-- [ ] **LEASE-01**: User can create tenant records and link tenants to units
-- [ ] **LEASE-02**: User can create residential leases with start date, end date, monthly rent, and security deposit
-- [ ] **LEASE-03**: User can renew, terminate, or move-out leases with explicit lifecycle status
-- [ ] **LEASE-04**: User cannot activate overlapping leases for the same unit and overlapping date range
+- [x] **LEASE-01**: User can create tenant records and link tenants to units
+- [x] **LEASE-02**: User can create residential leases with start date, end date, monthly rent, and security deposit
+- [x] **LEASE-03**: User can renew, terminate, or move-out leases with explicit lifecycle status
+- [x] **LEASE-04**: User cannot activate overlapping leases for the same unit and overlapping date range
 
 ### Rent Operations
 
@@ -58,10 +58,10 @@
 | UNIT-01 | Phase 2 | Pending |
 | UNIT-02 | Phase 2 | Pending |
 | UNIT-03 | Phase 2 | Pending |
-| LEASE-01 | Phase 3 | Pending |
-| LEASE-02 | Phase 3 | Pending |
-| LEASE-03 | Phase 3 | Pending |
-| LEASE-04 | Phase 3 | Pending |
+| LEASE-01 | Phase 3 | Complete |
+| LEASE-02 | Phase 3 | Complete |
+| LEASE-03 | Phase 3 | Complete |
+| LEASE-04 | Phase 3 | Complete |
 | RENT-01 | Phase 4 | Pending |
 | RENT-02 | Phase 4 | Pending |
 | RENT-03 | Phase 4 | Pending |
