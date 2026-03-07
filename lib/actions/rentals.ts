@@ -4,8 +4,10 @@ import { revalidatePath } from 'next/cache';
 import { requireAuth } from '@/lib/auth/session';
 import { createProperty, updateProperty } from '@/lib/db/rentals-properties';
 import { createUnit, updateUnit } from '@/lib/db/rentals-units';
+import { scheduleUnitOccupancyStatus } from '@/lib/db/rentals-occupancy';
 import { createPropertySchema, updatePropertySchema } from '@/lib/validations/rentals-property';
 import { createUnitSchema, updateUnitSchema } from '@/lib/validations/rentals-unit';
+import { scheduleOccupancySchema } from '@/lib/validations/rentals-occupancy';
 
 type RentalsActionResult =
   | { success: true }
@@ -210,5 +212,49 @@ export async function createRental(formData: FormData): Promise<RentalsActionRes
   } catch (error) {
     console.error('Failed to create rental:', error);
     return handleDatabaseError(error);
+  }
+}
+
+export async function scheduleUnitOccupancyStatusAction(
+  formData: FormData
+): Promise<RentalsActionResult> {
+  await requireAuth();
+
+  const result = scheduleOccupancySchema.safeParse({
+    unit_id: getFormValue(formData, 'unit_id'),
+    status: getFormValue(formData, 'status'),
+    effective_date: getFormValue(formData, 'effective_date'),
+    unavailable_reason: getFormValue(formData, 'unavailable_reason'),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await scheduleUnitOccupancyStatus(result.data);
+    revalidatePath('/rentals');
+    revalidatePath('/rentals/units');
+    revalidatePath(`/rentals/units/${result.data.unit_id}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to schedule occupancy status:', error);
+
+    const code = (error as { code?: string } | null)?.code;
+    if (code === 'OCCUPANCY_OVERLAP' || code === '23505') {
+      return {
+        success: false,
+        error:
+          'An occupancy status is already scheduled for this unit on the selected effective date',
+      };
+    }
+
+    return {
+      success: false,
+      error: 'Failed to schedule occupancy status',
+    };
   }
 }

@@ -108,3 +108,13 @@ export interface Unit {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface UnitOccupancyStatus {
+  id: number;
+  unit_id: number;
+  status: UnitStatus;
+  effective_date: string;
+  unavailable_reason: string | null;
+  created_at: Date;
+  updated_at: Date;
+}

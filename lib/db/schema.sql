@@ -100,6 +100,21 @@ CREATE TABLE units (
   UNIQUE (property_id, unit_number)
 );
 
+-- Unit occupancy status history table
+CREATE TABLE unit_occupancy_statuses (
+  id SERIAL PRIMARY KEY,
+  unit_id INTEGER NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+  status unit_status NOT NULL CHECK (status IN ('Occupied', 'Vacant', 'Unavailable')),
+  effective_date DATE NOT NULL,
+  unavailable_reason TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE (unit_id, effective_date),
+  CHECK (
+    (status = 'Unavailable') OR unavailable_reason IS NULL
+  )
+);
+
 -- Indexes for performance
 CREATE INDEX idx_transactions_account_date ON transactions(account_id, date DESC);
 CREATE INDEX idx_transactions_category ON transactions(category_id);
@@ -108,6 +123,8 @@ CREATE INDEX idx_transactions_ofx_fitid ON transactions(ofx_fitid);
 CREATE INDEX idx_categories_parent ON categories(parent_id);
 CREATE INDEX idx_units_property_id ON units(property_id);
 CREATE INDEX idx_units_status ON units(status);
+CREATE INDEX idx_unit_occupancy_statuses_unit_effective_date
+  ON unit_occupancy_statuses(unit_id, effective_date DESC);
 
 -- Indexes for expense reports
 CREATE INDEX idx_expense_reports_user ON expense_reports(user_id);
