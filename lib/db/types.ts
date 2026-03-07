@@ -147,3 +147,29 @@ export interface Lease {
   created_at: Date;
   updated_at: Date;
 }
+
+export type ChargeStatus = 'pending' | 'paid';
+
+export interface RentCharge {
+  id: number;
+  lease_id: number;
+  charge_date: string;
+  due_date: string;
+  amount: number;
+  status: ChargeStatus;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type PaymentMethod = 'cash' | 'check' | 'bank_transfer' | 'other';
+
+export interface RentPayment {
+  id: number;
+  lease_id: number;
+  payment_date: string;
+  amount: number;
+  payment_method: PaymentMethod;
+  notes: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
