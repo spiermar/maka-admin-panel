@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createUnit,
   getUnitById,
+  getUnitInventoryById,
   getUnitsByProperty,
+  listUnitsInventory,
   updateUnit,
 } from '@/lib/db/rentals-units';
 
@@ -88,6 +90,50 @@ describe('Rentals Unit Queries', () => {
     expect(execute).toHaveBeenCalledWith(
       expect.stringContaining('updated_at = NOW()'),
       [5, '5C', 'Condo', 3, 2, 'Occupied', null, 11]
+    );
+  });
+
+  it('lists inventory with deterministic default ordering and occupancy context', async () => {
+    const { queryMany } = await import('@/lib/db');
+    const rows = [
+      {
+        id: 1,
+        property_name: 'Maple Apartments',
+        unit_number: '101',
+        current_status: 'Vacant',
+      },
+    ];
+    vi.mocked(queryMany).mockResolvedValue(rows);
+
+    const result = await listUnitsInventory();
+
+    expect(result).toEqual(rows);
+    expect(queryMany).toHaveBeenCalledWith(
+      expect.stringContaining('ORDER BY p.name ASC, u.unit_number ASC'),
+      []
+    );
+    expect(queryMany).toHaveBeenCalledWith(
+      expect.stringContaining('LEFT JOIN LATERAL'),
+      []
+    );
+  });
+
+  it('gets inventory detail for a single unit id', async () => {
+    const { queryOne } = await import('@/lib/db');
+    const row = {
+      id: 9,
+      property_name: 'Riverside Homes',
+      unit_number: '2A',
+      current_status: 'Occupied',
+    };
+    vi.mocked(queryOne).mockResolvedValue(row);
+
+    const result = await getUnitInventoryById(9);
+
+    expect(result).toEqual(row);
+    expect(queryOne).toHaveBeenCalledWith(
+      expect.stringContaining('WHERE u.id = $1'),
+      [9]
     );
   });
 });

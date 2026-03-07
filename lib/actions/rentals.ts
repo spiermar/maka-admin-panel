@@ -17,6 +17,14 @@ type RentalsActionResult =
       errors?: Record<string, string[] | undefined>;
     };
 
+type CreateUnitActionResult =
+  | { success: true; unitId: number }
+  | {
+      success: false;
+      error?: string;
+      errors?: Record<string, string[] | undefined>;
+    };
+
 function getFormValue(formData: FormData, key: string): string | null {
   const value = formData.get(key);
   return typeof value === 'string' ? value : null;
@@ -92,7 +100,7 @@ export async function updatePropertyAction(
   }
 }
 
-export async function createUnitAction(formData: FormData): Promise<RentalsActionResult> {
+export async function createUnitAction(formData: FormData): Promise<CreateUnitActionResult> {
   await requireAuth();
 
   const result = createUnitSchema.safeParse({
@@ -113,10 +121,12 @@ export async function createUnitAction(formData: FormData): Promise<RentalsActio
   }
 
   try {
-    await createUnit(result.data);
+    const unit = await createUnit(result.data);
     revalidatePath('/rentals');
     revalidatePath('/rentals/units');
-    return { success: true };
+    revalidatePath(`/rentals/units/${unit.id}`);
+    revalidatePath(`/rentals/units/${unit.id}/edit`);
+    return { success: true, unitId: unit.id };
   } catch (error) {
     console.error('Failed to create unit:', error);
     return handleDatabaseError(error);
@@ -178,6 +188,7 @@ export async function updateUnitAction(
     revalidatePath('/rentals');
     revalidatePath('/rentals/units');
     revalidatePath(`/rentals/units/${id}`);
+    revalidatePath(`/rentals/units/${id}/edit`);
     return { success: true };
   } catch (error) {
     console.error('Failed to update unit:', error);

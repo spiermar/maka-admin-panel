@@ -139,9 +139,66 @@
   },
   "rentals": {
     "title": "Aluguéis",
-    "subtitle": "Gerencie operações de aluguel dentro do seu painel protegido.",
-    "comingSoonTitle": "Base do módulo de aluguéis",
-    "comingSoonDescription": "Usuários autenticados já podem acessar esta página. Os fluxos de aluguel serão adicionados nas próximas fases."
+    "subtitle": "Acompanhe e gerencie a ocupação das unidades em um único inventário.",
+    "inventory": {
+      "title": "Inventário de Unidades",
+      "newUnit": "Nova Unidade",
+      "emptyFiltered": "Nenhuma unidade corresponde aos filtros selecionados.",
+      "columns": {
+        "property": "Propriedade",
+        "unit": "Unidade",
+        "type": "Tipo",
+        "layout": "Quartos / Banheiros",
+        "status": "Status"
+      },
+      "filters": {
+        "property": "Propriedade",
+        "status": "Status",
+        "search": "Busca",
+        "searchPlaceholder": "Buscar propriedade, unidade, bloco ou tipo",
+        "allProperties": "Todas as propriedades",
+        "allStatuses": "Todos os status"
+      }
+    },
+    "status": {
+      "Occupied": "Ocupada",
+      "Vacant": "Vaga",
+      "Unavailable": "Indisponível"
+    },
+    "newUnit": {
+      "title": "Criar Unidade",
+      "subtitle": "Adicione uma nova unidade ao inventário de aluguéis.",
+      "formTitle": "Detalhes da Unidade",
+      "noProperties": "Crie uma propriedade primeiro para adicionar unidades."
+    },
+    "editUnit": {
+      "title": "Editar Unidade",
+      "subtitle": "Atualize esta unidade em uma página dedicada de edição.",
+      "formTitle": "Editar Detalhes da Unidade"
+    },
+    "detail": {
+      "subtitle": "Revise a ocupação atual e mudanças agendadas.",
+      "backToInventory": "Voltar ao Inventário",
+      "editUnit": "Editar Unidade",
+      "unitInfo": "Informações da Unidade",
+      "occupancy": "Ocupação",
+      "currentStatus": "Status atual",
+      "nextStatus": "Próximo status agendado",
+      "noFutureStatus": "Nenhum status futuro agendado."
+    },
+    "form": {
+      "property": "Propriedade",
+      "unitNumber": "Número da unidade",
+      "buildingLabel": "Bloco/torre (opcional)",
+      "unitType": "Tipo de unidade",
+      "bedrooms": "Quartos",
+      "bathrooms": "Banheiros",
+      "status": "Status",
+      "create": "Criar Unidade",
+      "update": "Salvar Alterações",
+      "saving": "Salvando...",
+      "saveError": "Não foi possível salvar esta unidade agora."
+    }
   },
   "app": {
     "name": "Console de Gerenciamento",
