@@ -1,8 +1,13 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { requireAuth } from '@/lib/auth/session';
+import { createProperty, updateProperty } from '@/lib/db/rentals-properties';
+import { createUnit, updateUnit } from '@/lib/db/rentals-units';
+import { createPropertySchema, updatePropertySchema } from '@/lib/validations/rentals-property';
+import { createUnitSchema, updateUnitSchema } from '@/lib/validations/rentals-unit';
 
-type CreateRentalResult =
+type RentalsActionResult =
   | { success: true }
   | {
       success: false;
@@ -10,28 +15,200 @@ type CreateRentalResult =
       errors?: Record<string, string[] | undefined>;
     };
 
-export async function createRental(formData: FormData): Promise<CreateRentalResult> {
+function getFormValue(formData: FormData, key: string): string | null {
+  const value = formData.get(key);
+  return typeof value === 'string' ? value : null;
+}
+
+function handleDatabaseError(error: unknown): RentalsActionResult {
+  const code = (error as { code?: string } | null)?.code;
+
+  if (code === '23505') {
+    return {
+      success: false,
+      error: 'Unit number must be unique within the selected property',
+    };
+  }
+
+  return {
+    success: false,
+    error: 'Failed to save rentals data',
+  };
+}
+
+export async function createPropertyAction(formData: FormData): Promise<RentalsActionResult> {
   await requireAuth();
 
-  const data = {
-    property_name: String(formData.get('property_name') || '').trim(),
-    unit_name: String(formData.get('unit_name') || '').trim(),
-  };
+  const result = createPropertySchema.safeParse({
+    name: getFormValue(formData, 'name'),
+  });
 
-  const errors: Record<string, string[] | undefined> = {};
-
-  if (!data.property_name) {
-    errors.property_name = ['Property name is required'];
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
   }
 
-  if (!data.unit_name) {
-    errors.unit_name = ['Unit name is required'];
+  try {
+    await createProperty(result.data);
+    revalidatePath('/rentals');
+    revalidatePath('/rentals/properties');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to create property:', error);
+    return handleDatabaseError(error);
+  }
+}
+
+export async function updatePropertyAction(
+  id: number,
+  formData: FormData
+): Promise<RentalsActionResult> {
+  await requireAuth();
+
+  const result = updatePropertySchema.safeParse({
+    name: getFormValue(formData, 'name'),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
   }
 
-  if (Object.keys(errors).length > 0) {
-    return { success: false, errors };
+  try {
+    await updateProperty(id, result.data);
+    revalidatePath('/rentals');
+    revalidatePath('/rentals/properties');
+    revalidatePath(`/rentals/properties/${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to update property:', error);
+    return handleDatabaseError(error);
+  }
+}
+
+export async function createUnitAction(formData: FormData): Promise<RentalsActionResult> {
+  await requireAuth();
+
+  const result = createUnitSchema.safeParse({
+    property_id: getFormValue(formData, 'property_id'),
+    unit_number: getFormValue(formData, 'unit_number'),
+    unit_type: getFormValue(formData, 'unit_type'),
+    bedrooms: getFormValue(formData, 'bedrooms'),
+    bathrooms: getFormValue(formData, 'bathrooms'),
+    status: getFormValue(formData, 'status'),
+    building_label: getFormValue(formData, 'building_label'),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
   }
 
-  // Phase 1 baseline: action contract exists and enforces auth.
-  return { success: false, error: 'Rental creation will be enabled in a later phase' };
+  try {
+    await createUnit(result.data);
+    revalidatePath('/rentals');
+    revalidatePath('/rentals/units');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to create unit:', error);
+    return handleDatabaseError(error);
+  }
+}
+
+export async function updateUnitAction(
+  id: number,
+  formData: FormData
+): Promise<RentalsActionResult> {
+  await requireAuth();
+
+  const result = updateUnitSchema.safeParse({
+    property_id: getFormValue(formData, 'property_id'),
+    unit_number: getFormValue(formData, 'unit_number'),
+    unit_type: getFormValue(formData, 'unit_type'),
+    bedrooms: getFormValue(formData, 'bedrooms'),
+    bathrooms: getFormValue(formData, 'bathrooms'),
+    status: getFormValue(formData, 'status'),
+    building_label: getFormValue(formData, 'building_label'),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
+
+  const requiredUpdateFields = [
+    'property_id',
+    'unit_number',
+    'unit_type',
+    'bedrooms',
+    'bathrooms',
+    'status',
+  ];
+
+  for (const field of requiredUpdateFields) {
+    if (result.data[field as keyof typeof result.data] === undefined) {
+      return {
+        success: false,
+        errors: { [field]: [`${field} is required`] },
+      };
+    }
+  }
+
+  try {
+    await updateUnit(id, {
+      property_id: result.data.property_id as number,
+      unit_number: result.data.unit_number as string,
+      unit_type: result.data.unit_type as string,
+      bedrooms: result.data.bedrooms as number,
+      bathrooms: result.data.bathrooms as number,
+      status: result.data.status as 'Occupied' | 'Vacant' | 'Unavailable',
+      building_label: result.data.building_label ?? null,
+    });
+
+    revalidatePath('/rentals');
+    revalidatePath('/rentals/units');
+    revalidatePath(`/rentals/units/${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to update unit:', error);
+    return handleDatabaseError(error);
+  }
+}
+
+export async function createRental(formData: FormData): Promise<RentalsActionResult> {
+  await requireAuth();
+  const result = createUnitSchema.safeParse({
+    property_id: getFormValue(formData, 'property_id'),
+    unit_number: getFormValue(formData, 'unit_number'),
+    unit_type: getFormValue(formData, 'unit_type'),
+    bedrooms: getFormValue(formData, 'bedrooms'),
+    bathrooms: getFormValue(formData, 'bathrooms'),
+    status: getFormValue(formData, 'status'),
+    building_label: getFormValue(formData, 'building_label'),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      error: 'Rental creation will be enabled in a later phase',
+    };
+  }
+
+  try {
+    await createUnit(result.data);
+    revalidatePath('/rentals');
+    revalidatePath('/rentals/units');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to create rental:', error);
+    return handleDatabaseError(error);
+  }
 }
