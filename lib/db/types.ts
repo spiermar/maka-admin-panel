@@ -118,3 +118,32 @@ export interface UnitOccupancyStatus {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface Tenant {
+  id: number;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export type LeaseStatus = 'Draft' | 'Pending' | 'Active' | 'Expired' | 'Terminated';
+
+export interface Lease {
+  id: number;
+  tenant_id: number;
+  unit_id: number;
+  status: LeaseStatus;
+  start_date: string; // YYYY-MM-DD
+  end_date: string;   // YYYY-MM-DD
+  monthly_rent: number;
+  security_deposit: number;
+  lease_type: string | null;
+  pets_allowed: boolean | null;
+  parking_spot: string | null;
+  utilities_included: boolean | null;
+  previous_lease_id: number | null;
+  created_at: Date;
+  updated_at: Date;
+}
