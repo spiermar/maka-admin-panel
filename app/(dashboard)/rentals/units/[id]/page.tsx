@@ -2,7 +2,10 @@ import { notFound } from 'next/navigation';
 import { getLangFromUrl } from '@/lib/i18n/utils';
 import { getUnitOccupancySnapshot } from '@/lib/db/rentals-occupancy';
 import { getUnitInventoryById } from '@/lib/db/rentals-units';
+import { getTenantByUnitId } from '@/lib/db/rentals-tenants';
+import { getAllLeases } from '@/lib/db/rentals-leases';
 import { RentalUnitDetailClient } from './client';
+import { Tenant, Lease } from '@/lib/db/types';
 
 export default async function RentalUnitDetailPage({
   params,
@@ -15,15 +18,28 @@ export default async function RentalUnitDetailPage({
     notFound();
   }
 
-  const [lang, unit, occupancy] = await Promise.all([
+  const [lang, unit, occupancy, tenant, leases] = await Promise.all([
     getLangFromUrl(),
     getUnitInventoryById(unitId),
     getUnitOccupancySnapshot(unitId),
+    getTenantByUnitId(unitId),
+    getAllLeases({ unit_id: unitId }),
   ]);
 
   if (!unit) {
     notFound();
   }
 
-  return <RentalUnitDetailClient lang={lang} unit={unit} occupancy={occupancy} />;
+  // Find the active lease
+  const activeLease = leases.find((l) => l.status === 'Active') || null;
+
+  return (
+    <RentalUnitDetailClient
+      lang={lang}
+      unit={unit}
+      occupancy={occupancy}
+      tenant={tenant}
+      activeLease={activeLease}
+    />
+  );
 }

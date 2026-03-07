@@ -186,7 +186,17 @@
       "occupancy": "Ocupação",
       "currentStatus": "Status atual",
       "nextStatus": "Próximo status agendado",
-      "noFutureStatus": "Nenhum status futuro agendado."
+      "noFutureStatus": "Nenhum status futuro agendado.",
+      "tenantLease": "Inquilino & Contrato",
+      "tenant": "Inquilino",
+      "leaseStatus": "Status do Contrato",
+      "startDate": "Data de Início",
+      "endDate": "Data de Término",
+      "monthlyRent": "Aluguel Mensal",
+      "viewLease": "Ver Contrato",
+      "noActiveLease": "Sem contrato ativo",
+      "noTenantAssigned": "Nenhum inquilino atribuído a esta unidade.",
+      "addTenant": "Adicionar Inquilino"
     },
     "form": {
       "property": "Propriedade",

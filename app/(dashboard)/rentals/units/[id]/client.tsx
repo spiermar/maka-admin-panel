@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UnitOccupancySnapshot } from '@/lib/db/rentals-occupancy';
 import { UnitInventoryRow } from '@/lib/db/rentals-units';
+import { Tenant, Lease } from '@/lib/db/types';
 
 const STATUS_BADGE_STYLES: Record<'Occupied' | 'Vacant' | 'Unavailable', string> = {
   Vacant: 'bg-green-100 text-green-700',
@@ -13,10 +14,20 @@ const STATUS_BADGE_STYLES: Record<'Occupied' | 'Vacant' | 'Unavailable', string>
   Unavailable: 'bg-amber-100 text-amber-800',
 };
 
+const LEASE_STATUS_STYLES: Record<Lease['status'], string> = {
+  Draft: 'bg-gray-100 text-gray-700',
+  Pending: 'bg-yellow-100 text-yellow-700',
+  Active: 'bg-green-100 text-green-700',
+  Expired: 'bg-red-100 text-red-700',
+  Terminated: 'bg-red-100 text-red-700',
+};
+
 interface RentalUnitDetailClientProps {
   lang: string;
   unit: UnitInventoryRow;
   occupancy: UnitOccupancySnapshot;
+  tenant: Tenant | null;
+  activeLease: Lease | null;
 }
 
 function formatDate(value: string, lang: string): string {
@@ -31,6 +42,8 @@ export function RentalUnitDetailClient({
   lang,
   unit,
   occupancy,
+  tenant,
+  activeLease,
 }: RentalUnitDetailClientProps) {
   const t = useTranslations('rentals');
 
@@ -120,6 +133,69 @@ export function RentalUnitDetailClient({
               <p className="text-sm text-muted-foreground">{t('detail.noFutureStatus')}</p>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('detail.tenantLease')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {tenant ? (
+            <>
+              <div>
+                <p className="text-sm text-muted-foreground">{t('detail.tenant')}</p>
+                <p className="font-medium">{tenant.name}</p>
+                {tenant.email && <p className="text-sm text-muted-foreground">{tenant.email}</p>}
+                {tenant.phone && <p className="text-sm text-muted-foreground">{tenant.phone}</p>}
+              </div>
+
+              {activeLease ? (
+                <>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{t('detail.leaseStatus')}</p>
+                    <span
+                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${LEASE_STATUS_STYLES[activeLease.status]}`}
+                    >
+                      {t(`leaseStatus.${activeLease.status}`)}
+                    </span>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.startDate')}</p>
+                      <p className="font-medium">{formatDate(activeLease.start_date, lang)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.endDate')}</p>
+                      <p className="font-medium">{formatDate(activeLease.end_date, lang)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.monthlyRent')}</p>
+                      <p className="font-medium">${Number(activeLease.monthly_rent).toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/rentals/leases/${activeLease.id}?lang=${lang}`}>
+                      {t('detail.viewLease')}
+                    </Link>
+                  </Button>
+                </>
+              ) : (
+                <div>
+                  <p className="text-sm text-amber-600">{t('detail.noActiveLease')}</p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">{t('detail.noTenantAssigned')}</p>
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/rentals/tenants/new?lang=${lang}&unitId=${unit.id}`}>
+                  {t('detail.addTenant')}
+                </Link>
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

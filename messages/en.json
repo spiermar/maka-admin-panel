@@ -188,7 +188,17 @@
       "occupancy": "Occupancy",
       "currentStatus": "Current status",
       "nextStatus": "Next scheduled status",
-      "noFutureStatus": "No future status scheduled."
+      "noFutureStatus": "No future status scheduled.",
+      "tenantLease": "Tenant & Lease",
+      "tenant": "Tenant",
+      "leaseStatus": "Lease Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "monthlyRent": "Monthly Rent",
+      "viewLease": "View Lease",
+      "noActiveLease": "No active lease",
+      "noTenantAssigned": "No tenant assigned to this unit.",
+      "addTenant": "Add Tenant"
     },
     "form": {
       "property": "Property",
