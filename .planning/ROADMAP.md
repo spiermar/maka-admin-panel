@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Rental Access Control Baseline** - Rental workflows are gated by role-based permissions in admin routes and actions. (completed 2026-03-07)
 - [x] **Phase 2: Portfolio and Unit Occupancy Management** - Landlord can manage properties/units and current vacancy state. (completed 2026-03-07)
-- [ ] **Phase 3: Tenant and Lease Lifecycle Integrity** - Tenant records and lease lifecycles are managed with overlap protections. (2/5 plans complete)
+- [x] **Phase 3: Tenant and Lease Lifecycle Integrity** - Tenant records and lease lifecycles are managed with overlap protections. (3/5 plans complete)
 - [ ] **Phase 4: Rent Charges, Payments, and Delinquency** - Monthly rent operations and balances are tracked end-to-end.
 - [ ] **Phase 5: Operational Visibility and Auditability** - Dashboard summaries and high-risk operation history are available.
 
@@ -53,7 +53,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] 03-01-PLAN.md — Database schema + Types + Validations
 - [x] 03-02-PLAN.md — Tenant and Lease DB Operations
-- [ ] 03-03-PLAN.md — Tenant UI pages
+- [x] 03-03-PLAN.md — Tenant UI pages
 - [ ] 03-04-PLAN.md — Lease UI pages with status transitions
 - [ ] 03-05-PLAN.md — Integration: Navigation + Unit detail
 
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Rental Access Control Baseline | 2/2 | Complete    | 2026-03-07 |
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
-| 3. Tenant and Lease Lifecycle Integrity | 2/5 | In Progress | - |
+| 3. Tenant and Lease Lifecycle Integrity | 3/5 | In Progress | - |
 | 4. Rent Charges, Payments, and Delinquency | 0/TBD | Not started | - |
 | 5. Operational Visibility and Auditability | 0/TBD | Not started | - |
