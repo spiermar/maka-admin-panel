@@ -161,8 +161,41 @@ CREATE INDEX idx_expense_reports_status ON expense_reports(status);
 CREATE INDEX idx_expenses_report ON expenses(expense_report_id);
 CREATE INDEX idx_expenses_transaction ON expenses(transaction_id);
 
+-- Charges table (rent charges against a lease)
+CREATE TABLE charges (
+  id SERIAL PRIMARY KEY,
+  lease_id INTEGER NOT NULL REFERENCES leases(id) ON DELETE CASCADE,
+  charge_date DATE NOT NULL,
+  due_date DATE NOT NULL,
+  amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid')),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Payments table (rent payments against a lease)
+CREATE TABLE payments (
+  id SERIAL PRIMARY KEY,
+  lease_id INTEGER NOT NULL REFERENCES leases(id) ON DELETE CASCADE,
+  payment_date DATE NOT NULL,
+  amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+  payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('cash', 'check', 'bank_transfer', 'other')),
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Indexes for leases
 CREATE INDEX idx_leases_tenant_id ON leases(tenant_id);
 CREATE INDEX idx_leases_unit_id ON leases(unit_id);
 CREATE INDEX idx_leases_status ON leases(status);
 CREATE INDEX idx_leases_start_end ON leases(unit_id, start_date, end_date);
+
+-- Indexes for charges
+CREATE INDEX idx_charges_lease_id ON charges(lease_id);
+CREATE INDEX idx_charges_status ON charges(status);
+CREATE INDEX idx_charges_due_date ON charges(due_date);
+
+-- Indexes for payments
+CREATE INDEX idx_payments_lease_id ON payments(lease_id);
+CREATE INDEX idx_payments_date ON payments(payment_date);
