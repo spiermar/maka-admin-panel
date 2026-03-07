@@ -12,7 +12,7 @@ This roadmap delivers a residential-first rental operations capability inside th
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Rental Access Control Baseline** - Rental workflows are gated by role-based permissions in admin routes and actions.
+- [x] **Phase 1: Rental Access Control Baseline** - Rental workflows are gated by role-based permissions in admin routes and actions. (completed 2026-03-07)
 - [ ] **Phase 2: Portfolio and Unit Occupancy Management** - Landlord can manage properties/units and current vacancy state.
 - [ ] **Phase 3: Tenant and Lease Lifecycle Integrity** - Tenant records and lease lifecycles are managed with overlap protections.
 - [ ] **Phase 4: Rent Charges, Payments, and Delinquency** - Monthly rent operations and balances are tracked end-to-end.
@@ -79,7 +79,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Rental Access Control Baseline | 0/TBD | Not started | - |
+| 1. Rental Access Control Baseline | 1/1 | Complete   | 2026-03-07 |
 | 2. Portfolio and Unit Occupancy Management | 0/TBD | Not started | - |
 | 3. Tenant and Lease Lifecycle Integrity | 0/TBD | Not started | - |
 | 4. Rent Charges, Payments, and Delinquency | 0/TBD | Not started | - |
