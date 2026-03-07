@@ -22,6 +22,8 @@
     "dashboard": "Dashboard",
     "accounts": "Accounts",
     "rentals": "Rentals",
+    "tenants": "Tenants",
+    "leases": "Leases",
     "expenseReports": "Expense Reports",
     "settings": "Settings"
   },

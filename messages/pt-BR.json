@@ -20,6 +20,8 @@
     "dashboard": "Painel",
     "accounts": "Contas",
     "rentals": "Aluguéis",
+    "tenants": "Inquilinos",
+    "leases": "Contratos",
     "expenseReports": "Relatórios de Despesas",
     "settings": "Configurações"
   },

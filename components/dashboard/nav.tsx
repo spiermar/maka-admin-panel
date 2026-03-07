@@ -14,6 +14,8 @@ export function DashboardNav() {
     { href: `/?lang=${lang}`, label: t('dashboard') },
     { href: `/accounts?lang=${lang}`, label: t('accounts') },
     { href: `/rentals?lang=${lang}`, label: t('rentals') },
+    { href: `/rentals/tenants?lang=${lang}`, label: t('tenants') },
+    { href: `/rentals/leases?lang=${lang}`, label: t('leases') },
     { href: `/expense-reports?lang=${lang}`, label: t('expenseReports') },
     { href: `/settings?lang=${lang}`, label: t('settings') },
   ];
