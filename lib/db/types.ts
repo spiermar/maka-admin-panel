@@ -1,4 +1,5 @@
 export type CategoryType = 'income' | 'expense';
+export type UnitStatus = 'Occupied' | 'Vacant' | 'Unavailable';
 
 export interface User {
   id: number;
@@ -86,4 +87,34 @@ export interface ExpenseWithDetails extends Expense {
   category_name: string | null;
   category_path: string | null;
   transaction_date: string | null;
+}
+
+export interface Property {
+  id: number;
+  name: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface Unit {
+  id: number;
+  property_id: number;
+  unit_number: string;
+  building_label: string | null;
+  unit_type: string;
+  bedrooms: string;
+  bathrooms: string;
+  status: UnitStatus;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UnitOccupancyStatus {
+  id: number;
+  unit_id: number;
+  status: UnitStatus;
+  effective_date: string;
+  unavailable_reason: string | null;
+  created_at: Date;
+  updated_at: Date;
 }

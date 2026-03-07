@@ -10,6 +10,10 @@ const eslintConfig = [
       '*.config.js',
       '*.config.ts',
       '*.config.mjs',
+      '**/__tests__/**',
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '.worktrees/**',
     ],
   },
   {

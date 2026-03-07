@@ -11,7 +11,9 @@ import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
 import { getAccountLockoutStatus, incrementFailedAttempts, resetFailedAttempts } from '@/lib/auth/account-lockout';
 import { logSecureError } from '@/lib/utils/error-handler';
 
-export async function login(prevState: any, formData: FormData) {
+type LoginState = { success: boolean; error?: string };
+
+export async function login(prevState: LoginState | null, formData: FormData): Promise<LoginState> {
   const targetDelay = getConstantTimeDelay();
 
   const result = loginSchema.safeParse({

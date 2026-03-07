@@ -19,6 +19,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "accounts": "Accounts",
+    "rentals": "Rentals",
     "expenseReports": "Expense Reports",
     "settings": "Settings"
   },
@@ -135,6 +136,69 @@
     "income": "Income",
     "expense": "Expense",
     "noneRootCategory": "None (root category)"
+  },
+  "rentals": {
+    "title": "Rentals",
+    "subtitle": "Track and manage your property unit occupancy from a single inventory.",
+    "inventory": {
+      "title": "Units Inventory",
+      "newUnit": "New Unit",
+      "emptyFiltered": "No units match the selected filters.",
+      "columns": {
+        "property": "Property",
+        "unit": "Unit",
+        "type": "Type",
+        "layout": "Beds / Baths",
+        "status": "Status"
+      },
+      "filters": {
+        "property": "Property",
+        "status": "Status",
+        "search": "Search",
+        "searchPlaceholder": "Search property, unit, building, or type",
+        "allProperties": "All properties",
+        "allStatuses": "All statuses"
+      }
+    },
+    "status": {
+      "Occupied": "Occupied",
+      "Vacant": "Vacant",
+      "Unavailable": "Unavailable"
+    },
+    "newUnit": {
+      "title": "Create Unit",
+      "subtitle": "Add a new unit to your rentals inventory.",
+      "formTitle": "Unit Details",
+      "noProperties": "Create a property first before adding units."
+    },
+    "editUnit": {
+      "title": "Edit Unit",
+      "subtitle": "Update this unit using the full-page edit flow.",
+      "formTitle": "Edit Unit Details"
+    },
+    "detail": {
+      "subtitle": "Review current occupancy and scheduled changes.",
+      "backToInventory": "Back to Inventory",
+      "editUnit": "Edit Unit",
+      "unitInfo": "Unit Information",
+      "occupancy": "Occupancy",
+      "currentStatus": "Current status",
+      "nextStatus": "Next scheduled status",
+      "noFutureStatus": "No future status scheduled."
+    },
+    "form": {
+      "property": "Property",
+      "unitNumber": "Unit number",
+      "buildingLabel": "Building label (optional)",
+      "unitType": "Unit type",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "status": "Status",
+      "create": "Create Unit",
+      "update": "Save Changes",
+      "saving": "Saving...",
+      "saveError": "Unable to save this unit right now."
+    }
   },
   "app": {
     "name": "Management Console",
