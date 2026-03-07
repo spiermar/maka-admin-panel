@@ -7,6 +7,7 @@ import { createUnit, updateUnit } from '@/lib/db/rentals-units';
 import { scheduleUnitOccupancyStatus } from '@/lib/db/rentals-occupancy';
 import { createTenant, updateTenant } from '@/lib/db/rentals-tenants';
 import { createLease, updateLease, transitionLeaseStatus, LeaseOverlapError } from '@/lib/db/rentals-leases';
+import { generateMonthlyCharges } from '@/lib/db/rentals-charges';
 import { createPropertySchema, updatePropertySchema } from '@/lib/validations/rentals-property';
 import { createUnitSchema, updateUnitSchema } from '@/lib/validations/rentals-unit';
 import { scheduleOccupancySchema } from '@/lib/validations/rentals-occupancy';
@@ -503,5 +504,28 @@ export async function transitionLeaseAction(
       success: false,
       error: error instanceof Error ? error.message : 'Failed to transition lease status',
     };
+  }
+}
+
+// Charge Actions
+
+type GenerateChargesResult =
+  | { success: true; count: number }
+  | { success: false; error: string };
+
+export async function generateChargesAction(
+  year: number,
+  month: number
+): Promise<GenerateChargesResult> {
+  await requireAuth();
+
+  try {
+    const charges = await generateMonthlyCharges(year, month);
+    revalidatePath('/rentals/charges');
+    revalidatePath('/rentals/leases');
+    return { success: true, count: charges.length };
+  } catch (error) {
+    console.error('Failed to generate charges:', error);
+    return { success: false, error: 'Failed to generate charges' };
   }
 }
