@@ -55,26 +55,26 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UNIT-01 | TBD | Pending |
-| UNIT-02 | TBD | Pending |
-| UNIT-03 | TBD | Pending |
-| LEASE-01 | TBD | Pending |
-| LEASE-02 | TBD | Pending |
-| LEASE-03 | TBD | Pending |
-| LEASE-04 | TBD | Pending |
-| RENT-01 | TBD | Pending |
-| RENT-02 | TBD | Pending |
-| RENT-03 | TBD | Pending |
-| RENT-04 | TBD | Pending |
-| VIS-01 | TBD | Pending |
-| VIS-02 | TBD | Pending |
-| VIS-03 | TBD | Pending |
+| UNIT-01 | Phase 2 | Pending |
+| UNIT-02 | Phase 2 | Pending |
+| UNIT-03 | Phase 2 | Pending |
+| LEASE-01 | Phase 3 | Pending |
+| LEASE-02 | Phase 3 | Pending |
+| LEASE-03 | Phase 3 | Pending |
+| LEASE-04 | Phase 3 | Pending |
+| RENT-01 | Phase 4 | Pending |
+| RENT-02 | Phase 4 | Pending |
+| RENT-03 | Phase 4 | Pending |
+| RENT-04 | Phase 4 | Pending |
+| VIS-01 | Phase 5 | Pending |
+| VIS-02 | Phase 5 | Pending |
+| VIS-03 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️
+- Mapped to phases: 14
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Last updated: 2026-03-07 after roadmap mapping*
