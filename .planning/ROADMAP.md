@@ -66,7 +66,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can record manual rent payments with date, amount, and payment method.
   3. User can view current balance due by lease and by tenant.
   4. User can identify overdue balances using due dates and configurable grace periods.
-**Plans**: TBD
+**Plans**: 5 plans
+
+- [x] 04-01-PLAN.md — Database schema + Types + Validations
+- [x] 04-02-PLAN.md — Charges and Payments DB Operations
+- [x] 04-03-PLAN.md — Charges UI page with generate action
+- [x] 04-04-PLAN.md — Payments UI page and form
+- [x] 04-05-PLAN.md — Overdue UI + Integration (lease/tenant balance, nav)
 
 ### Phase 5: Operational Visibility and Auditability
 **Goal**: Rental operations provide clear summary visibility and an auditable history for high-risk changes.
@@ -88,5 +94,5 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 1. Rental Access Control Baseline | 2/2 | Complete    | 2026-03-07 |
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
 | 3. Tenant and Lease Lifecycle Integrity | 5/5 | Complete    | 2026-03-07 |
-| 4. Rent Charges, Payments, and Delinquency | 0/TBD | Not started | - |
+| 4. Rent Charges, Payments, and Delinquency | 5/5 | Planned | - |
 | 5. Operational Visibility and Auditability | 0/TBD | Not started | - |
