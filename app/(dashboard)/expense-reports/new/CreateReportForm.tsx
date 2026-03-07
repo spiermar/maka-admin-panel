@@ -11,22 +11,29 @@ interface Props {
 
 const initialState = { success: false, error: '', errors: {} as Record<string, string[]> };
 
+type ExpenseReportResult = 
+  | { success: true; reportId: number }
+  | { success: false; error?: string; errors?: Record<string, string[]> };
+
 export default function CreateReportForm({ locale }: Props) {
   const t = useTranslations('expenseReports');
   const tCommon = useTranslations('common');
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
     async (prevState: typeof initialState, formData: FormData) => {
-      const result = await createExpenseReport(formData);
+      const result = await createExpenseReport(formData) as ExpenseReportResult;
       if (result.success && 'reportId' in result && result.reportId) {
         router.push(`/expense-reports/${result.reportId}?lang=${locale}`);
         return prevState;
       }
-      return {
-        success: false,
-        error: (result as any).error || tCommon('error'),
-        errors: (result as any).errors || {},
-      };
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error || tCommon('error'),
+          errors: result.errors || {},
+        };
+      }
+      return prevState;
     },
     initialState
   );

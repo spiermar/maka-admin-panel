@@ -46,6 +46,22 @@ function handleDatabaseError(error: unknown): RentalsActionResult {
   };
 }
 
+function handleCreateUnitError(error: unknown): CreateUnitActionResult {
+  const code = (error as { code?: string } | null)?.code;
+
+  if (code === '23505') {
+    return {
+      success: false,
+      error: 'Unit number must be unique within the selected property',
+    };
+  }
+
+  return {
+    success: false,
+    error: 'Failed to create unit',
+  };
+}
+
 export async function createPropertyAction(formData: FormData): Promise<RentalsActionResult> {
   await requireAuth();
 
@@ -129,7 +145,7 @@ export async function createUnitAction(formData: FormData): Promise<CreateUnitAc
     return { success: true, unitId: unit.id };
   } catch (error) {
     console.error('Failed to create unit:', error);
-    return handleDatabaseError(error);
+    return handleCreateUnitError(error);
   }
 }
 
