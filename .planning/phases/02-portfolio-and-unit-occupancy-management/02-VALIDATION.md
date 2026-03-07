@@ -1,10 +1,11 @@
 ---
 phase: 02
 slug: portfolio-and-unit-occupancy-management
-status: draft
+status: verified
 nyquist_compliant: true
-wave_0_complete: false
+wave_0_complete: true
 created: 2026-03-07
+validated: 2026-03-07
 ---
 
 # Phase 02 — Validation Strategy
@@ -38,11 +39,11 @@ created: 2026-03-07
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 01 | 1 | UNIT-01 | unit/integration | `npm test -- --run __tests__/lib/db/rentals-properties.test.ts` | ❌ W0 | ⬜ pending |
-| 02-01-02 | 01 | 1 | UNIT-01 | unit/integration | `npm test -- --run __tests__/lib/db/rentals-units.test.ts` | ❌ W0 | ⬜ pending |
-| 02-02-01 | 02 | 1 | UNIT-02 | unit/integration | `npm test -- --run __tests__/lib/actions/rentals-occupancy.test.ts` | ❌ W0 | ⬜ pending |
-| 02-02-02 | 02 | 1 | UNIT-02 | unit/integration | `npm test -- --run __tests__/lib/validations/rentals-occupancy.test.ts` | ❌ W0 | ⬜ pending |
-| 02-03-01 | 03 | 2 | UNIT-03 | e2e | `npm run test:e2e -- e2e/20-rentals-inventory.spec.ts` | ❌ W0 | ⬜ pending |
+| 02-01-01 | 01 | 1 | UNIT-01 | unit/integration | `npm test -- --run __tests__/lib/db/rentals-properties.test.ts` | ✅ | ✅ green |
+| 02-01-02 | 01 | 1 | UNIT-01 | unit/integration | `npm test -- --run __tests__/lib/db/rentals-units.test.ts` | ✅ | ✅ green |
+| 02-02-01 | 02 | 1 | UNIT-02 | unit/integration | `npm test -- --run __tests__/lib/actions/rentals-occupancy.test.ts` | ✅ | ✅ green |
+| 02-02-02 | 02 | 1 | UNIT-02 | unit/integration | `npm test -- --run __tests__/lib/validations/rentals-occupancy.test.ts` | ✅ | ✅ green |
+| 02-03-01 | 03 | 2 | UNIT-03 | e2e | `npm run test:e2e -- e2e/20-rentals-inventory.spec.ts` | ✅ | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -50,11 +51,11 @@ created: 2026-03-07
 
 ## Wave 0 Requirements
 
-- [ ] `__tests__/lib/db/rentals-properties.test.ts` — coverage for property CRUD query behavior
-- [ ] `__tests__/lib/db/rentals-units.test.ts` — coverage for unit uniqueness and inventory query behavior
-- [ ] `__tests__/lib/actions/rentals-occupancy.test.ts` — auth-first and overlap-blocking action behavior
-- [ ] `__tests__/lib/validations/rentals-occupancy.test.ts` — date-only and status validation rules
-- [ ] `e2e/20-rentals-inventory.spec.ts` — table/filter/status badge and create/edit navigation flow
+- [x] `__tests__/lib/db/rentals-properties.test.ts` — coverage for property CRUD query behavior
+- [x] `__tests__/lib/db/rentals-units.test.ts` — coverage for unit uniqueness and inventory query behavior
+- [x] `__tests__/lib/actions/rentals-occupancy.test.ts` — auth-first and overlap-blocking action behavior
+- [x] `__tests__/lib/validations/rentals-occupancy.test.ts` — date-only and status validation rules
+- [x] `e2e/20-rentals-inventory.spec.ts` — table/filter/status badge and create/edit navigation flow
 
 ---
 
@@ -69,11 +70,24 @@ created: 2026-03-07
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 180s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 180s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** ✅ verified
+
+## Validation Audit 2026-03-07
+
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 5 |
+| Escalated | 0 |
+
+### Test Results Summary
+- **Unit Tests:** 40 passed (rentals-properties, rentals-units, rentals-occupancy, rentals-unit validation, rentals-occupancy validation)
+- **E2E Tests:** 2 passed (inventory defaults + filters, row-click detail/edit flow)
+- **Lint:** 0 errors (102 warnings - pre-existing)
