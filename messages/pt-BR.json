@@ -19,6 +19,7 @@
   "nav": {
     "dashboard": "Painel",
     "accounts": "Contas",
+    "rentals": "Aluguéis",
     "expenseReports": "Relatórios de Despesas",
     "settings": "Configurações"
   },
@@ -135,6 +136,12 @@
     "income": "Receita",
     "expense": "Despesa",
     "noneRootCategory": "Nenhuma (categoria raiz)"
+  },
+  "rentals": {
+    "title": "Aluguéis",
+    "subtitle": "Gerencie operações de aluguel dentro do seu painel protegido.",
+    "comingSoonTitle": "Base do módulo de aluguéis",
+    "comingSoonDescription": "Usuários autenticados já podem acessar esta página. Os fluxos de aluguel serão adicionados nas próximas fases."
   },
   "app": {
     "name": "Console de Gerenciamento",

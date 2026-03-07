@@ -19,6 +19,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "accounts": "Accounts",
+    "rentals": "Rentals",
     "expenseReports": "Expense Reports",
     "settings": "Settings"
   },
@@ -135,6 +136,12 @@
     "income": "Income",
     "expense": "Expense",
     "noneRootCategory": "None (root category)"
+  },
+  "rentals": {
+    "title": "Rentals",
+    "subtitle": "Manage rental operations inside your protected dashboard workspace.",
+    "comingSoonTitle": "Rental workspace baseline",
+    "comingSoonDescription": "Authenticated users can access this page today. Rental workflows will be added in the next phases."
   },
   "app": {
     "name": "Management Console",

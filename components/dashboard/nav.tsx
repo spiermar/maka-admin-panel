@@ -13,6 +13,7 @@ export function DashboardNav() {
   const navLinks = [
     { href: `/?lang=${lang}`, label: t('dashboard') },
     { href: `/accounts?lang=${lang}`, label: t('accounts') },
+    { href: `/rentals?lang=${lang}`, label: t('rentals') },
     { href: `/expense-reports?lang=${lang}`, label: t('expenseReports') },
     { href: `/settings?lang=${lang}`, label: t('settings') },
   ];
