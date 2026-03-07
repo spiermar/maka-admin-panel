@@ -198,6 +198,51 @@
       "update": "Salvar Alterações",
       "saving": "Salvando...",
       "saveError": "Não foi possível salvar esta unidade agora."
+    },
+    "tenants": {
+      "title": "Inquilinos",
+      "subtitle": "Gerencie seus registros de inquilinos.",
+      "listTitle": "Todos os Inquilinos",
+      "newTenant": "Novo Inquilino",
+      "searchPlaceholder": "Buscar por nome ou email",
+      "empty": "Nenhum inquilino ainda. Adicione o primeiro inquilino.",
+      "view": "Ver",
+      "newTitle": "Criar Inquilino",
+      "newSubtitle": "Adicione um novo inquilino aos seus registros.",
+      "formTitle": "Detalhes do Inquilino",
+      "backToList": "Voltar para Inquilinos",
+      "columns": {
+        "name": "Nome",
+        "phone": "Telefone",
+        "email": "Email",
+        "created": "Criado em"
+      },
+      "detail": {
+        "subtitle": "Ver informações do inquilino e detalhes do contrato.",
+        "backToList": "Voltar para Inquilinos",
+        "editTenant": "Editar Inquilino",
+        "tenantInfo": "Informações do Inquilino",
+        "lease": "Contrato",
+        "noLease": "Nenhum contrato ativo",
+        "unit": "Unidade",
+        "status": "Status",
+        "dates": "Datas",
+        "rent": "Aluguel Mensal",
+        "deposit": "Depósito de Segurança"
+      },
+      "editTitle": "Editar Inquilino",
+      "editSubtitle": "Atualize informações do inquilino.",
+      "form": {
+        "name": "Nome",
+        "namePlaceholder": "Digite o nome completo",
+        "phone": "Telefone",
+        "phonePlaceholder": "Digite o telefone (opcional)",
+        "email": "Email",
+        "emailPlaceholder": "Digite o email (opcional)",
+        "create": "Criar Inquilino",
+        "update": "Salvar Alterações",
+        "cancel": "Cancelar"
+      }
     }
   },
   "app": {

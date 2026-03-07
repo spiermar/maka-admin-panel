@@ -26,7 +26,22 @@ export const createLeaseSchema = z.object({
   path: ['end_date'],
 });
 
-export const updateLeaseSchema = createLeaseSchema.partial();
+// Update schema - separate from create to avoid refine issues with partial
+const updateLeaseBaseSchema = z.object({
+  tenant_id: z.coerce.number().int().positive('Tenant is required').optional(),
+  unit_id: z.coerce.number().int().positive('Unit is required').optional(),
+  start_date: dateOnlySchema.optional(),
+  end_date: dateOnlySchema.optional(),
+  monthly_rent: z.coerce.number().positive('Rent must be positive').optional(),
+  security_deposit: z.coerce.number().min(0, 'Deposit cannot be negative').optional(),
+  lease_type: z.string().max(50).optional(),
+  pets_allowed: z.boolean().optional(),
+  parking_spot: z.string().max(100).optional(),
+  utilities_included: z.boolean().optional(),
+});
+
+export const updateLeaseSchema = updateLeaseBaseSchema;
+
 export const transitionLeaseSchema = z.object({
   status: leaseStatusSchema,
 });
