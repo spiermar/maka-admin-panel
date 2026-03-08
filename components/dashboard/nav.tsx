@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
 
 export function DashboardNav() {
   const t = useTranslations('nav');
@@ -29,7 +30,7 @@ export function DashboardNav() {
   ];
 
   const rentalsLinks = [
-    { href: `/rentals?lang=${lang}`, label: t('rentals') },
+    { href: `/rentals?lang=${lang}`, label: t('units') },
     { href: `/rentals/tenants?lang=${lang}`, label: t('tenants') },
     { href: `/rentals/leases?lang=${lang}`, label: t('leases') },
     { href: `/rentals/charges?lang=${lang}`, label: t('charges') },
@@ -60,6 +61,9 @@ export function DashboardNav() {
               className="focus:outline-none"
             >
               {t('rentals')}
+              <ChevronDown
+                className={`ml-1 h-4 w-4 transition-transform ${rentalsOpen ? 'rotate-180' : ''}`}
+              />
             </Button>
             {rentalsOpen && (
               <div className="absolute left-0 top-full mt-1 min-w-[180px] z-50 rounded-md border bg-background shadow-lg">
