@@ -145,7 +145,8 @@ test.describe('Rentals Inventory', () => {
 
     await page.getByRole('link', { name: /dashboard/i }).click();
     await page.waitForURL('/?lang=en');
-    await page.getByRole('link', { name: /rentals/i }).click();
+    await page.getByRole('button', { name: /rentals/i }).click();
+    await page.getByRole('link', { name: /units/i }).click();
     await page.waitForURL('/rentals?lang=en');
 
     await expect(page.getByTestId('inventory-filter-search')).toHaveValue('');

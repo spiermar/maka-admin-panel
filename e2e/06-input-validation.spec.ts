@@ -38,6 +38,7 @@ test.describe('Transaction Input Validation', () => {
     await page.waitForTimeout(300);
     await page.locator('[data-state="open"] input[name="amount"]').fill('1000000.00');
     await page.locator('[data-state="open"] input[name="payee"]').fill('Test');
+    await page.locator('[data-state="open"] input[name="date"]').fill('2026-01-15');
     await page.locator('[data-state="open"] button[type="submit"]').click();
 
     await expect(page.locator('text=Transaction added')).toBeVisible({ timeout: 5000 });
@@ -103,7 +104,6 @@ test.describe('Transaction Input Validation', () => {
   });
 
   test('allows submission of valid transaction', async ({ page }) => {
-    const today = new Date().toISOString().split('T')[0];
     const accountId = await getAccountIdByName('Checking Account');
 
     await page.goto(`/accounts/${accountId}`);
@@ -113,7 +113,7 @@ test.describe('Transaction Input Validation', () => {
     await page.waitForTimeout(300);
     await page.locator('[data-state="open"] input[name="amount"]').fill('150.50');
     await page.locator('[data-state="open"] input[name="payee"]').fill('Test Payee');
-    await page.locator('[data-state="open"] input[name="date"]').fill(today);
+    await page.locator('[data-state="open"] input[name="date"]').fill('2026-01-15');
     await page.locator('[data-state="open"] button[type="submit"]').click();
 
     await expect(page.locator('text=Transaction added')).toBeVisible({ timeout: 5000 });

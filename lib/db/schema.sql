@@ -115,6 +115,35 @@ CREATE TABLE unit_occupancy_statuses (
   )
 );
 
+-- Tenants table
+CREATE TABLE tenants (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  phone VARCHAR(20),
+  email VARCHAR(255),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Leases table
+CREATE TABLE leases (
+  id SERIAL PRIMARY KEY,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  unit_id INTEGER NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+  status VARCHAR(20) NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Pending', 'Active', 'Expired', 'Terminated')),
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  monthly_rent DECIMAL(10,2) NOT NULL,
+  security_deposit DECIMAL(10,2) NOT NULL,
+  lease_type VARCHAR(50),
+  pets_allowed BOOLEAN,
+  parking_spot VARCHAR(100),
+  utilities_included BOOLEAN,
+  previous_lease_id INTEGER REFERENCES leases(id),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX idx_transactions_account_date ON transactions(account_id, date DESC);
 CREATE INDEX idx_transactions_category ON transactions(category_id);
@@ -131,3 +160,64 @@ CREATE INDEX idx_expense_reports_user ON expense_reports(user_id);
 CREATE INDEX idx_expense_reports_status ON expense_reports(status);
 CREATE INDEX idx_expenses_report ON expenses(expense_report_id);
 CREATE INDEX idx_expenses_transaction ON expenses(transaction_id);
+
+-- Charges table (rent charges against a lease)
+CREATE TABLE charges (
+  id SERIAL PRIMARY KEY,
+  lease_id INTEGER NOT NULL REFERENCES leases(id) ON DELETE CASCADE,
+  charge_date DATE NOT NULL,
+  due_date DATE NOT NULL,
+  amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'paid')),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Payments table (rent payments against a lease)
+CREATE TABLE payments (
+  id SERIAL PRIMARY KEY,
+  lease_id INTEGER NOT NULL REFERENCES leases(id) ON DELETE CASCADE,
+  payment_date DATE NOT NULL,
+  amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+  payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('cash', 'check', 'bank_transfer', 'other')),
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for leases
+CREATE INDEX idx_leases_tenant_id ON leases(tenant_id);
+CREATE INDEX idx_leases_unit_id ON leases(unit_id);
+CREATE INDEX idx_leases_status ON leases(status);
+CREATE INDEX idx_leases_start_end ON leases(unit_id, start_date, end_date);
+
+-- Indexes for charges
+CREATE INDEX idx_charges_lease_id ON charges(lease_id);
+CREATE INDEX idx_charges_status ON charges(status);
+CREATE INDEX idx_charges_due_date ON charges(due_date);
+
+-- Indexes for payments
+CREATE INDEX idx_payments_lease_id ON payments(lease_id);
+CREATE INDEX idx_payments_date ON payments(payment_date);
+
+-- Audit events table for tracking high-risk rental operations
+CREATE TABLE IF NOT EXISTS audit_events (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+  event_type VARCHAR(50) NOT NULL CHECK (event_type IN (
+    'lease_status_change',
+    'rent_amount_edit',
+    'payment_adjustment'
+  )),
+  entity_type VARCHAR(20) NOT NULL CHECK (entity_type IN ('lease', 'charge', 'payment')),
+  entity_id INTEGER NOT NULL,
+  old_value JSONB,
+  new_value JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for audit log queries
+CREATE INDEX IF NOT EXISTS idx_audit_events_type ON audit_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_audit_events_entity ON audit_events(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_events_created ON audit_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_events_user ON audit_events(user_id);

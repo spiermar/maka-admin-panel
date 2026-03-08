@@ -138,7 +138,7 @@ export function TransactionTable({
                   }
                   disabled={deleting === transaction.id}
                 >
-                  {deleting === transaction.id ? t('deleting') : t('delete')}
+                  {deleting === transaction.id ? t('deleting') : tCommon('delete')}
                 </Button>
               </TableCell>
             </TableRow>

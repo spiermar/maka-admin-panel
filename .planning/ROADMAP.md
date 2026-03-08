@@ -14,9 +14,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Rental Access Control Baseline** - Rental workflows are gated by role-based permissions in admin routes and actions. (completed 2026-03-07)
 - [x] **Phase 2: Portfolio and Unit Occupancy Management** - Landlord can manage properties/units and current vacancy state. (completed 2026-03-07)
-- [ ] **Phase 3: Tenant and Lease Lifecycle Integrity** - Tenant records and lease lifecycles are managed with overlap protections.
-- [ ] **Phase 4: Rent Charges, Payments, and Delinquency** - Monthly rent operations and balances are tracked end-to-end.
-- [ ] **Phase 5: Operational Visibility and Auditability** - Dashboard summaries and high-risk operation history are available.
+- [x] **Phase 3: Tenant and Lease Lifecycle Integrity** - Tenant records and lease lifecycles are managed with overlap protections. (5/5 plans complete)
+- [x] **Phase 4: Rent Charges, Payments, and Delinquency** - Monthly rent operations and balances are tracked end-to-end. (5/5 plans complete)
+- [x] **Phase 5: Operational Visibility and Auditability** - Dashboard summaries and high-risk operation history are available. (1/2 plans complete)
 
 ## Phase Details
 
@@ -49,7 +49,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can create leases with required residential terms (start/end dates, monthly rent, security deposit).
   3. User can renew, terminate, and move out leases with explicit lifecycle statuses.
   4. User cannot activate overlapping leases for the same unit and overlapping dates.
-**Plans**: TBD
+**Plans**: 5 plans
+
+- [x] 03-01-PLAN.md — Database schema + Types + Validations
+- [x] 03-02-PLAN.md — Tenant and Lease DB Operations
+- [x] 03-03-PLAN.md — Tenant UI pages
+- [x] 03-04-PLAN.md — Lease UI pages with status transitions
+- [x] 03-05-PLAN.md — Integration: Navigation + Unit detail
 
 ### Phase 4: Rent Charges, Payments, and Delinquency
 **Goal**: Landlord can run monthly rent operations, record manual payments, and monitor balances and overdue accounts.
@@ -60,7 +66,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can record manual rent payments with date, amount, and payment method.
   3. User can view current balance due by lease and by tenant.
   4. User can identify overdue balances using due dates and configurable grace periods.
-**Plans**: TBD
+**Plans**: 5 plans
+
+- [x] 04-01-PLAN.md — Database schema + Types + Validations ✓
+- [x] 04-02-PLAN.md — Charges and Payments DB Operations ✓
+- [x] 04-03-PLAN.md — Charges UI page with generate action ✓
+- [x] 04-04-PLAN.md — Payments UI page and form ✓
+- [x] 04-05-PLAN.md — Overdue UI + Integration (lease/tenant balance, nav)
 
 ### Phase 5: Operational Visibility and Auditability
 **Goal**: Rental operations provide clear summary visibility and an auditable history for high-risk changes.
@@ -70,7 +82,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. User can view dashboard summaries for vacancy, occupied units, and delinquent accounts.
   2. User can review an auditable history of lease status changes, rent amount edits, and payment adjustments.
   3. History entries include enough context (who changed what and when) to support operational review.
-**Plans**: TBD
+**Plans**: 2 plans
+
+- [x] 05-01-PLAN.md — Dashboard summary cards for rental operations (VIS-01) ✓
+- [ ] 05-02-PLAN.md — Audit trail for high-risk operations (VIS-02)
 
 ## Progress
 
@@ -81,6 +96,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Rental Access Control Baseline | 2/2 | Complete    | 2026-03-07 |
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
-| 3. Tenant and Lease Lifecycle Integrity | 0/TBD | Not started | - |
-| 4. Rent Charges, Payments, and Delinquency | 0/TBD | Not started | - |
-| 5. Operational Visibility and Auditability | 0/TBD | Not started | - |
+| 3. Tenant and Lease Lifecycle Integrity | 5/5 | Complete    | 2026-03-07 |
+| 4. Rent Charges, Payments, and Delinquency | 5/5 | Complete    | 2026-03-08 |
+| 5. Operational Visibility and Auditability | 1/2 | In Progress | - |

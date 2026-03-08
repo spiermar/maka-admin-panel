@@ -20,6 +20,13 @@
     "dashboard": "Painel",
     "accounts": "Contas",
     "rentals": "Aluguéis",
+    "units": "Unidades",
+    "tenants": "Inquilinos",
+    "leases": "Contratos",
+    "charges": "Encargos",
+    "payments": "Pagamentos",
+    "overdue": "Atrasados",
+    "audit": "Registro de Auditoria",
     "expenseReports": "Relatórios de Despesas",
     "settings": "Configurações"
   },
@@ -31,7 +38,10 @@
     "monthlyExpenses": "Despesas Mensais",
     "netCashFlow": "Fluxo de Caixa Líquido",
     "topExpenses": "Maiores Despesas do Mês",
-    "incomeSources": "Fontes de Receita do Mês"
+    "incomeSources": "Fontes de Receita do Mês",
+    "vacantUnits": "Unidades Vagas",
+    "occupiedUnits": "Unidades Ocupadas",
+    "delinquentAccounts": "Contas Inadimplentes"
   },
   "accounts": {
     "title": "Contas",
@@ -184,7 +194,17 @@
       "occupancy": "Ocupação",
       "currentStatus": "Status atual",
       "nextStatus": "Próximo status agendado",
-      "noFutureStatus": "Nenhum status futuro agendado."
+      "noFutureStatus": "Nenhum status futuro agendado.",
+      "tenantLease": "Inquilino & Contrato",
+      "tenant": "Inquilino",
+      "leaseStatus": "Status do Contrato",
+      "startDate": "Data de Início",
+      "endDate": "Data de Término",
+      "monthlyRent": "Aluguel Mensal",
+      "viewLease": "Ver Contrato",
+      "noActiveLease": "Sem contrato ativo",
+      "noTenantAssigned": "Nenhum inquilino atribuído a esta unidade.",
+      "addTenant": "Adicionar Inquilino"
     },
     "form": {
       "property": "Propriedade",
@@ -198,6 +218,174 @@
       "update": "Salvar Alterações",
       "saving": "Salvando...",
       "saveError": "Não foi possível salvar esta unidade agora."
+    },
+    "tenants": {
+      "title": "Inquilinos",
+      "subtitle": "Gerencie seus registros de inquilinos.",
+      "listTitle": "Todos os Inquilinos",
+      "newTenant": "Novo Inquilino",
+      "searchPlaceholder": "Buscar por nome ou email",
+      "empty": "Nenhum inquilino ainda. Adicione o primeiro inquilino.",
+      "view": "Ver",
+      "newTitle": "Criar Inquilino",
+      "newSubtitle": "Adicione um novo inquilino aos seus registros.",
+      "formTitle": "Detalhes do Inquilino",
+      "backToList": "Voltar para Inquilinos",
+      "columns": {
+        "name": "Nome",
+        "phone": "Telefone",
+        "email": "Email",
+        "created": "Criado em"
+      },
+      "detail": {
+        "subtitle": "Ver informações do inquilino e detalhes do contrato.",
+        "backToList": "Voltar para Inquilinos",
+        "editTenant": "Editar Inquilino",
+        "tenantInfo": "Informações do Inquilino",
+        "lease": "Contrato",
+        "noLease": "Nenhum contrato ativo",
+        "unit": "Unidade",
+        "status": "Status",
+        "dates": "Datas",
+        "rent": "Aluguel Mensal",
+        "deposit": "Depósito de Segurança"
+      },
+      "editTitle": "Editar Inquilino",
+      "editSubtitle": "Atualize informações do inquilino.",
+      "form": {
+        "name": "Nome",
+        "namePlaceholder": "Digite o nome completo",
+        "phone": "Telefone",
+        "phonePlaceholder": "Digite o telefone (opcional)",
+        "email": "Email",
+        "emailPlaceholder": "Digite o email (opcional)",
+        "create": "Criar Inquilino",
+        "update": "Salvar Alterações",
+        "cancel": "Cancelar"
+      },
+      "tenantBalance": {
+        "totalBalance": "Saldo Total"
+      }
+    },
+    "leases": {
+      "title": "Contratos",
+      "subtitle": "Gerencie seus contratos de aluguel.",
+      "listTitle": "Todos os Contratos",
+      "newLease": "Novo Contrato",
+      "noLeases": "Nenhum contrato ainda.",
+      "newLeaseTitle": "Criar Contrato",
+      "newLeaseSubtitle": "Adicione um novo contrato de aluguel.",
+      "formTitle": "Detalhes do Contrato",
+      "noTenants": "Crie um inquilino primeiro para adicionar contratos.",
+      "noAvailableUnits": "Nenhuma unidade disponível. Verifique se você tem unidades vagas.",
+      "columns": {
+        "unit": "Unidade",
+        "tenant": "Inquilino",
+        "status": "Status",
+        "startDate": "Data de Início",
+        "endDate": "Data de Término",
+        "rent": "Aluguel Mensal"
+      },
+      "detail": {
+        "subtitle": "Visualize detalhes do contrato e gerencie o status.",
+        "backToList": "Voltar para Contratos",
+        "backToDetail": "Voltar para Contrato",
+        "edit": "Editar",
+        "leaseInfo": "Informações do Contrato",
+        "additionalInfo": "Informações Adicionais",
+        "statusTransitions": "Transições de Status",
+        "noTransitions": "Nenhuma transição de status válida deste estado.",
+        "currentBalance": "Saldo Atual",
+        "amountDue": "Valor devido",
+        "creditBalance": "Saldo credor"
+      },
+      "editTitle": "Editar Contrato",
+      "editSubtitle": "Atualize informações do contrato.",
+      "form": {
+        "tenant": "Inquilino",
+        "unit": "Unidade",
+        "startDate": "Data de Início",
+        "endDate": "Data de Término",
+        "monthlyRent": "Aluguel Mensal",
+        "securityDeposit": "Depósito de Segurança",
+        "leaseType": "Tipo de Contrato",
+        "leaseTypePlaceholder": "ex: Prazo Fixo, Mês a Mês",
+        "petsAllowed": "Pets Permitidos",
+        "utilitiesIncluded": "Utilidades Incluídas",
+        "parkingSpot": "Vaga de Estacionamento",
+        "parkingSpotPlaceholder": "ex: Vaga A1"
+      },
+      "transition": {
+        "toPending": "Enviar para Aprovação",
+        "toActive": "Marcar Ativo",
+        "toExpired": "Marcar Expirado",
+        "toTerminated": "Encerrar Contrato",
+        "confirmMessage": "Tem certeza que deseja encerrar este contrato antes do prazo?"
+      }
+    },
+    "charges": {
+      "title": "Encargos",
+      "subtitle": "Visualize e gerencie os encargos de aluguel.",
+      "listTitle": "Todos os Encargos",
+      "noCharges": "Nenhum encargo encontrado.",
+      "generate": "Gerar Encargos",
+      "columns": {
+        "lease": "Contrato",
+        "chargeDate": "Data do Encargo",
+        "dueDate": "Data de Vencimento",
+        "amount": "Valor",
+        "status": "Status"
+      }
+    },
+    "payments": {
+      "title": "Pagamentos",
+      "subtitle": "Visualize e registre pagamentos de aluguel.",
+      "listTitle": "Todos os Pagamentos",
+      "noPayments": "Nenhum pagamento encontrado.",
+      "add": "Adicionar Pagamento",
+      "columns": {
+        "lease": "Contrato",
+        "paymentDate": "Data do Pagamento",
+        "amount": "Valor",
+        "method": "Método"
+      },
+      "form": {
+        "lease": "Contrato",
+        "amount": "Valor",
+        "paymentDate": "Data do Pagamento",
+        "method": "Método",
+        "reference": "Referência/Observações"
+      }
+    },
+    "overdue": {
+      "title": "Saldos Atrasados",
+      "subtitle": "Visualize contas com pagamentos de aluguel atrasados.",
+      "noOverdue": "Nenhum saldo atrasado.",
+      "withOverdue": "com saldo atrasado",
+      "listTitle": "Contas Atrasadas",
+      "tenant": "Inquilino",
+      "unit": "Unidade",
+      "amount": "Valor Atrasado",
+      "oldestDue": "Vencimento Mais Antigo"
+    },
+    "audit": {
+      "title": "Registro de Auditoria",
+      "subtitle": "Acompanhe alterações em contratos, valores de aluguel e pagamentos.",
+      "filterTitle": "Filtrar Eventos",
+      "eventType": "Tipo de Evento",
+      "startDate": "Data Inicial",
+      "endDate": "Data Final",
+      "applyFilter": "Aplicar Filtros",
+      "allTypes": "Todos os Tipos",
+      "typeLeaseStatus": "Mudança de Status do Contrato",
+      "typeRentEdit": "Edição de Valor de Aluguel",
+      "typePayment": "Pagamento",
+      "noEvents": "Nenhum evento de auditoria encontrado.",
+      "dateTime": "Data/Hora",
+      "user": "Usuário",
+      "eventTypeCol": "Tipo de Evento",
+      "entity": "Entidade",
+      "details": "Detalhes"
     }
   },
   "app": {

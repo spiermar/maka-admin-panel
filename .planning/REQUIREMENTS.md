@@ -13,23 +13,23 @@
 
 ### Tenants & Leases
 
-- [ ] **LEASE-01**: User can create tenant records and link tenants to units
-- [ ] **LEASE-02**: User can create residential leases with start date, end date, monthly rent, and security deposit
-- [ ] **LEASE-03**: User can renew, terminate, or move-out leases with explicit lifecycle status
-- [ ] **LEASE-04**: User cannot activate overlapping leases for the same unit and overlapping date range
+- [x] **LEASE-01**: User can create tenant records and link tenants to units
+- [x] **LEASE-02**: User can create residential leases with start date, end date, monthly rent, and security deposit
+- [x] **LEASE-03**: User can renew, terminate, or move-out leases with explicit lifecycle status
+- [x] **LEASE-04**: User cannot activate overlapping leases for the same unit and overlapping date range
 
 ### Rent Operations
 
-- [ ] **RENT-01**: User can generate monthly rent charges from active lease terms
-- [ ] **RENT-02**: User can record manual rent payments with payment date, amount, and method
-- [ ] **RENT-03**: User can see current balance due per lease and per tenant
-- [ ] **RENT-04**: User can mark and view overdue balances based on due date and configurable grace period
+- [x] **RENT-01**: User can generate monthly rent charges from active lease terms
+- [x] **RENT-02**: User can record manual rent payments with payment date, amount, and method
+- [x] **RENT-03**: User can see current balance due per lease and per tenant
+- [x] **RENT-04**: User can mark and view overdue balances based on due date and configurable grace period
 
 ### Visibility & Controls
 
-- [ ] **VIS-01**: User can see vacancy, occupied count, and delinquent-account summaries in dashboard views
-- [ ] **VIS-02**: User can see an auditable change history for high-risk rental operations (lease status changes, rent amount edits, payment adjustments)
-- [ ] **VIS-03**: User access to rental operations is protected by role-based permissions in admin workflows
+- [x] **VIS-01**: User can see vacancy, occupied count, and delinquent-account summaries in dashboard views
+- [x] **VIS-02**: User can see an auditable change history for high-risk rental operations (lease status changes, rent amount edits, payment adjustments)
+- [x] **VIS-03**: User access to rental operations is protected by role-based permissions in admin workflows
 
 ## v2 Requirements
 
@@ -58,16 +58,16 @@
 | UNIT-01 | Phase 2 | Pending |
 | UNIT-02 | Phase 2 | Pending |
 | UNIT-03 | Phase 2 | Pending |
-| LEASE-01 | Phase 3 | Pending |
-| LEASE-02 | Phase 3 | Pending |
-| LEASE-03 | Phase 3 | Pending |
-| LEASE-04 | Phase 3 | Pending |
-| RENT-01 | Phase 4 | Pending |
-| RENT-02 | Phase 4 | Pending |
-| RENT-03 | Phase 4 | Pending |
-| RENT-04 | Phase 4 | Pending |
-| VIS-01 | Phase 5 | Pending |
-| VIS-02 | Phase 5 | Pending |
+| LEASE-01 | Phase 3 | Complete |
+| LEASE-02 | Phase 3 | Complete |
+| LEASE-03 | Phase 3 | Complete |
+| LEASE-04 | Phase 3 | Complete |
+| RENT-01 | Phase 4 | Complete |
+| RENT-02 | Phase 4 | Complete |
+| RENT-03 | Phase 4 | Complete |
+| RENT-04 | Phase 4 | Complete |
+| VIS-01 | Phase 5 | Complete |
+| VIS-02 | Phase 5 | Complete |
 | VIS-03 | Phase 1 | Pending |
 
 **Coverage:**

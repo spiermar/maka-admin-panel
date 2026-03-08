@@ -7,7 +7,9 @@
     "confirm": "Confirm",
     "edit": "Edit",
     "add": "Add",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "yes": "Yes",
+    "no": "No"
   },
   "auth": {
     "signIn": "Sign In",
@@ -20,6 +22,13 @@
     "dashboard": "Dashboard",
     "accounts": "Accounts",
     "rentals": "Rentals",
+    "units": "Units",
+    "tenants": "Tenants",
+    "leases": "Leases",
+    "charges": "Charges",
+    "payments": "Payments",
+    "overdue": "Overdue",
+    "audit": "Audit Log",
     "expenseReports": "Expense Reports",
     "settings": "Settings"
   },
@@ -31,7 +40,10 @@
     "monthlyExpenses": "Monthly Expenses",
     "netCashFlow": "Net Cash Flow",
     "topExpenses": "Top Expenses This Month",
-    "incomeSources": "Income Sources This Month"
+    "incomeSources": "Income Sources This Month",
+    "vacantUnits": "Vacant Units",
+    "occupiedUnits": "Occupied Units",
+    "delinquentAccounts": "Delinquent Accounts"
   },
   "accounts": {
     "title": "Accounts",
@@ -184,7 +196,17 @@
       "occupancy": "Occupancy",
       "currentStatus": "Current status",
       "nextStatus": "Next scheduled status",
-      "noFutureStatus": "No future status scheduled."
+      "noFutureStatus": "No future status scheduled.",
+      "tenantLease": "Tenant & Lease",
+      "tenant": "Tenant",
+      "leaseStatus": "Lease Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "monthlyRent": "Monthly Rent",
+      "viewLease": "View Lease",
+      "noActiveLease": "No active lease",
+      "noTenantAssigned": "No tenant assigned to this unit.",
+      "addTenant": "Add Tenant"
     },
     "form": {
       "property": "Property",
@@ -198,6 +220,181 @@
       "update": "Save Changes",
       "saving": "Saving...",
       "saveError": "Unable to save this unit right now."
+    },
+    "tenants": {
+      "title": "Tenants",
+      "subtitle": "Manage your tenant records.",
+      "listTitle": "All Tenants",
+      "newTenant": "New Tenant",
+      "searchPlaceholder": "Search by name or email",
+      "empty": "No tenants yet. Add your first tenant.",
+      "view": "View",
+      "newTitle": "Create Tenant",
+      "newSubtitle": "Add a new tenant to your records.",
+      "formTitle": "Tenant Details",
+      "backToList": "Back to Tenants",
+      "columns": {
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "created": "Created"
+      },
+      "detail": {
+        "subtitle": "View tenant information and lease details.",
+        "backToList": "Back to Tenants",
+        "editTenant": "Edit Tenant",
+        "tenantInfo": "Tenant Information",
+        "lease": "Lease",
+        "noLease": "No active lease",
+        "unit": "Unit",
+        "status": "Status",
+        "dates": "Dates",
+        "rent": "Monthly Rent",
+        "deposit": "Security Deposit"
+      },
+      "editTitle": "Edit Tenant",
+      "editSubtitle": "Update tenant information.",
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Enter full name",
+        "phone": "Phone",
+        "phonePlaceholder": "Enter phone number (optional)",
+        "email": "Email",
+        "emailPlaceholder": "Enter email address (optional)",
+        "create": "Create Tenant",
+        "update": "Save Changes",
+        "cancel": "Cancel"
+      },
+      "detail": {
+        "totalBalance": "Total Balance"
+      }
+    },
+    "leases": {
+      "title": "Leases",
+      "subtitle": "Manage your lease agreements.",
+      "listTitle": "All Leases",
+      "newLease": "New Lease",
+      "noLeases": "No leases yet.",
+      "newLeaseTitle": "Create Lease",
+      "newLeaseSubtitle": "Add a new lease agreement.",
+      "formTitle": "Lease Details",
+      "noTenants": "Create a tenant first before adding leases.",
+      "noAvailableUnits": "No available units. Make sure you have vacant units.",
+      "columns": {
+        "unit": "Unit",
+        "tenant": "Tenant",
+        "status": "Status",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "rent": "Monthly Rent"
+      },
+      "detail": {
+        "subtitle": "View lease details and manage status.",
+        "backToList": "Back to Leases",
+        "backToDetail": "Back to Lease",
+        "edit": "Edit",
+        "leaseInfo": "Lease Information",
+        "additionalInfo": "Additional Information",
+        "statusTransitions": "Status Transitions",
+        "noTransitions": "No valid status transitions from this state.",
+        "currentBalance": "Current Balance",
+        "amountDue": "Amount due",
+        "creditBalance": "Credit balance"
+      },
+      "editTitle": "Edit Lease",
+      "editSubtitle": "Update lease information.",
+      "form": {
+        "tenant": "Tenant",
+        "unit": "Unit",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "monthlyRent": "Monthly Rent",
+        "securityDeposit": "Security Deposit",
+        "leaseType": "Lease Type",
+        "leaseTypePlaceholder": "e.g., Fixed Term, Month-to-Month",
+        "petsAllowed": "Pets Allowed",
+        "utilitiesIncluded": "Utilities Included",
+        "parkingSpot": "Parking Spot",
+        "parkingSpotPlaceholder": "e.g., Space A1"
+      },
+      "transition": {
+        "toPending": "Submit for Approval",
+        "toActive": "Mark Active",
+        "toExpired": "Mark Expired",
+        "toTerminated": "Terminate Lease",
+        "confirmMessage": "Are you sure you want to terminate this lease early?"
+      }
+    },
+    "leaseStatus": {
+      "Draft": "Draft",
+      "Pending": "Pending",
+      "Active": "Active",
+      "Expired": "Expired",
+      "Terminated": "Terminated"
+    },
+    "charges": {
+      "title": "Charges",
+      "subtitle": "View and manage rent charges.",
+      "listTitle": "All Charges",
+      "noCharges": "No charges found.",
+      "generate": "Generate Charges",
+      "columns": {
+        "lease": "Lease",
+        "chargeDate": "Charge Date",
+        "dueDate": "Due Date",
+        "amount": "Amount",
+        "status": "Status"
+      }
+    },
+    "payments": {
+      "title": "Payments",
+      "subtitle": "View and record rent payments.",
+      "listTitle": "All Payments",
+      "noPayments": "No payments found.",
+      "add": "Add Payment",
+      "columns": {
+        "lease": "Lease",
+        "paymentDate": "Payment Date",
+        "amount": "Amount",
+        "method": "Method"
+      },
+      "form": {
+        "lease": "Lease",
+        "amount": "Amount",
+        "paymentDate": "Payment Date",
+        "method": "Method",
+        "reference": "Reference/Notes"
+      }
+    },
+    "overdue": {
+      "title": "Overdue Balances",
+      "subtitle": "View accounts with overdue rent payments.",
+      "noOverdue": "No overdue balances.",
+      "withOverdue": "with overdue balance",
+      "listTitle": "Overdue Accounts",
+      "tenant": "Tenant",
+      "unit": "Unit",
+      "amount": "Amount Overdue",
+      "oldestDue": "Oldest Due Date"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "subtitle": "Track changes to leases, rent amounts, and payments.",
+      "filterTitle": "Filter Events",
+      "eventType": "Event Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "applyFilter": "Apply Filters",
+      "allTypes": "All Types",
+      "typeLeaseStatus": "Lease Status Change",
+      "typeRentEdit": "Rent Amount Edit",
+      "typePayment": "Payment",
+      "noEvents": "No audit events found.",
+      "dateTime": "Date/Time",
+      "user": "User",
+      "eventTypeCol": "Event Type",
+      "entity": "Entity",
+      "details": "Details"
     }
   },
   "app": {
