@@ -38,7 +38,10 @@
     "monthlyExpenses": "Despesas Mensais",
     "netCashFlow": "Fluxo de Caixa Líquido",
     "topExpenses": "Maiores Despesas do Mês",
-    "incomeSources": "Fontes de Receita do Mês"
+    "incomeSources": "Fontes de Receita do Mês",
+    "vacantUnits": "Unidades Vagas",
+    "occupiedUnits": "Unidades Ocupadas",
+    "delinquentAccounts": "Contas Inadimplentes"
   },
   "accounts": {
     "title": "Contas",
