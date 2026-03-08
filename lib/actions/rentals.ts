@@ -6,10 +6,12 @@ import { createProperty, updateProperty } from '@/lib/db/rentals-properties';
 import { createUnit, updateUnit } from '@/lib/db/rentals-units';
 import { scheduleUnitOccupancyStatus } from '@/lib/db/rentals-occupancy';
 import { createTenant, updateTenant } from '@/lib/db/rentals-tenants';
-import { createLease, updateLease, transitionLeaseStatus, LeaseOverlapError } from '@/lib/db/rentals-leases';
+import { createLease, updateLease, transitionLeaseStatus, LeaseOverlapError, getLeaseById } from '@/lib/db/rentals-leases';
 import { generateMonthlyCharges } from '@/lib/db/rentals-charges';
-import { createPayment, allocatePaymentToCharges } from '@/lib/db/rentals-payments';
+import { createPayment, allocatePaymentToCharges, getPaymentById } from '@/lib/db/rentals-payments';
 import { getAllLeases } from '@/lib/db/rentals-leases';
+import { emitAuditEvent } from '@/lib/db/rentals-audit';
+import { getSession } from '@/lib/auth/session';
 import { createPropertySchema, updatePropertySchema } from '@/lib/validations/rentals-property';
 import { createPaymentSchema } from '@/lib/validations/rentals-payment';
 import { createUnitSchema, updateUnitSchema } from '@/lib/validations/rentals-unit';
@@ -52,6 +54,11 @@ type CreateLeaseActionResult =
 function getFormValue(formData: FormData, key: string): string | null {
   const value = formData.get(key);
   return typeof value === 'string' ? value : null;
+}
+
+async function getCurrentUserId(): Promise<number | null> {
+  const session = await getSession();
+  return session?.userId ?? null;
 }
 
 function handleDatabaseError(error: unknown): RentalsActionResult {
@@ -458,7 +465,28 @@ export async function updateLeaseAction(
   }
 
   try {
+    // Get current lease data before update for audit
+    const oldLease = await getLeaseById(id);
+    const oldMonthlyRent = oldLease?.monthly_rent ?? null;
+
     await updateLease(id, result.data);
+
+    // Emit audit event if monthly rent changed
+    const newMonthlyRent = result.data.monthly_rent ?? null;
+    if (oldMonthlyRent !== null && newMonthlyRent !== null && oldMonthlyRent !== newMonthlyRent) {
+      const userId = await getCurrentUserId();
+      if (userId) {
+        await emitAuditEvent({
+          userId,
+          eventType: 'rent_amount_edit',
+          entityType: 'lease',
+          entityId: id,
+          oldValue: { monthly_rent: oldMonthlyRent },
+          newValue: { monthly_rent: newMonthlyRent },
+        });
+      }
+    }
+
     revalidatePath('/rentals');
     revalidatePath('/rentals/leases');
     revalidatePath(`/rentals/leases/${id}`);
@@ -496,7 +524,27 @@ export async function transitionLeaseAction(
   }
 
   try {
+    // Get current lease data before status change for audit
+    const oldLease = await getLeaseById(id);
+    const oldStatus = oldLease?.status ?? null;
+
     await transitionLeaseStatus(id, result.data.status);
+
+    // Emit audit event for status change
+    if (oldStatus !== null && oldStatus !== result.data.status) {
+      const userId = await getCurrentUserId();
+      if (userId) {
+        await emitAuditEvent({
+          userId,
+          eventType: 'lease_status_change',
+          entityType: 'lease',
+          entityId: id,
+          oldValue: { status: oldStatus },
+          newValue: { status: result.data.status },
+        });
+      }
+    }
+
     revalidatePath('/rentals');
     revalidatePath('/rentals/leases');
     revalidatePath(`/rentals/leases/${id}`);
@@ -574,6 +622,24 @@ export async function createPaymentAction(
     const payment = await createPayment(result.data);
     // Auto-allocate payment to oldest pending charges
     await allocatePaymentToCharges(payment.id);
+
+    // Emit audit event for payment creation
+    const userId = await getCurrentUserId();
+    if (userId) {
+      await emitAuditEvent({
+        userId,
+        eventType: 'payment_adjustment',
+        entityType: 'payment',
+        entityId: payment.id,
+        oldValue: null,
+        newValue: {
+          lease_id: result.data.lease_id,
+          payment_date: result.data.payment_date,
+          amount: result.data.amount,
+          payment_method: result.data.payment_method,
+        },
+      });
+    }
 
     revalidatePath('/rentals/payments');
     revalidatePath('/rentals/charges');
