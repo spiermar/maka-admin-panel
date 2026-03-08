@@ -15,8 +15,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Rental Access Control Baseline** - Rental workflows are gated by role-based permissions in admin routes and actions. (completed 2026-03-07)
 - [x] **Phase 2: Portfolio and Unit Occupancy Management** - Landlord can manage properties/units and current vacancy state. (completed 2026-03-07)
 - [x] **Phase 3: Tenant and Lease Lifecycle Integrity** - Tenant records and lease lifecycles are managed with overlap protections. (5/5 plans complete)
-- [ ] **Phase 4: Rent Charges, Payments, and Delinquency** - Monthly rent operations and balances are tracked end-to-end.
-- [ ] **Phase 5: Operational Visibility and Auditability** - Dashboard summaries and high-risk operation history are available.
+- [x] **Phase 4: Rent Charges, Payments, and Delinquency** - Monthly rent operations and balances are tracked end-to-end. (5/5 plans complete)
+- [x] **Phase 5: Operational Visibility and Auditability** - Dashboard summaries and high-risk operation history are available. (1/2 plans complete)
 
 ## Phase Details
 
@@ -84,8 +84,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. History entries include enough context (who changed what and when) to support operational review.
 **Plans**: 2 plans
 
-- [x] 05-01-PLAN.md — Dashboard summary cards for rental operations (VIS-01)
-- [x] 05-02-PLAN.md — Audit trail for high-risk operations (VIS-02)
+- [x] 05-01-PLAN.md — Dashboard summary cards for rental operations (VIS-01) ✓
+- [ ] 05-02-PLAN.md — Audit trail for high-risk operations (VIS-02)
 
 ## Progress
 
@@ -98,4 +98,4 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
 | 3. Tenant and Lease Lifecycle Integrity | 5/5 | Complete    | 2026-03-07 |
 | 4. Rent Charges, Payments, and Delinquency | 5/5 | Complete    | 2026-03-08 |
-| 5. Operational Visibility and Auditability | 2/2 | Planned | - |
+| 5. Operational Visibility and Auditability | 1/2 | In Progress | - |
