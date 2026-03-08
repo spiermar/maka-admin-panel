@@ -8,7 +8,10 @@ import { scheduleUnitOccupancyStatus } from '@/lib/db/rentals-occupancy';
 import { createTenant, updateTenant } from '@/lib/db/rentals-tenants';
 import { createLease, updateLease, transitionLeaseStatus, LeaseOverlapError } from '@/lib/db/rentals-leases';
 import { generateMonthlyCharges } from '@/lib/db/rentals-charges';
+import { createPayment, allocatePaymentToCharges } from '@/lib/db/rentals-payments';
+import { getAllLeases } from '@/lib/db/rentals-leases';
 import { createPropertySchema, updatePropertySchema } from '@/lib/validations/rentals-property';
+import { createPaymentSchema } from '@/lib/validations/rentals-payment';
 import { createUnitSchema, updateUnitSchema } from '@/lib/validations/rentals-unit';
 import { scheduleOccupancySchema } from '@/lib/validations/rentals-occupancy';
 import { createTenantSchema, updateTenantSchema } from '@/lib/validations/rentals-tenant';
@@ -527,5 +530,57 @@ export async function generateChargesAction(
   } catch (error) {
     console.error('Failed to generate charges:', error);
     return { success: false, error: 'Failed to generate charges' };
+  }
+}
+
+// Payment Actions
+
+type CreatePaymentActionResult =
+  | { success: true; paymentId: number }
+  | {
+      success: false;
+      error?: string;
+      errors?: Record<string, string[] | undefined>;
+    };
+
+function handleCreatePaymentError(error: unknown): CreatePaymentActionResult {
+  return {
+    success: false,
+    error: 'Failed to create payment',
+  };
+}
+
+export async function createPaymentAction(
+  formData: FormData
+): Promise<CreatePaymentActionResult> {
+  await requireAuth();
+
+  const result = createPaymentSchema.safeParse({
+    lease_id: getFormValue(formData, 'lease_id'),
+    payment_date: getFormValue(formData, 'payment_date'),
+    amount: getFormValue(formData, 'amount'),
+    payment_method: getFormValue(formData, 'payment_method'),
+    notes: getFormValue(formData, 'notes'),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    const payment = await createPayment(result.data);
+    // Auto-allocate payment to oldest pending charges
+    await allocatePaymentToCharges(payment.id);
+
+    revalidatePath('/rentals/payments');
+    revalidatePath('/rentals/charges');
+    revalidatePath('/rentals/leases');
+    return { success: true, paymentId: payment.id };
+  } catch (error) {
+    console.error('Failed to create payment:', error);
+    return handleCreatePaymentError(error);
   }
 }
