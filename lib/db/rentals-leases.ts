@@ -235,3 +235,30 @@ export async function transitionLeaseStatus(
     [newStatus, id]
   );
 }
+
+// Get lease options for dropdowns (with tenant and unit info)
+export interface LeaseOption {
+  id: number;
+  tenant_name: string;
+  unit_number: string;
+  property_name: string;
+  monthly_rent: number;
+}
+
+export async function getLeaseOptions(status?: LeaseStatus): Promise<LeaseOption[]> {
+  return queryMany<LeaseOption>(
+    `SELECT 
+       l.id, 
+       t.name as tenant_name, 
+       u.unit_number, 
+       prop.name as property_name,
+       l.monthly_rent
+     FROM leases l
+     JOIN tenants t ON l.tenant_id = t.id
+     JOIN units u ON l.unit_id = u.id
+     JOIN properties prop ON u.property_id = prop.id
+     WHERE l.status = $1
+     ORDER BY prop.name, u.unit_number`,
+    status ? [status] : []
+  );
+}
