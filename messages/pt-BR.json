@@ -25,6 +25,7 @@
     "charges": "Encargos",
     "payments": "Pagamentos",
     "overdue": "Atrasados",
+    "audit": "Registro de Auditoria",
     "expenseReports": "Relatórios de Despesas",
     "settings": "Configurações"
   },
@@ -258,15 +259,64 @@
         "update": "Salvar Alterações",
         "cancel": "Cancelar"
       },
-      "detail": {
+      "tenantBalance": {
         "totalBalance": "Saldo Total"
       }
     },
     "leases": {
+      "title": "Contratos",
+      "subtitle": "Gerencie seus contratos de aluguel.",
+      "listTitle": "Todos os Contratos",
+      "newLease": "Novo Contrato",
+      "noLeases": "Nenhum contrato ainda.",
+      "newLeaseTitle": "Criar Contrato",
+      "newLeaseSubtitle": "Adicione um novo contrato de aluguel.",
+      "formTitle": "Detalhes do Contrato",
+      "noTenants": "Crie um inquilino primeiro para adicionar contratos.",
+      "noAvailableUnits": "Nenhuma unidade disponível. Verifique se você tem unidades vagas.",
+      "columns": {
+        "unit": "Unidade",
+        "tenant": "Inquilino",
+        "status": "Status",
+        "startDate": "Data de Início",
+        "endDate": "Data de Término",
+        "rent": "Aluguel Mensal"
+      },
       "detail": {
+        "subtitle": "Visualize detalhes do contrato e gerencie o status.",
+        "backToList": "Voltar para Contratos",
+        "backToDetail": "Voltar para Contrato",
+        "edit": "Editar",
+        "leaseInfo": "Informações do Contrato",
+        "additionalInfo": "Informações Adicionais",
+        "statusTransitions": "Transições de Status",
+        "noTransitions": "Nenhuma transição de status válida deste estado.",
         "currentBalance": "Saldo Atual",
         "amountDue": "Valor devido",
         "creditBalance": "Saldo credor"
+      },
+      "editTitle": "Editar Contrato",
+      "editSubtitle": "Atualize informações do contrato.",
+      "form": {
+        "tenant": "Inquilino",
+        "unit": "Unidade",
+        "startDate": "Data de Início",
+        "endDate": "Data de Término",
+        "monthlyRent": "Aluguel Mensal",
+        "securityDeposit": "Depósito de Segurança",
+        "leaseType": "Tipo de Contrato",
+        "leaseTypePlaceholder": "ex: Prazo Fixo, Mês a Mês",
+        "petsAllowed": "Pets Permitidos",
+        "utilitiesIncluded": "Utilidades Incluídas",
+        "parkingSpot": "Vaga de Estacionamento",
+        "parkingSpotPlaceholder": "ex: Vaga A1"
+      },
+      "transition": {
+        "toPending": "Enviar para Aprovação",
+        "toActive": "Marcar Ativo",
+        "toExpired": "Marcar Expirado",
+        "toTerminated": "Encerrar Contrato",
+        "confirmMessage": "Tem certeza que deseja encerrar este contrato antes do prazo?"
       }
     },
     "charges": {

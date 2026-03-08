@@ -263,6 +263,9 @@
         "create": "Create Tenant",
         "update": "Save Changes",
         "cancel": "Cancel"
+      },
+      "detail": {
+        "totalBalance": "Total Balance"
       }
     },
     "leases": {
@@ -292,7 +295,10 @@
         "leaseInfo": "Lease Information",
         "additionalInfo": "Additional Information",
         "statusTransitions": "Status Transitions",
-        "noTransitions": "No valid status transitions from this state."
+        "noTransitions": "No valid status transitions from this state.",
+        "currentBalance": "Current Balance",
+        "amountDue": "Amount due",
+        "creditBalance": "Credit balance"
       },
       "editTitle": "Edit Lease",
       "editSubtitle": "Update lease information.",
@@ -388,18 +394,6 @@
       "eventTypeCol": "Event Type",
       "entity": "Entity",
       "details": "Details"
-    },
-    "tenants": {
-      "detail": {
-        "totalBalance": "Total Balance"
-      }
-    },
-    "leases": {
-      "detail": {
-        "currentBalance": "Current Balance",
-        "amountDue": "Amount due",
-        "creditBalance": "Credit balance"
-      }
     }
   },
   "app": {
