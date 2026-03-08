@@ -3,6 +3,7 @@ import { getLangFromUrl } from '@/lib/i18n/utils';
 import { getLeaseById } from '@/lib/db/rentals-leases';
 import { getTenantById } from '@/lib/db/rentals-tenants';
 import { getUnitInventoryById } from '@/lib/db/rentals-units';
+import { getLeaseBalance } from '@/lib/db/rentals-charges';
 import { LeaseDetailClient } from './client';
 
 export default async function LeaseDetailPage({
@@ -29,10 +30,11 @@ export default async function LeaseDetailPage({
     notFound();
   }
 
-  // Fetch tenant and unit using lease data
-  const [tenantData, unitData] = await Promise.all([
+  // Fetch tenant, unit, and balance using lease data
+  const [tenantData, unitData, balance] = await Promise.all([
     getTenantById(lease.tenant_id),
     getUnitInventoryById(lease.unit_id),
+    getLeaseBalance(lease.id),
   ]);
 
   return (
@@ -41,6 +43,7 @@ export default async function LeaseDetailPage({
       lease={lease}
       tenant={tenantData}
       unit={unitData}
+      balance={balance}
     />
   );
 }

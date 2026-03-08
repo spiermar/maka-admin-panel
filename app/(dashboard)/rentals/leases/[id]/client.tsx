@@ -24,6 +24,7 @@ interface LeaseDetailClientProps {
   lease: Lease;
   tenant: Tenant | null;
   unit: UnitInventoryRow | null;
+  balance: number;
 }
 
 function formatDate(value: string, lang: string): string {
@@ -46,6 +47,7 @@ export function LeaseDetailClient({
   lease,
   tenant,
   unit,
+  balance,
 }: LeaseDetailClientProps) {
   const t = useTranslations('rentals');
   const tCommon = useTranslations('common');
@@ -160,6 +162,26 @@ export function LeaseDetailClient({
           <div>
             <p className="text-sm text-muted-foreground">{t('leases.form.securityDeposit')}</p>
             <p className="font-medium">{formatCurrency(lease.security_deposit, lang)}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('leases.detail.currentBalance')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4">
+            <p
+              className={`text-2xl font-bold ${
+                balance > 0 ? 'text-red-600' : 'text-green-600'
+              }`}
+            >
+              {formatCurrency(balance, lang)}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {balance > 0 ? t('leases.detail.amountDue') : t('leases.detail.creditBalance')}
+            </p>
           </div>
         </CardContent>
       </Card>
