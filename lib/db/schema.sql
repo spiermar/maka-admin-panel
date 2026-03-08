@@ -199,3 +199,25 @@ CREATE INDEX idx_charges_due_date ON charges(due_date);
 -- Indexes for payments
 CREATE INDEX idx_payments_lease_id ON payments(lease_id);
 CREATE INDEX idx_payments_date ON payments(payment_date);
+
+-- Audit events table for tracking high-risk rental operations
+CREATE TABLE IF NOT EXISTS audit_events (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+  event_type VARCHAR(50) NOT NULL CHECK (event_type IN (
+    'lease_status_change',
+    'rent_amount_edit',
+    'payment_adjustment'
+  )),
+  entity_type VARCHAR(20) NOT NULL CHECK (entity_type IN ('lease', 'charge', 'payment')),
+  entity_id INTEGER NOT NULL,
+  old_value JSONB,
+  new_value JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for audit log queries
+CREATE INDEX IF NOT EXISTS idx_audit_events_type ON audit_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_audit_events_entity ON audit_events(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_events_created ON audit_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_events_user ON audit_events(user_id);
