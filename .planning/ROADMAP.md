@@ -72,7 +72,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 04-02-PLAN.md — Charges and Payments DB Operations ✓
 - [x] 04-03-PLAN.md — Charges UI page with generate action ✓
 - [x] 04-04-PLAN.md — Payments UI page and form ✓
-- [ ] 04-05-PLAN.md — Overdue UI + Integration (lease/tenant balance, nav)
+- [x] 04-05-PLAN.md — Overdue UI + Integration (lease/tenant balance, nav)
 
 ### Phase 5: Operational Visibility and Auditability
 **Goal**: Rental operations provide clear summary visibility and an auditable history for high-risk changes.
@@ -84,8 +84,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. History entries include enough context (who changed what and when) to support operational review.
 **Plans**: 2 plans
 
-- [ ] 05-01-PLAN.md — Dashboard summary cards for rental operations (VIS-01)
-- [ ] 05-02-PLAN.md — Audit trail for high-risk operations (VIS-02)
+- [x] 05-01-PLAN.md — Dashboard summary cards for rental operations (VIS-01)
+- [x] 05-02-PLAN.md — Audit trail for high-risk operations (VIS-02)
 
 ## Progress
 
@@ -98,4 +98,4 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
 | 3. Tenant and Lease Lifecycle Integrity | 5/5 | Complete    | 2026-03-07 |
 | 4. Rent Charges, Payments, and Delinquency | 5/5 | Complete    | 2026-03-08 |
-| 5. Operational Visibility and Auditability | 0/2 | Not started | - |
+| 5. Operational Visibility and Auditability | 2/2 | Planned | - |
