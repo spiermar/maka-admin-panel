@@ -38,7 +38,10 @@
     "monthlyExpenses": "Monthly Expenses",
     "netCashFlow": "Net Cash Flow",
     "topExpenses": "Top Expenses This Month",
-    "incomeSources": "Income Sources This Month"
+    "incomeSources": "Income Sources This Month",
+    "vacantUnits": "Vacant Units",
+    "occupiedUnits": "Occupied Units",
+    "delinquentAccounts": "Delinquent Accounts"
   },
   "accounts": {
     "title": "Accounts",
