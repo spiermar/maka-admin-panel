@@ -363,6 +363,25 @@
       "unit": "Unidade",
       "amount": "Valor Atrasado",
       "oldestDue": "Vencimento Mais Antigo"
+    },
+    "audit": {
+      "title": "Registro de Auditoria",
+      "subtitle": "Acompanhe alterações em contratos, valores de aluguel e pagamentos.",
+      "filterTitle": "Filtrar Eventos",
+      "eventType": "Tipo de Evento",
+      "startDate": "Data Inicial",
+      "endDate": "Data Final",
+      "applyFilter": "Aplicar Filtros",
+      "allTypes": "Todos os Tipos",
+      "typeLeaseStatus": "Mudança de Status do Contrato",
+      "typeRentEdit": "Edição de Valor de Aluguel",
+      "typePayment": "Pagamento",
+      "noEvents": "Nenhum evento de auditoria encontrado.",
+      "dateTime": "Data/Hora",
+      "user": "Usuário",
+      "eventTypeCol": "Tipo de Evento",
+      "entity": "Entidade",
+      "details": "Detalhes"
     }
   },
   "app": {
