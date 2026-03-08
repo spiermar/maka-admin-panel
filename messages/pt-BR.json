@@ -22,6 +22,9 @@
     "rentals": "Aluguéis",
     "tenants": "Inquilinos",
     "leases": "Contratos",
+    "charges": "Encargos",
+    "payments": "Pagamentos",
+    "overdue": "Atrasados",
     "expenseReports": "Relatórios de Despesas",
     "settings": "Configurações"
   },
@@ -254,7 +257,62 @@
         "create": "Criar Inquilino",
         "update": "Salvar Alterações",
         "cancel": "Cancelar"
+      },
+      "detail": {
+        "totalBalance": "Saldo Total"
       }
+    },
+    "leases": {
+      "detail": {
+        "currentBalance": "Saldo Atual",
+        "amountDue": "Valor devido",
+        "creditBalance": "Saldo credor"
+      }
+    },
+    "charges": {
+      "title": "Encargos",
+      "subtitle": "Visualize e gerencie os encargos de aluguel.",
+      "listTitle": "Todos os Encargos",
+      "noCharges": "Nenhum encargo encontrado.",
+      "generate": "Gerar Encargos",
+      "columns": {
+        "lease": "Contrato",
+        "chargeDate": "Data do Encargo",
+        "dueDate": "Data de Vencimento",
+        "amount": "Valor",
+        "status": "Status"
+      }
+    },
+    "payments": {
+      "title": "Pagamentos",
+      "subtitle": "Visualize e registre pagamentos de aluguel.",
+      "listTitle": "Todos os Pagamentos",
+      "noPayments": "Nenhum pagamento encontrado.",
+      "add": "Adicionar Pagamento",
+      "columns": {
+        "lease": "Contrato",
+        "paymentDate": "Data do Pagamento",
+        "amount": "Valor",
+        "method": "Método"
+      },
+      "form": {
+        "lease": "Contrato",
+        "amount": "Valor",
+        "paymentDate": "Data do Pagamento",
+        "method": "Método",
+        "reference": "Referência/Observações"
+      }
+    },
+    "overdue": {
+      "title": "Saldos Atrasados",
+      "subtitle": "Visualize contas com pagamentos de aluguel atrasados.",
+      "noOverdue": "Nenhum saldo atrasado.",
+      "withOverdue": "com saldo atrasado",
+      "listTitle": "Contas Atrasadas",
+      "tenant": "Inquilino",
+      "unit": "Unidade",
+      "amount": "Valor Atrasado",
+      "oldestDue": "Vencimento Mais Antigo"
     }
   },
   "app": {

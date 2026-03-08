@@ -16,6 +16,9 @@ export function DashboardNav() {
     { href: `/rentals?lang=${lang}`, label: t('rentals') },
     { href: `/rentals/tenants?lang=${lang}`, label: t('tenants') },
     { href: `/rentals/leases?lang=${lang}`, label: t('leases') },
+    { href: `/rentals/charges?lang=${lang}`, label: t('charges') },
+    { href: `/rentals/payments?lang=${lang}`, label: t('payments') },
+    { href: `/rentals/overdue?lang=${lang}`, label: t('overdue') },
     { href: `/expense-reports?lang=${lang}`, label: t('expenseReports') },
     { href: `/settings?lang=${lang}`, label: t('settings') },
   ];

@@ -24,6 +24,9 @@
     "rentals": "Rentals",
     "tenants": "Tenants",
     "leases": "Leases",
+    "charges": "Charges",
+    "payments": "Payments",
+    "overdue": "Overdue",
     "expenseReports": "Expense Reports",
     "settings": "Settings"
   },
@@ -317,6 +320,63 @@
       "Active": "Active",
       "Expired": "Expired",
       "Terminated": "Terminated"
+    },
+    "charges": {
+      "title": "Charges",
+      "subtitle": "View and manage rent charges.",
+      "listTitle": "All Charges",
+      "noCharges": "No charges found.",
+      "generate": "Generate Charges",
+      "columns": {
+        "lease": "Lease",
+        "chargeDate": "Charge Date",
+        "dueDate": "Due Date",
+        "amount": "Amount",
+        "status": "Status"
+      }
+    },
+    "payments": {
+      "title": "Payments",
+      "subtitle": "View and record rent payments.",
+      "listTitle": "All Payments",
+      "noPayments": "No payments found.",
+      "add": "Add Payment",
+      "columns": {
+        "lease": "Lease",
+        "paymentDate": "Payment Date",
+        "amount": "Amount",
+        "method": "Method"
+      },
+      "form": {
+        "lease": "Lease",
+        "amount": "Amount",
+        "paymentDate": "Payment Date",
+        "method": "Method",
+        "reference": "Reference/Notes"
+      }
+    },
+    "overdue": {
+      "title": "Overdue Balances",
+      "subtitle": "View accounts with overdue rent payments.",
+      "noOverdue": "No overdue balances.",
+      "withOverdue": "with overdue balance",
+      "listTitle": "Overdue Accounts",
+      "tenant": "Tenant",
+      "unit": "Unit",
+      "amount": "Amount Overdue",
+      "oldestDue": "Oldest Due Date"
+    },
+    "tenants": {
+      "detail": {
+        "totalBalance": "Total Balance"
+      }
+    },
+    "leases": {
+      "detail": {
+        "currentBalance": "Current Balance",
+        "amountDue": "Amount due",
+        "creditBalance": "Credit balance"
+      }
     }
   },
   "app": {
