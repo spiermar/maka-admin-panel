@@ -6,10 +6,9 @@ import { createProperty, updateProperty } from '@/lib/db/rentals-properties';
 import { createUnit, updateUnit } from '@/lib/db/rentals-units';
 import { scheduleUnitOccupancyStatus } from '@/lib/db/rentals-occupancy';
 import { createTenant, updateTenant } from '@/lib/db/rentals-tenants';
-import { createLease, updateLease, transitionLeaseStatus, LeaseOverlapError, getLeaseById } from '@/lib/db/rentals-leases';
+import { createLease, updateLease, transitionLeaseStatus, getLeaseById } from '@/lib/db/rentals-leases';
 import { generateMonthlyCharges } from '@/lib/db/rentals-charges';
-import { createPayment, allocatePaymentToCharges, getPaymentById } from '@/lib/db/rentals-payments';
-import { getAllLeases } from '@/lib/db/rentals-leases';
+import { createPayment, allocatePaymentToCharges } from '@/lib/db/rentals-payments';
 import { emitAuditEvent } from '@/lib/db/rentals-audit';
 import { getSession } from '@/lib/auth/session';
 import { createPropertySchema, updatePropertySchema } from '@/lib/validations/rentals-property';
@@ -93,7 +92,7 @@ function handleCreateUnitError(error: unknown): CreateUnitActionResult {
   };
 }
 
-function handleCreateTenantError(error: unknown): CreateTenantActionResult {
+function handleCreateTenantError(_error: unknown): CreateTenantActionResult {
   return {
     success: false,
     error: 'Failed to create tenant',
@@ -591,7 +590,7 @@ type CreatePaymentActionResult =
       errors?: Record<string, string[] | undefined>;
     };
 
-function handleCreatePaymentError(error: unknown): CreatePaymentActionResult {
+function handleCreatePaymentError(_error: unknown): CreatePaymentActionResult {
   return {
     success: false,
     error: 'Failed to create payment',

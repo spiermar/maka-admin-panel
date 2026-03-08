@@ -1,4 +1,4 @@
-import { execute, executeReturning, queryOne, queryMany } from './index';
+import { executeReturning, queryOne, queryMany } from './index';
 import { Lease, LeaseStatus } from './types';
 import { CreateLeaseInput, UpdateLeaseInput } from '@/lib/validations/rentals-lease';
 

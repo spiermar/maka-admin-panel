@@ -49,7 +49,7 @@ export default async function NewTenantPage({
             'use use server';
             try {
               await createTenant(formData);
-            } catch (_error) {
+            } catch {
               // Form will be re-rendered with error state
             }
           }} className="space-y-4">

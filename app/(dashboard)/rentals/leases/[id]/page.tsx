@@ -17,13 +17,9 @@ export default async function LeaseDetailPage({
     notFound();
   }
 
-  const [lang, lease, tenant, unit] = await Promise.all([
+  const [lang, lease] = await Promise.all([
     getLangFromUrl(),
     getLeaseById(leaseId),
-    // eslint-disable-next-line no-unsequel
-    leaseId ? getTenantById(leaseId) : Promise.resolve(null),
-    // eslint-disable-next-line no-unsequel
-    leaseId ? getUnitInventoryById(leaseId) : Promise.resolve(null),
   ]);
 
   if (!lease) {

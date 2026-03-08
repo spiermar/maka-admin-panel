@@ -1,4 +1,4 @@
-import { execute, executeReturning, queryOne, queryMany } from './index';
+import { executeReturning, queryOne, queryMany } from './index';
 import { RentCharge, ChargeStatus } from './types';
 
 export interface ChargeFilters {

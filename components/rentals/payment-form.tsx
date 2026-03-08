@@ -34,7 +34,7 @@ function getTodayDate(): string {
 
 export function PaymentForm({
   leases,
-  lang,
+  lang: _lang,
   cancelHref,
   redirectOnSuccess,
 }: PaymentFormProps) {

@@ -5,7 +5,6 @@ import { getUnitInventoryById } from '@/lib/db/rentals-units';
 import { getTenantByUnitId } from '@/lib/db/rentals-tenants';
 import { getAllLeases } from '@/lib/db/rentals-leases';
 import { RentalUnitDetailClient } from './client';
-import { Tenant, Lease } from '@/lib/db/types';
 
 export default async function RentalUnitDetailPage({
   params,

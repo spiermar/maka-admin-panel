@@ -4,13 +4,6 @@ import { getAuditEvents, AuditEventWithUser } from '@/lib/db/rentals-audit';
 import { getLangFromUrl } from '@/lib/i18n/utils';
 import { Button } from '@/components/ui/button';
 
-function formatCurrency(value: number, lang: string): string {
-  return new Intl.NumberFormat(lang, {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value);
-}
-
 function formatDateTime(value: string, lang: string): string {
   return new Date(value).toLocaleString(lang, {
     year: 'numeric',

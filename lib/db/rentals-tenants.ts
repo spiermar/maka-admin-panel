@@ -1,4 +1,4 @@
-import { execute, executeReturning, queryOne, queryMany } from './index';
+import { executeReturning, queryOne, queryMany } from './index';
 import { Tenant } from './types';
 import { CreateTenantInput } from '@/lib/validations/rentals-tenant';
 

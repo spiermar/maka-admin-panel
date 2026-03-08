@@ -54,7 +54,7 @@ export function LeaseForm({
   mode,
   tenants,
   units,
-  lang,
+  lang: _lang,
   cancelHref,
   redirectOnSuccess,
   leaseId,
