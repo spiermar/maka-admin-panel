@@ -27,6 +27,7 @@
     "charges": "Charges",
     "payments": "Payments",
     "overdue": "Overdue",
+    "audit": "Audit Log",
     "expenseReports": "Expense Reports",
     "settings": "Settings"
   },
@@ -368,6 +369,25 @@
       "unit": "Unit",
       "amount": "Amount Overdue",
       "oldestDue": "Oldest Due Date"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "subtitle": "Track changes to leases, rent amounts, and payments.",
+      "filterTitle": "Filter Events",
+      "eventType": "Event Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "applyFilter": "Apply Filters",
+      "allTypes": "All Types",
+      "typeLeaseStatus": "Lease Status Change",
+      "typeRentEdit": "Rent Amount Edit",
+      "typePayment": "Payment",
+      "noEvents": "No audit events found.",
+      "dateTime": "Date/Time",
+      "user": "User",
+      "eventTypeCol": "Event Type",
+      "entity": "Entity",
+      "details": "Details"
     },
     "tenants": {
       "detail": {
