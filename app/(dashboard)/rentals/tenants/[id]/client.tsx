@@ -12,6 +12,7 @@ interface TenantDetailClientProps {
   tenant: Tenant;
   activeLease: Lease | null;
   leases: Lease[];
+  totalBalance: number;
 }
 
 function formatDate(value: string, lang: string): string {
@@ -30,10 +31,18 @@ const LEASE_STATUS_STYLES: Record<string, string> = {
   Terminated: 'bg-red-100 text-red-700',
 };
 
+function formatCurrency(value: number, lang: string): string {
+  return new Intl.NumberFormat(lang, {
+    style: 'currency',
+    currency: 'USD',
+  }).format(value);
+}
+
 export function TenantDetailClient({
   lang,
   tenant,
   activeLease,
+  totalBalance,
 }: TenantDetailClientProps) {
   const t = useTranslations('rentals');
 
@@ -74,6 +83,12 @@ export function TenantDetailClient({
           <div>
             <p className="text-sm text-muted-foreground">{t('tenants.form.email')}</p>
             <p className="font-medium">{tenant.email || '-'}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">{t('tenants.detail.totalBalance')}</p>
+            <p className={`font-medium ${totalBalance > 0 ? 'text-red-600' : 'text-green-600'}`}>
+              {formatCurrency(totalBalance, lang)}
+            </p>
           </div>
         </CardContent>
       </Card>
