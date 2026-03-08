@@ -28,7 +28,7 @@
 ### Visibility & Controls
 
 - [x] **VIS-01**: User can see vacancy, occupied count, and delinquent-account summaries in dashboard views
-- [ ] **VIS-02**: User can see an auditable change history for high-risk rental operations (lease status changes, rent amount edits, payment adjustments)
+- [x] **VIS-02**: User can see an auditable change history for high-risk rental operations (lease status changes, rent amount edits, payment adjustments)
 - [x] **VIS-03**: User access to rental operations is protected by role-based permissions in admin workflows
 
 ## v2 Requirements
@@ -62,12 +62,12 @@
 | LEASE-02 | Phase 3 | Complete |
 | LEASE-03 | Phase 3 | Complete |
 | LEASE-04 | Phase 3 | Complete |
-| RENT-01 | Phase 4 | Pending |
-| RENT-02 | Phase 4 | Pending |
-| RENT-03 | Phase 4 | Pending |
-| RENT-04 | Phase 4 | Pending |
-| VIS-01 | Phase 5 | Pending |
-| VIS-02 | Phase 5 | Pending |
+| RENT-01 | Phase 4 | Complete |
+| RENT-02 | Phase 4 | Complete |
+| RENT-03 | Phase 4 | Complete |
+| RENT-04 | Phase 4 | Complete |
+| VIS-01 | Phase 5 | Complete |
+| VIS-02 | Phase 5 | Complete |
 | VIS-03 | Phase 1 | Pending |
 
 **Coverage:**
