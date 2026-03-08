@@ -8,6 +8,12 @@ export interface PaymentFilters {
   end_date?: string;
 }
 
+export interface PaymentWithLease extends RentPayment {
+  tenant_name: string;
+  unit_number: string;
+  property_name: string;
+}
+
 // Create a new payment
 export async function createPayment(data: {
   lease_id: number;
@@ -62,6 +68,51 @@ export async function getAllPayments(filters?: PaymentFilters): Promise<RentPaym
 
   return queryMany<RentPayment>(
     `SELECT * FROM payments ${whereClause} ORDER BY payment_date DESC, id DESC`,
+    values
+  );
+}
+
+// Get all payments with lease/tenant/unit info
+export async function getAllPaymentsWithLeaseInfo(
+  filters?: PaymentFilters
+): Promise<PaymentWithLease[]> {
+  const conditions: string[] = [];
+  const values: (string | number)[] = [];
+  let paramIndex = 1;
+
+  if (filters?.lease_id) {
+    conditions.push(`p.lease_id = $${paramIndex++}`);
+    values.push(filters.lease_id);
+  }
+
+  if (filters?.start_date) {
+    conditions.push(`p.payment_date >= $${paramIndex++}`);
+    values.push(filters.start_date);
+  }
+
+  if (filters?.end_date) {
+    conditions.push(`p.payment_date <= $${paramIndex++}`);
+    values.push(filters.end_date);
+  }
+
+  const whereClause = conditions.length > 0
+    ? `WHERE ${conditions.join(' AND ')}`
+    : '';
+
+  return queryMany<PaymentWithLease>(
+    `SELECT 
+       p.id, p.lease_id, p.payment_date, p.amount, p.payment_method, 
+       p.notes, p.created_at, p.updated_at,
+       t.name as tenant_name,
+       u.unit_number,
+       prop.name as property_name
+     FROM payments p
+     JOIN leases l ON p.lease_id = l.id
+     JOIN tenants t ON l.tenant_id = t.id
+     JOIN units u ON l.unit_id = u.id
+     JOIN properties prop ON u.property_id = prop.id
+     ${whereClause}
+     ORDER BY p.payment_date DESC, p.id DESC`,
     values
   );
 }
