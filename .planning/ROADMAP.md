@@ -82,7 +82,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. User can view dashboard summaries for vacancy, occupied units, and delinquent accounts.
   2. User can review an auditable history of lease status changes, rent amount edits, and payment adjustments.
   3. History entries include enough context (who changed what and when) to support operational review.
-**Plans**: TBD
+**Plans**: 2 plans
+
+- [ ] 05-01-PLAN.md — Dashboard summary cards for rental operations (VIS-01)
+- [ ] 05-02-PLAN.md — Audit trail for high-risk operations (VIS-02)
 
 ## Progress
 
@@ -94,5 +97,5 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 2.1 -> 3 -> 4 -> 5
 | 1. Rental Access Control Baseline | 2/2 | Complete    | 2026-03-07 |
 | 2. Portfolio and Unit Occupancy Management | 3/3 | Complete    | 2026-03-07 |
 | 3. Tenant and Lease Lifecycle Integrity | 5/5 | Complete    | 2026-03-07 |
-| 4. Rent Charges, Payments, and Delinquency | 4/5 | In Progress | 2026-03-08 |
-| 5. Operational Visibility and Auditability | 0/TBD | Not started | - |
+| 4. Rent Charges, Payments, and Delinquency | 5/5 | Complete    | 2026-03-08 |
+| 5. Operational Visibility and Auditability | 0/2 | Not started | - |
