@@ -49,14 +49,10 @@ test.describe('Dashboard Visualization', () => {
   });
 
   test('should render cash flow chart', async ({ page }) => {
-    // Wait for the page to fully load
     await page.waitForLoadState('networkidle');
 
-    // The CashFlowChart component uses recharts
-    // Look for the specific "Cash Flow Over Time" heading
     await expect(page.getByRole('heading', { name: 'Cash Flow Over Time' })).toBeVisible();
 
-    // Verify no chart loading errors
     await expect(page.getByText(/failed to load/i)).not.toBeVisible();
   });
 

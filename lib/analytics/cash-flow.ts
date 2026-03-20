@@ -1,5 +1,5 @@
 import { queryMany, queryOne } from '@/lib/db';
-import { MonthlyData, CategoryBreakdown, AccountSummary } from './types';
+import { MonthlyData, DailyData, CategoryBreakdown, AccountSummary } from './types';
 
 export async function getAccountSummary(): Promise<AccountSummary> {
   const result = await queryOne<AccountSummary>(
@@ -49,6 +49,24 @@ export async function getMonthlyCashFlow(
      GROUP BY DATE_TRUNC('month', t.date)
      ORDER BY month DESC`,
     [months]
+  );
+}
+
+export async function getDailyCashFlow(
+  days: number = 30
+): Promise<DailyData[]> {
+  return queryMany<DailyData>(
+    `SELECT
+       TO_CHAR(t.date, 'YYYY-MM-DD') as date,
+       COALESCE(SUM(CASE WHEN c.category_type = 'income' THEN t.amount ELSE 0 END), 0)::decimal(15,2) as income,
+       COALESCE(ABS(SUM(CASE WHEN c.category_type = 'expense' THEN t.amount ELSE 0 END)), 0)::decimal(15,2) as expenses,
+       COALESCE(SUM(t.amount), 0)::decimal(15,2) as net
+     FROM transactions t
+     LEFT JOIN categories c ON t.category_id = c.id
+     WHERE t.date >= CURRENT_DATE - INTERVAL '1 day' * $1
+     GROUP BY t.date
+     ORDER BY date DESC`,
+    [days]
   );
 }
 

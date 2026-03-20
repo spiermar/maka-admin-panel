@@ -5,14 +5,14 @@ import { CashFlowChart } from '@/components/dashboard/cash-flow-chart';
 import { CategoryChart } from '@/components/dashboard/category-chart';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import {
-  getMonthlyCashFlow,
+  getDailyCashFlow,
   getCategoryBreakdown,
 } from '@/lib/analytics/cash-flow';
 
 export default async function DashboardPage() {
   const t = await getTranslations('dashboard');
-  const [monthlyData, expenseBreakdown, incomeBreakdown] = await Promise.all([
-    getMonthlyCashFlow(6),
+  const [dailyData, expenseBreakdown, incomeBreakdown] = await Promise.all([
+    getDailyCashFlow(30),
     getCategoryBreakdown('expense', 5),
     getCategoryBreakdown('income', 5),
   ]);
@@ -25,7 +25,7 @@ export default async function DashboardPage() {
         <SummaryCards />
       </Suspense>
 
-      <CashFlowChart data={monthlyData} />
+      <CashFlowChart data={dailyData} />
 
       <div className="grid gap-6 md:grid-cols-2">
         <CategoryChart
