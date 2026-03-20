@@ -104,9 +104,9 @@ export function middleware(request: NextRequest) {
       name: LOCALE_COOKIE,
       value: locale,
       path: '/',
-      httpOnly: false,
+      httpOnly: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 365, 
+      maxAge: 60 * 60 * 24 * 365,
     });
   }
 
