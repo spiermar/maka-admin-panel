@@ -13,21 +13,19 @@ import {
 } from 'recharts';
 
 interface CashFlowChartProps {
-  data: Array<{
-    month: string;
-    income: string;
-    expenses: string;
-    net: string;
-  }>;
+  data: Array<
+    | { month: string; income: string; expenses: string; net: string }
+    | { date: string; income: string; expenses: string; net: string }
+  >;
 }
 
 export function CashFlowChart({ data }: CashFlowChartProps) {
   const chartData = data.map((item) => ({
-    month: item.month,
+    period: 'month' in item ? item.month : item.date,
     Income: parseFloat(item.income),
     Expenses: parseFloat(item.expenses),
     Net: parseFloat(item.net),
-  })).reverse(); // Show oldest to newest
+  })).reverse();
 
   return (
     <Card>
@@ -38,7 +36,7 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
+            <XAxis dataKey="period" />
             <YAxis />
             <Tooltip />
             <Legend />

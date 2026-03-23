@@ -5,6 +5,13 @@ export interface MonthlyData {
   net: string;
 }
 
+export interface DailyData {
+  date: string; // YYYY-MM-DD format
+  income: string;
+  expenses: string;
+  net: string;
+}
+
 export interface CategoryBreakdown {
   category_id: number | null;
   category_name: string;

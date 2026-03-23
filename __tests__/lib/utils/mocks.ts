@@ -108,3 +108,18 @@ export const mockAccountSummary = {
   monthly_expenses: '3000.00',
   net_cash_flow: '2000.00',
 };
+
+export const mockDailyData = [
+  {
+    date: '2024-01-15',
+    income: '500.00',
+    expenses: '300.00',
+    net: '200.00',
+  },
+  {
+    date: '2024-01-14',
+    income: '450.00',
+    expenses: '280.00',
+    net: '170.00',
+  },
+];

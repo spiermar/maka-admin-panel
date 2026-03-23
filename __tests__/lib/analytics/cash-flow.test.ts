@@ -2,11 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getAccountSummary,
   getMonthlyCashFlow,
+  getDailyCashFlow,
   getCategoryBreakdown,
 } from '@/lib/analytics/cash-flow';
 import {
   mockAccountSummary,
   mockMonthlyData,
+  mockDailyData,
   mockCategoryBreakdown,
 } from '../utils/mocks';
 
@@ -199,6 +201,90 @@ describe('Cash Flow Analytics', () => {
         expect.any(String),
         [1]
       );
+    });
+  });
+
+  describe('getDailyCashFlow', () => {
+    it('should return daily cash flow data', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue(mockDailyData);
+
+      const result = await getDailyCashFlow();
+
+      expect(result).toEqual(mockDailyData);
+      expect(result).toHaveLength(2);
+    });
+
+    it('should use default 30 days when no parameter provided', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue(mockDailyData);
+
+      await getDailyCashFlow();
+
+      expect(queryMany).toHaveBeenCalledWith(
+        expect.any(String),
+        [30]
+      );
+    });
+
+    it('should accept custom day range', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue(mockDailyData);
+
+      await getDailyCashFlow(7);
+
+      expect(queryMany).toHaveBeenCalledWith(
+        expect.any(String),
+        [7]
+      );
+    });
+
+    it('should return data in YYYY-MM-DD format', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue(mockDailyData);
+
+      const result = await getDailyCashFlow();
+
+      expect(result[0].date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    });
+
+    it('should separate income and expenses', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue(mockDailyData);
+
+      const result = await getDailyCashFlow();
+
+      expect(result[0]).toHaveProperty('income');
+      expect(result[0]).toHaveProperty('expenses');
+      expect(result[0]).toHaveProperty('net');
+    });
+
+    it('should order by date DESC', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue(mockDailyData);
+
+      await getDailyCashFlow();
+
+      expect(queryMany).toHaveBeenCalledWith(
+        expect.stringContaining('ORDER BY date DESC'),
+        [30]
+      );
+    });
+
+    it('should return empty array when no data', async () => {
+      const { queryMany } = await import('@/lib/db');
+
+      vi.mocked(queryMany).mockResolvedValue([]);
+
+      const result = await getDailyCashFlow();
+
+      expect(result).toEqual([]);
     });
   });
 
