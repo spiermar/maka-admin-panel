@@ -200,7 +200,7 @@ describe('Transaction Queries', () => {
       expect(sql).toContain('t.date >= $2');
       expect(sql).toContain('t.date <= $3');
       expect(sql).toContain('t.category_id = $4');
-      expect(sql).toContain("(t.payee ILIKE $5 ESCAPE '\\\\' OR t.comment ILIKE $5 ESCAPE '\\\\')");
+      expect(sql).toContain("(t.payee ILIKE $5 ESCAPE '\\' OR t.comment ILIKE $5 ESCAPE '\\')");
       expect(sql).toContain('ORDER BY t.date DESC, t.created_at DESC');
       expect(sql).toContain('LIMIT $6 OFFSET $7');
       expect(params).toEqual([2, '2026-05-01', '2026-05-31', 7, '%rent%', 25, 50]);
@@ -213,8 +213,18 @@ describe('Transaction Queries', () => {
       await getTransactions({ q: '100%_match' });
 
       const [sql, params] = vi.mocked(queryMany).mock.calls[0];
-      expect(sql).toContain("ESCAPE '\\\\'");
+      expect(sql).toContain("ESCAPE '\\'");
       expect(params).toEqual(['%100\\%\\_match%', 100, 0]);
+    });
+
+    it('escapes literal backslashes in search terms', async () => {
+      const { queryMany } = await import('@/lib/db');
+      vi.mocked(queryMany).mockResolvedValue([]);
+
+      await getTransactions({ q: String.raw`C:\rent` });
+
+      const [, params] = vi.mocked(queryMany).mock.calls[0];
+      expect(params).toEqual([String.raw`%C:\\rent%`, 100, 0]);
     });
   });
 

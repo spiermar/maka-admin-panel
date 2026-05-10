@@ -45,7 +45,7 @@ function buildTransactionWhereClause(filters: TransactionFilters): {
   if (filters.q) {
     params.push(`%${escapeLikeSearch(filters.q)}%`);
     clauses.push(
-      `(t.payee ILIKE $${params.length} ESCAPE '\\\\' OR t.comment ILIKE $${params.length} ESCAPE '\\\\')`
+      `(t.payee ILIKE $${params.length} ESCAPE '\\' OR t.comment ILIKE $${params.length} ESCAPE '\\')`
     );
   }
 
