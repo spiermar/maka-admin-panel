@@ -41,6 +41,7 @@ export async function createTransaction(formData: FormData) {
     );
 
     revalidatePath('/');
+    revalidatePath('/transactions');
     revalidatePath(`/accounts/${account_id}`);
 
     return { success: true };
@@ -88,6 +89,7 @@ export async function updateTransaction(id: number, formData: FormData) {
     );
 
     revalidatePath('/');
+    revalidatePath('/transactions');
     revalidatePath(`/accounts/${account_id}`);
 
     return { success: true };
@@ -107,6 +109,7 @@ export async function deleteTransaction(id: number, accountId: number) {
     await execute('DELETE FROM transactions WHERE id = $1', [id]);
 
     revalidatePath('/');
+    revalidatePath('/transactions');
     revalidatePath(`/accounts/${accountId}`);
 
     return { success: true };

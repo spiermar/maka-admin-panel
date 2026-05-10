@@ -36,7 +36,7 @@ export default async function AccountsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {accounts.map((account) => (
-            <Link key={account.id} href={`/accounts/${account.id}?lang=${locale}`}>
+            <Link key={account.id} href={`/transactions?accountId=${account.id}&lang=${locale}`}>
               <Card className="transition-colors hover:bg-muted/50">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg">{account.name}</CardTitle>
