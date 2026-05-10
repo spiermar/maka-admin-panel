@@ -10,11 +10,12 @@ export default async function AccountDetailPage({
 }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-  const accountId = Number.parseInt(resolvedParams.id, 10);
 
-  if (!Number.isInteger(accountId)) {
+  if (!/^[1-9]\d*$/.test(resolvedParams.id)) {
     notFound();
   }
+
+  const accountId = Number.parseInt(resolvedParams.id, 10);
 
   const account = await getAccountById(accountId);
   if (!account) {
