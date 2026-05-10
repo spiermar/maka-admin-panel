@@ -168,7 +168,12 @@ export function groupStackedTrendRows(rows: StackedTrendQueryRow[]): StackedTren
 
   const topCategoryKeys = new Set(
     [...categoryTotals.entries()]
-      .sort(([, a], [, b]) => b.total - a.total)
+      .sort(
+        ([categoryKeyA, a], [categoryKeyB, b]) =>
+          b.total - a.total ||
+          a.categoryPath.localeCompare(b.categoryPath) ||
+          categoryKeyA.localeCompare(categoryKeyB)
+      )
       .slice(0, 10)
       .map(([categoryKey]) => categoryKey)
   );
@@ -429,6 +434,11 @@ function groupCategoryTrendRows(rows: CategoryTrendQueryRow[]): CategoryTrendRow
   }
 
   return [...categories.values()]
-    .sort((a, b) => b.numericTotal - a.numericTotal)
+    .sort(
+      (a, b) =>
+        b.numericTotal - a.numericTotal ||
+        a.categoryPath.localeCompare(b.categoryPath) ||
+        a.categoryKey.localeCompare(b.categoryKey)
+    )
     .map(({ numericTotal: _numericTotal, ...category }) => category);
 }

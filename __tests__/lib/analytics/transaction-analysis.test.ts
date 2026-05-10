@@ -5,6 +5,7 @@ import {
   emptyTransactionAnalysis,
   getTransactionAnalysis,
   groupStackedTrendRows,
+  periodExpression,
 } from '@/lib/analytics/transaction-analysis';
 
 vi.mock('@/lib/db', () => ({
@@ -68,6 +69,18 @@ describe('Transaction Analysis Analytics', () => {
     });
   });
 
+  describe('periodExpression', () => {
+    it('returns the SQL expression for each supported grouping', () => {
+      expect(periodExpression('daily')).toBe("TO_CHAR(t.date, 'YYYY-MM-DD')");
+      expect(periodExpression('weekly')).toBe(
+        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+      );
+      expect(periodExpression('monthly')).toBe(
+        "TO_CHAR(DATE_TRUNC('month', t.date), 'YYYY-MM')"
+      );
+    });
+  });
+
   describe('groupStackedTrendRows', () => {
     it('keeps the top 10 full-range categories and folds the rest into Other', () => {
       const rows = Array.from({ length: 12 }, (_, index) => {
@@ -104,6 +117,46 @@ describe('Transaction Analysis Analytics', () => {
         },
       ]);
     });
+
+    it('selects tied top categories deterministically by category path', () => {
+      const rows = [
+        {
+          period: '2025-01',
+          category_key: 'expense-11',
+          category_path: 'Category 11',
+          amount: '100.00',
+        },
+        ...Array.from({ length: 10 }, (_, index) => {
+          const categoryNumber = index + 1;
+
+          return {
+            period: '2025-01',
+            category_key: `expense-${categoryNumber}`,
+            category_path: `Category ${String(categoryNumber).padStart(2, '0')}`,
+            amount: '100.00',
+          };
+        }),
+      ];
+
+      const result = groupStackedTrendRows(rows);
+
+      expect(result).toEqual([
+        {
+          period: '2025-01',
+          'Category 01': '100.00',
+          'Category 02': '100.00',
+          'Category 03': '100.00',
+          'Category 04': '100.00',
+          'Category 05': '100.00',
+          'Category 06': '100.00',
+          'Category 07': '100.00',
+          'Category 08': '100.00',
+          'Category 09': '100.00',
+          'Category 10': '100.00',
+          Other: '100.00',
+        },
+      ]);
+    });
   });
 
   describe('getTransactionAnalysis', () => {
@@ -124,6 +177,15 @@ describe('Transaction Analysis Analytics', () => {
 
     it('queries and shapes summary, trend, breakdown, stacked, and table rows', async () => {
       const { queryMany, queryOne } = await import('@/lib/db');
+      const filters: AnalysisFilters = {
+        ...baseFilters,
+        grouping: 'weekly',
+        resolvedGrouping: 'weekly',
+        accountId: 7,
+        includedCategoryIds: [2, 5],
+        hasCategoryFilter: true,
+      };
+      const expectedParams = ['2025-01-01', '2025-03-31', 7, [2, 5]];
 
       vi.mocked(queryOne).mockResolvedValue({
         income: '6000.00',
@@ -221,18 +283,55 @@ describe('Transaction Analysis Analytics', () => {
           },
         ]);
 
-      const result = await getTransactionAnalysis(baseFilters);
+      const result = await getTransactionAnalysis(filters);
 
       expect(queryOne).toHaveBeenCalledTimes(1);
       expect(queryMany).toHaveBeenCalledTimes(6);
-      expect(queryOne).toHaveBeenCalledWith(
-        expect.stringContaining('category_hierarchy'),
-        ['2025-01-01', '2025-03-31']
+      const allQueryCalls = [
+        vi.mocked(queryOne).mock.calls[0],
+        ...vi.mocked(queryMany).mock.calls,
+      ];
+
+      for (const [sql, params] of allQueryCalls) {
+        expect(sql).toContain('WITH RECURSIVE category_hierarchy');
+        expect(sql).toContain('t.date >= $1');
+        expect(sql).toContain('t.date <= $2');
+        expect(sql).toContain('t.account_id = $3');
+        expect(sql).toContain('t.category_id = ANY($4::int[])');
+        expect(sql).toContain('(t.category_id IS NULL AND t.amount > 0)');
+        expect(sql).toContain('(t.category_id IS NULL AND t.amount < 0)');
+        expect(params).toEqual(expectedParams);
+      }
+
+      const queryManyCalls = vi.mocked(queryMany).mock.calls;
+      expect(queryManyCalls[0][0]).toContain(
+        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
       );
-      expect(queryMany).toHaveBeenNthCalledWith(
-        1,
-        expect.stringContaining("TO_CHAR(DATE_TRUNC('month', t.date), 'YYYY-MM')"),
-        ['2025-01-01', '2025-03-31']
+      expect(queryManyCalls[3][0]).toContain(
+        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+      );
+      expect(queryManyCalls[4][0]).toContain(
+        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+      );
+      expect(queryManyCalls[5][0]).toContain(
+        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+      );
+
+      expect(queryManyCalls[1][0]).toContain("ch.category_type = 'expense'");
+      expect(queryManyCalls[1][0]).toContain('(t.category_id IS NULL AND t.amount < 0)');
+      expect(queryManyCalls[2][0]).toContain("ch.category_type = 'income'");
+      expect(queryManyCalls[2][0]).toContain('(t.category_id IS NULL AND t.amount > 0)');
+      expect(queryManyCalls[3][0]).toContain("ch.category_type = 'expense'");
+      expect(queryManyCalls[3][0]).toContain('(t.category_id IS NULL AND t.amount < 0)');
+      expect(queryManyCalls[4][0]).toContain("ch.category_type = 'income'");
+      expect(queryManyCalls[4][0]).toContain('(t.category_id IS NULL AND t.amount > 0)');
+      expect(queryManyCalls[5][0]).toContain("WHEN ch.category_type = 'expense'");
+      expect(queryManyCalls[5][0]).toContain("WHEN ch.category_type = 'income'");
+      expect(queryManyCalls[5][0]).toContain(
+        "WHEN t.category_id IS NULL AND t.amount < 0 THEN 'expense'"
+      );
+      expect(queryManyCalls[5][0]).toContain(
+        "WHEN t.category_id IS NULL AND t.amount > 0 THEN 'income'"
       );
 
       expect(result).toEqual({
@@ -304,6 +403,76 @@ describe('Transaction Analysis Analytics', () => {
           },
         ],
       });
+    });
+
+    it('sorts category trend rows with equal totals by category path then key', async () => {
+      const { queryMany, queryOne } = await import('@/lib/db');
+
+      vi.mocked(queryOne).mockResolvedValue({
+        income: '0.00',
+        expenses: '0.00',
+      });
+      vi.mocked(queryMany)
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([
+          {
+            period: '2025-01',
+            category_key: 'expense-3',
+            category_type: 'expense',
+            category_path: 'Category B',
+            amount: '100.00',
+          },
+          {
+            period: '2025-01',
+            category_key: 'expense-2',
+            category_type: 'expense',
+            category_path: 'Category A',
+            amount: '100.00',
+          },
+          {
+            period: '2025-01',
+            category_key: 'expense-1',
+            category_type: 'expense',
+            category_path: 'Category A',
+            amount: '100.00',
+          },
+        ]);
+
+      const result = await getTransactionAnalysis(baseFilters);
+
+      expect(result.categoryTrends).toEqual([
+        {
+          categoryKey: 'expense-1',
+          categoryType: 'expense',
+          categoryPath: 'Category A',
+          total: '100.00',
+          periods: {
+            '2025-01': '100.00',
+          },
+        },
+        {
+          categoryKey: 'expense-2',
+          categoryType: 'expense',
+          categoryPath: 'Category A',
+          total: '100.00',
+          periods: {
+            '2025-01': '100.00',
+          },
+        },
+        {
+          categoryKey: 'expense-3',
+          categoryType: 'expense',
+          categoryPath: 'Category B',
+          total: '100.00',
+          periods: {
+            '2025-01': '100.00',
+          },
+        },
+      ]);
     });
   });
 });
