@@ -79,7 +79,9 @@ export async function importOfxTransactions(
     }
   }
 
+  revalidatePath('/');
   revalidatePath('/transactions');
+  revalidatePath('/accounts');
   revalidatePath(`/accounts/${accountId}`);
 
   return result;
