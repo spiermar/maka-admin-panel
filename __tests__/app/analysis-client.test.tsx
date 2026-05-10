@@ -377,6 +377,29 @@ describe('AnalysisClient', () => {
     expect(pushedParams.get('lang')).toBe('en');
   });
 
+  it('does not reuse stale account filters after props reset to defaults', async () => {
+    const { rerender } = renderClient({ ...filters, accountId: 2 });
+
+    rerender(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <AnalysisClient
+          accounts={accounts}
+          categories={categories}
+          filters={filters}
+          data={data}
+          lang="en"
+        />
+      </NextIntlClientProvider>
+    );
+
+    await selectOption(screen.getByRole('combobox', { name: 'Grouping' }), 'Monthly');
+
+    const { pushedParams } = getPushedParams();
+    expect(pushedParams.has('accountId')).toBe(false);
+    expect(pushedParams.get('grouping')).toBe('monthly');
+    expect(pushedParams.get('lang')).toBe('en');
+  });
+
   it('clears category params when the selection returns to the default filter', async () => {
     const user = userEvent.setup();
     setSearchParams('lang=en&categories=10&uncategorizedIncome=0&uncategorizedExpense=0');

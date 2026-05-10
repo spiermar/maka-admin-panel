@@ -93,6 +93,25 @@ function createAnalysisFilterDraft(
   };
 }
 
+function createAnalysisFilterDraftSyncKey(
+  filters: AnalysisFilters,
+  categories: CategoryWithPath[]
+) {
+  return [
+    filters.preset,
+    filters.from,
+    filters.to,
+    filters.accountId ?? '',
+    filters.grouping,
+    filters.hasCategoryFilter
+      ? sortedCategoryIds(filters.includedCategoryIds).join(',')
+      : 'all',
+    filters.includeUncategorizedIncome ? '1' : '0',
+    filters.includeUncategorizedExpense ? '1' : '0',
+    sortedCategoryIds(categories.map((category) => category.id)).join(','),
+  ].join('|');
+}
+
 export function AnalysisClient({
   accounts,
   categories,
@@ -100,6 +119,114 @@ export function AnalysisClient({
   data,
   lang,
 }: AnalysisClientProps) {
+  const t = useTranslations('analysis');
+  const filterControlsKey = createAnalysisFilterDraftSyncKey(filters, categories);
+  const periods = useMemo(
+    () => [
+      ...new Set(data.incomeExpenseTrend.map((point) => point.period)),
+    ],
+    [data.incomeExpenseTrend]
+  );
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold">{t('title')}</h2>
+        <p className="text-muted-foreground">{t('description')}</p>
+      </div>
+
+      <AnalysisFilterControls
+        key={filterControlsKey}
+        accounts={accounts}
+        categories={categories}
+        filters={filters}
+        lang={lang}
+      />
+
+      <AnalysisSummaryCards
+        income={data.summary.income}
+        expenses={data.summary.expenses}
+        locale={lang}
+        labels={{
+          income: t('summary.income'),
+          expenses: t('summary.expenses'),
+        }}
+      />
+
+      <IncomeExpenseTrendChart
+        data={data.incomeExpenseTrend}
+        title={t('charts.incomeExpenseTrend')}
+        emptyText={t('charts.empty')}
+        locale={lang}
+        labels={{
+          income: t('summary.income'),
+          expenses: t('summary.expenses'),
+        }}
+      />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <CategoryStackedTrendChart
+          data={data.incomeStackedTrend}
+          title={t('charts.incomeStackedTrend')}
+          emptyText={t('charts.empty')}
+          locale={lang}
+        />
+        <CategoryStackedTrendChart
+          data={data.expenseStackedTrend}
+          title={t('charts.expenseStackedTrend')}
+          emptyText={t('charts.empty')}
+          locale={lang}
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <CategoryBreakdownChart
+          data={data.incomeBreakdown}
+          title={t('charts.incomeBreakdown')}
+          emptyText={t('charts.empty')}
+          color="#22c55e"
+          locale={lang}
+        />
+        <CategoryBreakdownChart
+          data={data.expenseBreakdown}
+          title={t('charts.expenseBreakdown')}
+          emptyText={t('charts.empty')}
+          color="#ef4444"
+          locale={lang}
+        />
+      </div>
+
+      <CategoryTrendTable
+        rows={data.categoryTrends}
+        periods={periods}
+        title={t('charts.categoryTrendTable')}
+        emptyText={t('charts.empty')}
+        locale={lang}
+        labels={{
+          category: t('table.category'),
+          type: t('table.type'),
+          total: t('table.total'),
+          income: t('table.income'),
+          expense: t('table.expense'),
+        }}
+      />
+    </div>
+  );
+}
+
+interface AnalysisFilterControlsProps {
+  accounts: Account[];
+  categories: CategoryWithPath[];
+  filters: AnalysisFilters;
+  lang: string;
+}
+
+function AnalysisFilterControls({
+  accounts,
+  categories,
+  filters,
+  lang,
+}: AnalysisFilterControlsProps) {
   const t = useTranslations('analysis');
   const router = useRouter();
   const pathname = usePathname();
@@ -111,12 +238,6 @@ export function AnalysisClient({
   const allCategoryIds = useMemo(
     () => sortedCategoryIds(categories.map((category) => category.id)),
     [categories]
-  );
-  const periods = useMemo(
-    () => [
-      ...new Set(data.incomeExpenseTrend.map((point) => point.period)),
-    ],
-    [data.incomeExpenseTrend]
   );
 
   const pushDraft = (draft: AnalysisFilterDraft) => {
@@ -204,218 +325,143 @@ export function AnalysisClient({
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold">{t('title')}</h2>
-        <p className="text-muted-foreground">{t('description')}</p>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('filters')}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <div className="space-y-2">
-              <Label htmlFor="analysis-preset">{t('dateRangePreset')}</Label>
-              <Select
-                value={filterDraft.preset}
-                onValueChange={(value) =>
-                  updateDraft((current) => ({
-                    ...current,
-                    preset: value as AnalysisDatePreset,
-                  }))
-                }
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('filters')}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <div className="space-y-2">
+            <Label htmlFor="analysis-preset">{t('dateRangePreset')}</Label>
+            <Select
+              value={filterDraft.preset}
+              onValueChange={(value) =>
+                updateDraft((current) => ({
+                  ...current,
+                  preset: value as AnalysisDatePreset,
+                }))
+              }
+            >
+              <SelectTrigger
+                id="analysis-preset"
+                aria-label={t('dateRangePreset')}
               >
-                <SelectTrigger
-                  id="analysis-preset"
-                  aria-label={t('dateRangePreset')}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DATE_PRESET_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {t(option.labelKey)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="analysis-from">{t('from')}</Label>
-              <Input
-                id="analysis-from"
-                type="date"
-                value={filterDraft.from}
-                onChange={(event) => updateDateFilter('from', event.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="analysis-to">{t('to')}</Label>
-              <Input
-                id="analysis-to"
-                type="date"
-                value={filterDraft.to}
-                onChange={(event) => updateDateFilter('to', event.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="analysis-account">{t('account')}</Label>
-              <Select
-                value={filterDraft.accountId || 'all'}
-                onValueChange={(value) =>
-                  updateDraft((current) => ({
-                    ...current,
-                    accountId: value === 'all' ? '' : value,
-                  }))
-                }
-              >
-                <SelectTrigger id="analysis-account" aria-label={t('account')}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('allAccounts')}</SelectItem>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id.toString()}>
-                      {account.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="analysis-grouping">{t('grouping')}</Label>
-              <Select
-                value={filterDraft.grouping}
-                onValueChange={(value) =>
-                  updateDraft((current) => ({
-                    ...current,
-                    grouping: value as AnalysisGrouping,
-                  }))
-                }
-              >
-                <SelectTrigger id="analysis-grouping" aria-label={t('grouping')}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {GROUPING_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {t(option.labelKey)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {DATE_PRESET_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {t(option.labelKey)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="flex justify-end">
-            <Button type="button" variant="outline" onClick={resetFilters}>
-              {t('resetFilters')}
-            </Button>
+          <div className="space-y-2">
+            <Label htmlFor="analysis-from">{t('from')}</Label>
+            <Input
+              id="analysis-from"
+              type="date"
+              value={filterDraft.from}
+              onChange={(event) => updateDateFilter('from', event.target.value)}
+            />
           </div>
 
-          {filters.hasInvalidDateRange ? (
-            <div className="text-sm font-medium text-red-600" role="alert">
-              {t('invalidDateRange')}
-            </div>
-          ) : null}
+          <div className="space-y-2">
+            <Label htmlFor="analysis-to">{t('to')}</Label>
+            <Input
+              id="analysis-to"
+              type="date"
+              value={filterDraft.to}
+              onChange={(event) => updateDateFilter('to', event.target.value)}
+            />
+          </div>
 
-          <AnalysisCategoryFilter
-            categories={categories}
-            selectedCategoryIds={filterDraft.categoryIds}
-            includeUncategorizedIncome={filterDraft.includeUncategorizedIncome}
-            includeUncategorizedExpense={filterDraft.includeUncategorizedExpense}
-            labels={{
-              title: t('categories.title'),
-              income: t('categories.income'),
-              expense: t('categories.expense'),
-              uncategorizedIncome: t('categories.uncategorizedIncome'),
-              uncategorizedExpense: t('categories.uncategorizedExpense'),
-            }}
-            onChange={(next) => {
-              updateDraft((current) => ({
-                ...current,
-                categoryIds: sortedCategoryIds(next.selectedCategoryIds),
-                includeUncategorizedIncome: next.includeUncategorizedIncome,
-                includeUncategorizedExpense: next.includeUncategorizedExpense,
-              }));
-            }}
-          />
-        </CardContent>
-      </Card>
+          <div className="space-y-2">
+            <Label htmlFor="analysis-account">{t('account')}</Label>
+            <Select
+              value={filterDraft.accountId || 'all'}
+              onValueChange={(value) =>
+                updateDraft((current) => ({
+                  ...current,
+                  accountId: value === 'all' ? '' : value,
+                }))
+              }
+            >
+              <SelectTrigger id="analysis-account" aria-label={t('account')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('allAccounts')}</SelectItem>
+                {accounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id.toString()}>
+                    {account.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      <AnalysisSummaryCards
-        income={data.summary.income}
-        expenses={data.summary.expenses}
-        locale={lang}
-        labels={{
-          income: t('summary.income'),
-          expenses: t('summary.expenses'),
-        }}
-      />
+          <div className="space-y-2">
+            <Label htmlFor="analysis-grouping">{t('grouping')}</Label>
+            <Select
+              value={filterDraft.grouping}
+              onValueChange={(value) =>
+                updateDraft((current) => ({
+                  ...current,
+                  grouping: value as AnalysisGrouping,
+                }))
+              }
+            >
+              <SelectTrigger id="analysis-grouping" aria-label={t('grouping')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {GROUPING_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {t(option.labelKey)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
-      <IncomeExpenseTrendChart
-        data={data.incomeExpenseTrend}
-        title={t('charts.incomeExpenseTrend')}
-        emptyText={t('charts.empty')}
-        locale={lang}
-        labels={{
-          income: t('summary.income'),
-          expenses: t('summary.expenses'),
-        }}
-      />
+        <div className="flex justify-end">
+          <Button type="button" variant="outline" onClick={resetFilters}>
+            {t('resetFilters')}
+          </Button>
+        </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <CategoryStackedTrendChart
-          data={data.incomeStackedTrend}
-          title={t('charts.incomeStackedTrend')}
-          emptyText={t('charts.empty')}
-          locale={lang}
+        {filters.hasInvalidDateRange ? (
+          <div className="text-sm font-medium text-red-600" role="alert">
+            {t('invalidDateRange')}
+          </div>
+        ) : null}
+
+        <AnalysisCategoryFilter
+          categories={categories}
+          selectedCategoryIds={filterDraft.categoryIds}
+          includeUncategorizedIncome={filterDraft.includeUncategorizedIncome}
+          includeUncategorizedExpense={filterDraft.includeUncategorizedExpense}
+          labels={{
+            title: t('categories.title'),
+            income: t('categories.income'),
+            expense: t('categories.expense'),
+            uncategorizedIncome: t('categories.uncategorizedIncome'),
+            uncategorizedExpense: t('categories.uncategorizedExpense'),
+          }}
+          onChange={(next) => {
+            updateDraft((current) => ({
+              ...current,
+              categoryIds: sortedCategoryIds(next.selectedCategoryIds),
+              includeUncategorizedIncome: next.includeUncategorizedIncome,
+              includeUncategorizedExpense: next.includeUncategorizedExpense,
+            }));
+          }}
         />
-        <CategoryStackedTrendChart
-          data={data.expenseStackedTrend}
-          title={t('charts.expenseStackedTrend')}
-          emptyText={t('charts.empty')}
-          locale={lang}
-        />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <CategoryBreakdownChart
-          data={data.incomeBreakdown}
-          title={t('charts.incomeBreakdown')}
-          emptyText={t('charts.empty')}
-          color="#22c55e"
-          locale={lang}
-        />
-        <CategoryBreakdownChart
-          data={data.expenseBreakdown}
-          title={t('charts.expenseBreakdown')}
-          emptyText={t('charts.empty')}
-          color="#ef4444"
-          locale={lang}
-        />
-      </div>
-
-      <CategoryTrendTable
-        rows={data.categoryTrends}
-        periods={periods}
-        title={t('charts.categoryTrendTable')}
-        emptyText={t('charts.empty')}
-        locale={lang}
-        labels={{
-          category: t('table.category'),
-          type: t('table.type'),
-          total: t('table.total'),
-          income: t('table.income'),
-          expense: t('table.expense'),
-        }}
-      />
-    </div>
+      </CardContent>
+    </Card>
   );
 }
