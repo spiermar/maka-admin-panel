@@ -37,12 +37,7 @@ describe('Account detail redirect', () => {
     vi.mocked(getAccountById).mockResolvedValue({
       id: 7,
       name: 'Checking',
-      type: 'checking',
-      account_number: null,
-      bank_name: null,
-      currency: 'USD',
       created_at: new Date(),
-      updated_at: new Date(),
     });
 
     await expect(
@@ -59,12 +54,7 @@ describe('Account detail redirect', () => {
     vi.mocked(getAccountById).mockResolvedValue({
       id: 8,
       name: 'Savings',
-      type: 'savings',
-      account_number: null,
-      bank_name: null,
-      currency: 'USD',
       created_at: new Date(),
-      updated_at: new Date(),
     });
 
     await expect(
