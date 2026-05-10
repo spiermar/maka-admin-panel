@@ -155,6 +155,13 @@ export function buildAnalysisWhereClause(filters: AnalysisFilters): AnalysisWher
 }
 
 export function groupStackedTrendRows(rows: StackedTrendQueryRow[]): StackedTrendPoint[] {
+  return groupStackedTrendRowsForPeriods(rows);
+}
+
+function groupStackedTrendRowsForPeriods(
+  rows: StackedTrendQueryRow[],
+  selectedPeriods: string[] = []
+): StackedTrendPoint[] {
   const categoryTotals = new Map<string, { categoryPath: string; total: number }>();
 
   for (const row of rows) {
@@ -187,6 +194,10 @@ export function groupStackedTrendRows(rows: StackedTrendQueryRow[]): StackedTren
     periods.set(row.period, point);
   }
 
+  for (const period of selectedPeriods) {
+    periods.set(period, periods.get(period) ?? {});
+  }
+
   return [...periods.entries()]
     .sort(([periodA], [periodB]) => periodA.localeCompare(periodB))
     .map(([period, values]) => {
@@ -209,6 +220,11 @@ export async function getTransactionAnalysis(
 
   const { whereClause, params } = buildAnalysisWhereClause(filters);
   const periodSql = periodExpression(filters.resolvedGrouping);
+  const selectedPeriods = analysisPeriods(
+    filters.from,
+    filters.to,
+    filters.resolvedGrouping
+  );
   const includedSql = includedTransactionCondition(filters);
   const summary = await queryOne<AnalysisSummary>(
     `${CATEGORY_HIERARCHY_CTE}
@@ -280,13 +296,97 @@ export async function getTransactionAnalysis(
 
   return {
     summary: summary ?? { ...ZERO_SUMMARY },
-    incomeExpenseTrend,
+    incomeExpenseTrend: fillIncomeExpenseTrendPeriods(
+      incomeExpenseTrend,
+      selectedPeriods
+    ),
     expenseBreakdown,
     incomeBreakdown,
-    expenseStackedTrend: groupStackedTrendRows(expenseStackedTrendRows),
-    incomeStackedTrend: groupStackedTrendRows(incomeStackedTrendRows),
+    expenseStackedTrend: groupStackedTrendRowsForPeriods(
+      expenseStackedTrendRows,
+      selectedPeriods
+    ),
+    incomeStackedTrend: groupStackedTrendRowsForPeriods(
+      incomeStackedTrendRows,
+      selectedPeriods
+    ),
     categoryTrends: groupCategoryTrendRows(categoryTrendRows),
   };
+}
+
+function analysisPeriods(
+  from: string,
+  to: string,
+  grouping: ResolvedAnalysisGrouping
+): string[] {
+  const periods: string[] = [];
+  const end = parseIsoDate(to);
+  let current = periodStart(parseIsoDate(from), grouping);
+
+  while (current <= end) {
+    periods.push(formatPeriod(current, grouping));
+    current = incrementPeriod(current, grouping);
+  }
+
+  return periods;
+}
+
+function parseIsoDate(value: string): Date {
+  return new Date(`${value}T00:00:00Z`);
+}
+
+function periodStart(date: Date, grouping: ResolvedAnalysisGrouping): Date {
+  if (grouping === 'daily') {
+    return date;
+  }
+
+  if (grouping === 'weekly') {
+    const day = date.getUTCDay();
+    const daysFromMonday = (day + 6) % 7;
+    const start = new Date(date);
+    start.setUTCDate(start.getUTCDate() - daysFromMonday);
+    return start;
+  }
+
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+}
+
+function incrementPeriod(
+  date: Date,
+  grouping: ResolvedAnalysisGrouping
+): Date {
+  const next = new Date(date);
+
+  if (grouping === 'daily') {
+    next.setUTCDate(next.getUTCDate() + 1);
+  } else if (grouping === 'weekly') {
+    next.setUTCDate(next.getUTCDate() + 7);
+  } else {
+    next.setUTCMonth(next.getUTCMonth() + 1);
+  }
+
+  return next;
+}
+
+function formatPeriod(date: Date, grouping: ResolvedAnalysisGrouping): string {
+  const isoDate = date.toISOString().slice(0, 10);
+  return grouping === 'monthly' ? isoDate.slice(0, 7) : isoDate;
+}
+
+function fillIncomeExpenseTrendPeriods(
+  rows: IncomeExpenseTrendPoint[],
+  selectedPeriods: string[]
+): IncomeExpenseTrendPoint[] {
+  const byPeriod = new Map(rows.map((row) => [row.period, row]));
+
+  return selectedPeriods.map(
+    (period) =>
+      byPeriod.get(period) ?? {
+        period,
+        income: '0.00',
+        expenses: '0.00',
+      }
+  );
 }
 
 function includedTransactionCondition(filters: AnalysisFilters): string {

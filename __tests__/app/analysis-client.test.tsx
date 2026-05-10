@@ -229,23 +229,34 @@ describe('AnalysisClient', () => {
       { period: '2026-04', income: '500.00', expenses: '200.00' },
     ],
     incomeBreakdown: [
-      { categoryId: 10, categoryName: 'Salary', categoryPath: 'Salary', total: '10200.00' },
+      {
+        category_id: 10,
+        category_name: 'Salary',
+        category_path: 'Salary',
+        amount: '10200.00',
+        percentage: 100,
+      },
     ],
     expenseBreakdown: [
-      { categoryId: 20, categoryName: 'Rent', categoryPath: 'Rent', total: '4300.00' },
+      {
+        category_id: 20,
+        category_name: 'Rent',
+        category_path: 'Rent',
+        amount: '4300.00',
+        percentage: 100,
+      },
     ],
     incomeStackedTrend: [
-      { period: '2026-04', categories: { Salary: '5000.00' } },
+      { period: '2026-04', Salary: '5000.00' },
     ],
     expenseStackedTrend: [
-      { period: '2026-04', categories: { Rent: '2200.00' } },
+      { period: '2026-04', Rent: '2200.00' },
     ],
     categoryTrends: [
       {
-        categoryId: 10,
-        categoryName: 'Salary',
-        categoryPath: 'Salary',
+        categoryKey: 'income-10',
         categoryType: 'income',
+        categoryPath: 'Salary',
         total: '10200.00',
         periods: { '2026-04': '5000.00', '2026-05': '5200.00' },
       },

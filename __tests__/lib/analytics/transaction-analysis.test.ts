@@ -179,8 +179,6 @@ describe('Transaction Analysis Analytics', () => {
       const { queryMany, queryOne } = await import('@/lib/db');
       const filters: AnalysisFilters = {
         ...baseFilters,
-        grouping: 'weekly',
-        resolvedGrouping: 'weekly',
         accountId: 7,
         includedCategoryIds: [2, 5],
         hasCategoryFilter: true,
@@ -318,16 +316,16 @@ describe('Transaction Analysis Analytics', () => {
       }
 
       expect(queryManyCalls[0][0]).toContain(
-        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+        "TO_CHAR(DATE_TRUNC('month', t.date), 'YYYY-MM')"
       );
       expect(queryManyCalls[3][0]).toContain(
-        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+        "TO_CHAR(DATE_TRUNC('month', t.date), 'YYYY-MM')"
       );
       expect(queryManyCalls[4][0]).toContain(
-        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+        "TO_CHAR(DATE_TRUNC('month', t.date), 'YYYY-MM')"
       );
       expect(queryManyCalls[5][0]).toContain(
-        "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
+        "TO_CHAR(DATE_TRUNC('month', t.date), 'YYYY-MM')"
       );
 
       expect(queryManyCalls[1][0]).toContain("ch.category_type = 'expense'");
@@ -355,6 +353,7 @@ describe('Transaction Analysis Analytics', () => {
         incomeExpenseTrend: [
           { period: '2025-01', income: '4000.00', expenses: '900.00' },
           { period: '2025-02', income: '2000.00', expenses: '600.00' },
+          { period: '2025-03', income: '0.00', expenses: '0.00' },
         ],
         expenseBreakdown: [
           {
@@ -388,10 +387,12 @@ describe('Transaction Analysis Analytics', () => {
             'Housing > Rent': '100.00',
             Uncategorized: '500.00',
           },
+          { period: '2025-03' },
         ],
         incomeStackedTrend: [
           { period: '2025-01', 'Work > Salary': '4000.00' },
           { period: '2025-02', 'Work > Salary': '2000.00' },
+          { period: '2025-03' },
         ],
         categoryTrends: [
           {
@@ -485,6 +486,57 @@ describe('Transaction Analysis Analytics', () => {
             '2025-01': '100.00',
           },
         },
+      ]);
+    });
+
+    it('fills missing selected-range monthly buckets with zero trend values', async () => {
+      const { queryMany, queryOne } = await import('@/lib/db');
+
+      vi.mocked(queryOne).mockResolvedValue({
+        income: '1000.00',
+        expenses: '500.00',
+      });
+      vi.mocked(queryMany)
+        .mockResolvedValueOnce([
+          { period: '2025-01', income: '1000.00', expenses: '500.00' },
+          { period: '2025-03', income: '0.00', expenses: '0.00' },
+        ])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([
+          {
+            period: '2025-01',
+            category_key: 'expense-2',
+            category_path: 'Housing > Rent',
+            amount: '500.00',
+          },
+        ])
+        .mockResolvedValueOnce([
+          {
+            period: '2025-01',
+            category_key: 'income-1',
+            category_path: 'Work > Salary',
+            amount: '1000.00',
+          },
+        ])
+        .mockResolvedValueOnce([]);
+
+      const result = await getTransactionAnalysis(baseFilters);
+
+      expect(result.incomeExpenseTrend).toEqual([
+        { period: '2025-01', income: '1000.00', expenses: '500.00' },
+        { period: '2025-02', income: '0.00', expenses: '0.00' },
+        { period: '2025-03', income: '0.00', expenses: '0.00' },
+      ]);
+      expect(result.expenseStackedTrend).toEqual([
+        { period: '2025-01', 'Housing > Rent': '500.00' },
+        { period: '2025-02' },
+        { period: '2025-03' },
+      ]);
+      expect(result.incomeStackedTrend).toEqual([
+        { period: '2025-01', 'Work > Salary': '1000.00' },
+        { period: '2025-02' },
+        { period: '2025-03' },
       ]);
     });
   });
