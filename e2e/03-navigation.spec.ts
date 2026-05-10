@@ -68,9 +68,9 @@ test.describe('Navigation and Protected Routes', () => {
     await page.goto(`/accounts/${accountId}`);
     await page.waitForLoadState('networkidle');
 
-    await expect(page).toHaveURL(
-      new RegExp(`/transactions\\?accountId=${accountId}(?:&|$)`)
-    );
+    const url = new URL(page.url());
+    expect(url.pathname).toBe('/transactions');
+    expect(url.searchParams.get('accountId')).toBe(accountId.toString());
     await expect(page.getByRole('heading', { name: /transactions/i })).toBeVisible();
     await expect(page.getByText('Checking Account').first()).toBeVisible();
   });

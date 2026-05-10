@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers/auth';
+import { getAccountIdByName } from './helpers/database';
 
 /**
  * Accounts List Page End-to-End Tests
@@ -7,7 +8,7 @@ import { login } from './helpers/auth';
  * Tests the accounts list page including:
  * - Page structure and heading
  * - Account cards display
- * - Navigation to account details
+ * - Navigation to filtered transactions
  * - Navbar link visibility
  * - Responsive design
  */
@@ -51,14 +52,19 @@ test.describe('Accounts List Page', () => {
   });
 
   test('should navigate to filtered transactions when clicking account card', async ({ page }) => {
+    const accountId = await getAccountIdByName('Checking Account');
+
     await page.goto('/accounts');
     await page.waitForLoadState('networkidle');
 
     // Click on Checking Account card
     await page.getByText('Checking Account').first().click();
+    await page.waitForURL((url) => url.pathname === '/transactions');
 
     // Should navigate to filtered transactions page
-    await expect(page).toHaveURL(/\/transactions\?accountId=\d+/);
+    const url = new URL(page.url());
+    expect(url.pathname).toBe('/transactions');
+    expect(url.searchParams.get('accountId')).toBe(accountId.toString());
     await expect(
       page.getByRole('heading', { name: /transactions/i })
     ).toBeVisible();
