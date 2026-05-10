@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Overview
 
@@ -99,7 +99,7 @@ Before starting ANY work (fixes, features, or changes), you MUST:
 - Use Conventional Commits specification for git commit messages
 - Use semantic versioning (SemVer)
 
-### Claude Temporary Plans, Checklists and Test Summaries
+### Codex Temporary Plans, Checklists and Test Summaries
 - Always store temporary files such as plans, checklists and test summaries to `tmp\`
 
 ## Architecture
