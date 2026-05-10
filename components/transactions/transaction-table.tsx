@@ -73,6 +73,7 @@ export function TransactionTable({
       <TableHeader>
          <TableRow>
            <TableHead>{t('date')}</TableHead>
+           <TableHead>{t('account')}</TableHead>
            <TableHead>{t('payee')}</TableHead>
            <TableHead>{t('category')}</TableHead>
            <TableHead className="text-right">{t('amount')}</TableHead>
@@ -84,7 +85,7 @@ export function TransactionTable({
         {transactions.length === 0 ? (
           <TableRow>
             <TableCell
-              colSpan={6}
+              colSpan={7}
               className="text-center text-muted-foreground"
             >
               {t('noTransactions')}
@@ -96,6 +97,7 @@ export function TransactionTable({
               <TableCell>
                 {formatDate(transaction.date)}
               </TableCell>
+              <TableCell>{transaction.account_name}</TableCell>
               <TableCell>{transaction.payee}</TableCell>
               <TableCell>
                  {transaction.category_path || t('uncategorized')}

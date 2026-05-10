@@ -58,6 +58,7 @@
     "importOfx": "Importar OFX",
     "deleteConfirm": "Tem certeza que deseja excluir esta transação?",
     "date": "Data",
+    "account": "Conta",
     "description": "Descrição",
     "payee": "Beneficiário",
     "amount": "Valor",
