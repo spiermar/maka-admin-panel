@@ -28,6 +28,7 @@ export function DashboardNav() {
     { href: `/?lang=${lang}`, label: t('dashboard') },
     { href: `/accounts?lang=${lang}`, label: t('accounts') },
     { href: `/transactions?lang=${lang}`, label: t('transactions') },
+    { href: `/analysis?lang=${lang}`, label: t('analysis') },
   ];
 
   const rentalsLinks = [
