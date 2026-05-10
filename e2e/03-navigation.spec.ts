@@ -38,14 +38,14 @@ test.describe('Navigation and Protected Routes', () => {
     await expect(page).toHaveURL(/\/$/);
 
     // Try to navigate to accounts if link exists
-    const accountsLink = page.locator('a[href*="/accounts"], nav a:has-text("Accounts")');
+    const accountsLink = page.getByRole('link', { name: /accounts/i });
 
-    if (await accountsLink.first().isVisible()) {
-      await accountsLink.first().click();
-      await page.waitForLoadState('networkidle');
+    if (await accountsLink.isVisible()) {
+      await accountsLink.click();
 
       // Should navigate successfully
-      expect(page.url()).toContain('/accounts');
+      await expect(page).toHaveURL(/\/accounts/);
+      await expect(page.getByRole('heading', { name: /accounts/i })).toBeVisible();
     }
   });
 
