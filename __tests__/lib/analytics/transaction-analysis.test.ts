@@ -96,26 +96,45 @@ describe('Transaction Analysis Analytics', () => {
 
       const result = groupStackedTrendRows(rows);
 
-      expect(result).toEqual([
-        {
-          period: '2025-01',
-          'Expense 1': '119.00',
-          'Expense 3': '117.00',
-          'Expense 5': '115.00',
-          'Expense 7': '113.00',
-          'Expense 9': '111.00',
-          Other: '109.00',
-        },
-        {
-          period: '2025-02',
-          'Expense 2': '118.00',
-          'Expense 4': '116.00',
-          'Expense 6': '114.00',
-          'Expense 8': '112.00',
-          'Expense 10': '110.00',
-          Other: '108.00',
-        },
-      ]);
+      expect(result).toEqual({
+        series: [
+          { key: 'expense-1', name: 'Expense 1' },
+          { key: 'expense-2', name: 'Expense 2' },
+          { key: 'expense-3', name: 'Expense 3' },
+          { key: 'expense-4', name: 'Expense 4' },
+          { key: 'expense-5', name: 'Expense 5' },
+          { key: 'expense-6', name: 'Expense 6' },
+          { key: 'expense-7', name: 'Expense 7' },
+          { key: 'expense-8', name: 'Expense 8' },
+          { key: 'expense-9', name: 'Expense 9' },
+          { key: 'expense-10', name: 'Expense 10' },
+          { key: 'other', name: 'Other' },
+        ],
+        points: [
+          {
+            period: '2025-01',
+            values: {
+              'expense-1': '119.00',
+              'expense-3': '117.00',
+              'expense-5': '115.00',
+              'expense-7': '113.00',
+              'expense-9': '111.00',
+              other: '109.00',
+            },
+          },
+          {
+            period: '2025-02',
+            values: {
+              'expense-2': '118.00',
+              'expense-4': '116.00',
+              'expense-6': '114.00',
+              'expense-8': '112.00',
+              'expense-10': '110.00',
+              other: '108.00',
+            },
+          },
+        ],
+      });
     });
 
     it('selects tied top categories deterministically by category path', () => {
@@ -140,22 +159,60 @@ describe('Transaction Analysis Analytics', () => {
 
       const result = groupStackedTrendRows(rows);
 
-      expect(result).toEqual([
+      expect(result).toEqual({
+        series: [
+          { key: 'expense-1', name: 'Category 01' },
+          { key: 'expense-2', name: 'Category 02' },
+          { key: 'expense-3', name: 'Category 03' },
+          { key: 'expense-4', name: 'Category 04' },
+          { key: 'expense-5', name: 'Category 05' },
+          { key: 'expense-6', name: 'Category 06' },
+          { key: 'expense-7', name: 'Category 07' },
+          { key: 'expense-8', name: 'Category 08' },
+          { key: 'expense-9', name: 'Category 09' },
+          { key: 'expense-10', name: 'Category 10' },
+          { key: 'other', name: 'Other' },
+        ],
+        points: [
+          {
+            period: '2025-01',
+            values: {
+              'expense-1': '100.00',
+              'expense-2': '100.00',
+              'expense-3': '100.00',
+              'expense-4': '100.00',
+              'expense-5': '100.00',
+              'expense-6': '100.00',
+              'expense-7': '100.00',
+              'expense-8': '100.00',
+              'expense-9': '100.00',
+              'expense-10': '100.00',
+              other: '100.00',
+            },
+          },
+        ],
+      });
+    });
+
+    it('uses stable series keys and display names for category paths', () => {
+      const result = groupStackedTrendRows([
         {
           period: '2025-01',
-          'Category 01': '100.00',
-          'Category 02': '100.00',
-          'Category 03': '100.00',
-          'Category 04': '100.00',
-          'Category 05': '100.00',
-          'Category 06': '100.00',
-          'Category 07': '100.00',
-          'Category 08': '100.00',
-          'Category 09': '100.00',
-          'Category 10': '100.00',
-          Other: '100.00',
+          category_key: 'expense-11',
+          category_path: 'Taxes > U.S. Federal',
+          amount: '250.00',
         },
       ]);
+
+      expect(result).toEqual({
+        series: [{ key: 'expense-11', name: 'Taxes > U.S. Federal' }],
+        points: [
+          {
+            period: '2025-01',
+            values: { 'expense-11': '250.00' },
+          },
+        ],
+      });
     });
   });
 
@@ -380,20 +437,31 @@ describe('Transaction Analysis Analytics', () => {
             percentage: 100,
           },
         ],
-        expenseStackedTrend: [
-          { period: '2025-01', 'Housing > Rent': '900.00' },
-          {
-            period: '2025-02',
-            'Housing > Rent': '100.00',
-            Uncategorized: '500.00',
-          },
-          { period: '2025-03' },
-        ],
-        incomeStackedTrend: [
-          { period: '2025-01', 'Work > Salary': '4000.00' },
-          { period: '2025-02', 'Work > Salary': '2000.00' },
-          { period: '2025-03' },
-        ],
+        expenseStackedTrend: {
+          series: [
+            { key: 'expense-2', name: 'Housing > Rent' },
+            { key: 'expense-uncategorized', name: 'Uncategorized' },
+          ],
+          points: [
+            { period: '2025-01', values: { 'expense-2': '900.00' } },
+            {
+              period: '2025-02',
+              values: {
+                'expense-2': '100.00',
+                'expense-uncategorized': '500.00',
+              },
+            },
+            { period: '2025-03', values: {} },
+          ],
+        },
+        incomeStackedTrend: {
+          series: [{ key: 'income-1', name: 'Work > Salary' }],
+          points: [
+            { period: '2025-01', values: { 'income-1': '4000.00' } },
+            { period: '2025-02', values: { 'income-1': '2000.00' } },
+            { period: '2025-03', values: {} },
+          ],
+        },
         categoryTrends: [
           {
             categoryKey: 'income-1',
@@ -528,16 +596,22 @@ describe('Transaction Analysis Analytics', () => {
         { period: '2025-02', income: '0.00', expenses: '0.00' },
         { period: '2025-03', income: '0.00', expenses: '0.00' },
       ]);
-      expect(result.expenseStackedTrend).toEqual([
-        { period: '2025-01', 'Housing > Rent': '500.00' },
-        { period: '2025-02' },
-        { period: '2025-03' },
-      ]);
-      expect(result.incomeStackedTrend).toEqual([
-        { period: '2025-01', 'Work > Salary': '1000.00' },
-        { period: '2025-02' },
-        { period: '2025-03' },
-      ]);
+      expect(result.expenseStackedTrend).toEqual({
+        series: [{ key: 'expense-2', name: 'Housing > Rent' }],
+        points: [
+          { period: '2025-01', values: { 'expense-2': '500.00' } },
+          { period: '2025-02', values: {} },
+          { period: '2025-03', values: {} },
+        ],
+      });
+      expect(result.incomeStackedTrend).toEqual({
+        series: [{ key: 'income-1', name: 'Work > Salary' }],
+        points: [
+          { period: '2025-01', values: { 'income-1': '1000.00' } },
+          { period: '2025-02', values: {} },
+          { period: '2025-03', values: {} },
+        ],
+      });
     });
   });
 });

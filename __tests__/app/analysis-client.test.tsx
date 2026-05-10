@@ -60,7 +60,7 @@ vi.mock('@/components/analysis/category-stacked-trend-chart', () => ({
     <section
       data-testid="stacked-trend-chart"
       data-locale={locale}
-      data-points={data.length}
+      data-points={data.points.length}
     >
       {title}
     </section>
@@ -246,12 +246,14 @@ describe('AnalysisClient', () => {
         percentage: 100,
       },
     ],
-    incomeStackedTrend: [
-      { period: '2026-04', Salary: '5000.00' },
-    ],
-    expenseStackedTrend: [
-      { period: '2026-04', Rent: '2200.00' },
-    ],
+    incomeStackedTrend: {
+      series: [{ key: 'income-10', name: 'Salary' }],
+      points: [{ period: '2026-04', values: { 'income-10': '5000.00' } }],
+    },
+    expenseStackedTrend: {
+      series: [{ key: 'expense-20', name: 'Rent' }],
+      points: [{ period: '2026-04', values: { 'expense-20': '2200.00' } }],
+    },
     categoryTrends: [
       {
         categoryKey: 'income-10',

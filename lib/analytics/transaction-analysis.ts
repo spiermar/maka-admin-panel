@@ -24,9 +24,20 @@ export interface AnalysisCategoryBreakdown {
   percentage: number;
 }
 
-export type StackedTrendPoint = {
+export interface StackedTrendSeries {
+  key: string;
+  name: string;
+}
+
+export interface StackedTrendPoint {
   period: string;
-} & Record<string, string>;
+  values: Record<string, string>;
+}
+
+export interface StackedTrendData {
+  series: StackedTrendSeries[];
+  points: StackedTrendPoint[];
+}
 
 export interface CategoryTrendRow {
   categoryKey: string;
@@ -41,8 +52,8 @@ export interface TransactionAnalysisData {
   incomeExpenseTrend: IncomeExpenseTrendPoint[];
   expenseBreakdown: AnalysisCategoryBreakdown[];
   incomeBreakdown: AnalysisCategoryBreakdown[];
-  expenseStackedTrend: StackedTrendPoint[];
-  incomeStackedTrend: StackedTrendPoint[];
+  expenseStackedTrend: StackedTrendData;
+  incomeStackedTrend: StackedTrendData;
   categoryTrends: CategoryTrendRow[];
 }
 
@@ -74,6 +85,8 @@ const ZERO_SUMMARY: AnalysisSummary = {
   expenses: '0.00',
 };
 
+const OTHER_STACK_KEY = 'other';
+
 const CATEGORY_HIERARCHY_CTE = `WITH RECURSIVE category_hierarchy AS (
        SELECT
          id,
@@ -102,8 +115,8 @@ export function emptyTransactionAnalysis(): TransactionAnalysisData {
     incomeExpenseTrend: [],
     expenseBreakdown: [],
     incomeBreakdown: [],
-    expenseStackedTrend: [],
-    incomeStackedTrend: [],
+    expenseStackedTrend: { series: [], points: [] },
+    incomeStackedTrend: { series: [], points: [] },
     categoryTrends: [],
   };
 }
@@ -154,14 +167,14 @@ export function buildAnalysisWhereClause(filters: AnalysisFilters): AnalysisWher
   };
 }
 
-export function groupStackedTrendRows(rows: StackedTrendQueryRow[]): StackedTrendPoint[] {
+export function groupStackedTrendRows(rows: StackedTrendQueryRow[]): StackedTrendData {
   return groupStackedTrendRowsForPeriods(rows);
 }
 
 function groupStackedTrendRowsForPeriods(
   rows: StackedTrendQueryRow[],
   selectedPeriods: string[] = []
-): StackedTrendPoint[] {
+): StackedTrendData {
   const categoryTotals = new Map<string, { categoryPath: string; total: number }>();
 
   for (const row of rows) {
@@ -173,24 +186,36 @@ function groupStackedTrendRowsForPeriods(
     categoryTotals.set(row.category_key, total);
   }
 
-  const topCategoryKeys = new Set(
-    [...categoryTotals.entries()]
-      .sort(
-        ([categoryKeyA, a], [categoryKeyB, b]) =>
-          b.total - a.total ||
-          a.categoryPath.localeCompare(b.categoryPath) ||
-          categoryKeyA.localeCompare(categoryKeyB)
-      )
-      .slice(0, 10)
-      .map(([categoryKey]) => categoryKey)
+  const sortedCategories = [...categoryTotals.entries()].sort(
+    ([categoryKeyA, a], [categoryKeyB, b]) =>
+      b.total - a.total ||
+      a.categoryPath.localeCompare(b.categoryPath) ||
+      categoryKeyA.localeCompare(categoryKeyB)
   );
+  const topCategories = sortedCategories.slice(0, 10);
+  const topCategoryKeys = new Set(
+    topCategories.map(([categoryKey]) => categoryKey)
+  );
+  const series: StackedTrendSeries[] = topCategories.map(
+    ([categoryKey, category]) => ({
+      key: categoryKey,
+      name: category.categoryPath,
+    })
+  );
+
+  if (sortedCategories.length > topCategories.length) {
+    series.push({ key: OTHER_STACK_KEY, name: 'Other' });
+  }
+
   const periods = new Map<string, Record<string, number>>();
 
   for (const row of rows) {
     const point = periods.get(row.period) ?? {};
-    const categoryName = topCategoryKeys.has(row.category_key) ? row.category_path : 'Other';
+    const seriesKey = topCategoryKeys.has(row.category_key)
+      ? row.category_key
+      : OTHER_STACK_KEY;
 
-    point[categoryName] = (point[categoryName] ?? 0) + Number.parseFloat(row.amount);
+    point[seriesKey] = (point[seriesKey] ?? 0) + Number.parseFloat(row.amount);
     periods.set(row.period, point);
   }
 
@@ -198,17 +223,19 @@ function groupStackedTrendRowsForPeriods(
     periods.set(period, periods.get(period) ?? {});
   }
 
-  return [...periods.entries()]
+  const points = [...periods.entries()]
     .sort(([periodA], [periodB]) => periodA.localeCompare(periodB))
-    .map(([period, values]) => {
-      const point: StackedTrendPoint = { period };
+    .map(([period, values]) => ({
+      period,
+      values: Object.fromEntries(
+        Object.entries(values).map(([seriesKey, amount]) => [
+          seriesKey,
+          amount.toFixed(2),
+        ])
+      ),
+    }));
 
-      for (const [categoryName, amount] of Object.entries(values)) {
-        point[categoryName] = amount.toFixed(2);
-      }
-
-      return point;
-    });
+  return { series, points };
 }
 
 export async function getTransactionAnalysis(

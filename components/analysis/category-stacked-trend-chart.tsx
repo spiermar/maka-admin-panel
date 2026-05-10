@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { StackedTrendPoint } from '@/lib/analytics/transaction-analysis';
+import type { StackedTrendData } from '@/lib/analytics/transaction-analysis';
 import {
   Bar,
   BarChart,
@@ -28,7 +28,7 @@ const STACK_COLORS = [
 ];
 
 interface CategoryStackedTrendChartProps {
-  data: StackedTrendPoint[];
+  data: StackedTrendData;
   title: string;
   emptyText: string;
   locale: string;
@@ -49,16 +49,13 @@ export function CategoryStackedTrendChart({
   emptyText,
   locale,
 }: CategoryStackedTrendChartProps) {
-  const stackKeys = Array.from(
-    new Set(data.flatMap((point) => Object.keys(point).filter((key) => key !== 'period')))
-  );
-  const chartData = data.map((point) => {
+  const chartData = data.points.map((point) => {
     const parsedPoint: Record<string, string | number> = {
       period: point.period,
     };
 
-    for (const key of stackKeys) {
-      parsedPoint[key] = parseFloat(point[key] ?? '0');
+    for (const series of data.series) {
+      parsedPoint[series.key] = parseFloat(point.values[series.key] ?? '0');
     }
 
     return parsedPoint;
@@ -70,7 +67,7 @@ export function CategoryStackedTrendChart({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        {chartData.length === 0 || stackKeys.length === 0 ? (
+        {chartData.length === 0 || data.series.length === 0 ? (
           <div className="flex h-80 items-center justify-center text-sm text-muted-foreground">
             {emptyText}
           </div>
@@ -82,10 +79,11 @@ export function CategoryStackedTrendChart({
               <YAxis tickFormatter={(value) => formatCurrency(value, locale)} />
               <Tooltip formatter={(value) => formatCurrency(value, locale)} />
               <Legend />
-              {stackKeys.map((key, index) => (
+              {data.series.map((series, index) => (
                 <Bar
-                  key={key}
-                  dataKey={key}
+                  key={series.key}
+                  dataKey={series.key}
+                  name={series.name}
                   stackId="category"
                   fill={STACK_COLORS[index % STACK_COLORS.length]}
                 />

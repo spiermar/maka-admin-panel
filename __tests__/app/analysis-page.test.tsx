@@ -49,8 +49,8 @@ const data: TransactionAnalysisData = {
   incomeExpenseTrend: [],
   expenseBreakdown: [],
   incomeBreakdown: [],
-  expenseStackedTrend: [],
-  incomeStackedTrend: [],
+  expenseStackedTrend: { series: [], points: [] },
+  incomeStackedTrend: { series: [], points: [] },
   categoryTrends: [],
 };
 
