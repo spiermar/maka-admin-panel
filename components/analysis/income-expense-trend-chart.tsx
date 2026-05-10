@@ -17,17 +17,33 @@ interface IncomeExpenseTrendChartProps {
   data: IncomeExpenseTrendPoint[];
   title: string;
   emptyText: string;
+  locale: string;
+  labels: {
+    income: string;
+    expenses: string;
+  };
+}
+
+function formatCurrency(amount: unknown, locale: string) {
+  const parsedAmount = typeof amount === 'number' ? amount : parseFloat(String(amount));
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: locale === 'pt-BR' ? 'BRL' : 'USD',
+  }).format(Number.isNaN(parsedAmount) ? 0 : parsedAmount);
 }
 
 export function IncomeExpenseTrendChart({
   data,
   title,
   emptyText,
+  locale,
+  labels,
 }: IncomeExpenseTrendChartProps) {
   const chartData = data.map((item) => ({
     period: item.period,
-    Income: parseFloat(item.income),
-    Expenses: parseFloat(item.expenses),
+    income: parseFloat(item.income),
+    expenses: parseFloat(item.expenses),
   }));
 
   return (
@@ -45,11 +61,11 @@ export function IncomeExpenseTrendChart({
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip />
+              <YAxis tickFormatter={(value) => formatCurrency(value, locale)} />
+              <Tooltip formatter={(value) => formatCurrency(value, locale)} />
               <Legend />
-              <Bar dataKey="Income" fill="#22c55e" />
-              <Bar dataKey="Expenses" fill="#ef4444" />
+              <Bar dataKey="income" name={labels.income} fill="#22c55e" />
+              <Bar dataKey="expenses" name={labels.expenses} fill="#ef4444" />
             </BarChart>
           </ResponsiveContainer>
         )}

@@ -31,12 +31,23 @@ interface CategoryStackedTrendChartProps {
   data: StackedTrendPoint[];
   title: string;
   emptyText: string;
+  locale: string;
+}
+
+function formatCurrency(amount: unknown, locale: string) {
+  const parsedAmount = typeof amount === 'number' ? amount : parseFloat(String(amount));
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: locale === 'pt-BR' ? 'BRL' : 'USD',
+  }).format(Number.isNaN(parsedAmount) ? 0 : parsedAmount);
 }
 
 export function CategoryStackedTrendChart({
   data,
   title,
   emptyText,
+  locale,
 }: CategoryStackedTrendChartProps) {
   const stackKeys = Array.from(
     new Set(data.flatMap((point) => Object.keys(point).filter((key) => key !== 'period')))
@@ -68,8 +79,8 @@ export function CategoryStackedTrendChart({
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="period" />
-              <YAxis />
-              <Tooltip />
+              <YAxis tickFormatter={(value) => formatCurrency(value, locale)} />
+              <Tooltip formatter={(value) => formatCurrency(value, locale)} />
               <Legend />
               {stackKeys.map((key, index) => (
                 <Bar
