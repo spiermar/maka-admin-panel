@@ -259,7 +259,7 @@ describe('TransactionsClient', () => {
     ).toBeInTheDocument();
   });
 
-  it('requires choosing an import account again after completing a manual import flow', async () => {
+  it('keeps the import dialog open after completion until the dialog closes', async () => {
     const user = userEvent.setup();
     renderClient({});
 
@@ -273,6 +273,11 @@ describe('TransactionsClient', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Complete import' }));
+    expect(screen.getByTestId('ofx-import-dialog')).toHaveTextContent(
+      'Import account 2'
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Close import' }));
     await user.click(screen.getByRole('button', { name: 'Import OFX' }));
 
     expect(screen.queryByTestId('ofx-import-dialog')).not.toBeInTheDocument();

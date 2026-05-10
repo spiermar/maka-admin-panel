@@ -23,7 +23,6 @@ import {
   TransactionWithDetails,
 } from '@/lib/db/types';
 import { TransactionFilters } from '@/lib/transactions/filters';
-import { ImportResult } from '@/lib/actions/ofx-import';
 
 interface TransactionsClientProps {
   accounts: Account[];
@@ -97,10 +96,6 @@ export function TransactionsClient({
   const closeImportFlow = () => {
     setImportOpen(false);
     setImportAccountId('');
-  };
-
-  const handleImportComplete = (_result: ImportResult) => {
-    closeImportFlow();
   };
 
   return (
@@ -206,7 +201,7 @@ export function TransactionsClient({
             }
           }}
           accountId={selectedImportAccountId}
-          onImportComplete={handleImportComplete}
+          onImportComplete={() => {}}
         />
       ) : null}
     </div>
