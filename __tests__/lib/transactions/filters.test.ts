@@ -55,6 +55,19 @@ describe('parseTransactionFilters', () => {
     });
   });
 
+  it('ignores numeric values outside the PostgreSQL integer range', () => {
+    const result = parseTransactionFilters({
+      accountId: '2147483648',
+      categoryId: '9007199254740993',
+    });
+
+    expect(result).toEqual({
+      filters: {},
+      lang: 'en',
+      hasInvalidDateRange: false,
+    });
+  });
+
   it('ignores invalid calendar dates', () => {
     const result = parseTransactionFilters({
       from: '2026-02-31',

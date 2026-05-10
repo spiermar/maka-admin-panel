@@ -19,6 +19,7 @@ export type TransactionFilterSearchParams = Record<string, QueryValue>;
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const POSITIVE_INTEGER_RE = /^\d+$/;
+const POSTGRES_INTEGER_MAX = 2_147_483_647;
 
 function firstValue(value: QueryValue): string | undefined {
   if (Array.isArray(value)) {
@@ -35,7 +36,9 @@ function parsePositiveInteger(value: QueryValue): number | undefined {
   }
 
   const parsed = Number.parseInt(raw, 10);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
+  return Number.isInteger(parsed) && parsed > 0 && parsed <= POSTGRES_INTEGER_MAX
+    ? parsed
+    : undefined;
 }
 
 function parseIsoDate(value: QueryValue): string | undefined {
