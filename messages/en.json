@@ -22,6 +22,7 @@
     "dashboard": "Dashboard",
     "accounts": "Accounts",
     "transactions": "Transactions",
+    "analysis": "Analysis",
     "rentals": "Rentals",
     "units": "Units",
     "tenants": "Tenants",
@@ -94,6 +95,80 @@
     "fitid": "FITID",
     "refnum": "REFNUM",
     "originalMemo": "Original MEMO"
+  },
+  "analysis": {
+    "title": "Analysis",
+    "description": "Explore income and expense trends across accounts and categories.",
+    "filters": "Filters",
+    "dateRange": "Date range",
+    "dateRangePreset": "Date range",
+    "from": "From",
+    "to": "To",
+    "account": "Account",
+    "allAccounts": "All accounts",
+    "grouping": "Grouping",
+    "reset": "Reset",
+    "resetFilters": "Reset",
+    "categories": {
+      "title": "Categories",
+      "income": "Income categories",
+      "expense": "Expense categories",
+      "uncategorizedIncome": "Uncategorized income",
+      "uncategorizedExpense": "Uncategorized expense"
+    },
+    "income": "Income",
+    "expenses": "Expenses",
+    "category": "Category",
+    "type": "Type",
+    "total": "Total",
+    "uncategorizedIncome": "Uncategorized income",
+    "uncategorizedExpense": "Uncategorized expense",
+    "incomeVsExpensesTrend": "Income vs. expenses trend",
+    "expenseBreakdown": "Expense breakdown",
+    "incomeBreakdown": "Income breakdown",
+    "expenseStackedTrend": "Expense category trend",
+    "incomeStackedTrend": "Income category trend",
+    "categoryTrendTable": "Category trend table",
+    "empty": "No data for the selected filters.",
+    "emptyIncome": "No income data for the selected filters.",
+    "emptyExpenses": "No expense data for the selected filters.",
+    "invalidDateRange": "From date must be before to date.",
+    "presets": {
+      "thisMonth": "This month",
+      "lastMonth": "Last month",
+      "last3Months": "Last 3 months",
+      "last90Days": "Last 90 days",
+      "thisYear": "This year",
+      "ytd": "Year to date",
+      "lastYear": "Last year",
+      "custom": "Custom"
+    },
+    "groupings": {
+      "adaptive": "Adaptive",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "summary": {
+      "income": "Income",
+      "expenses": "Expenses"
+    },
+    "charts": {
+      "incomeExpenseTrend": "Income vs. expenses trend",
+      "incomeStackedTrend": "Income category trend",
+      "expenseStackedTrend": "Expense category trend",
+      "incomeBreakdown": "Income breakdown",
+      "expenseBreakdown": "Expense breakdown",
+      "categoryTrendTable": "Category trend table",
+      "empty": "No data for the selected filters."
+    },
+    "table": {
+      "category": "Category",
+      "type": "Type",
+      "total": "Total",
+      "income": "Income",
+      "expense": "Expense"
+    }
   },
   "expenseReports": {
     "title": "Expense Reports",

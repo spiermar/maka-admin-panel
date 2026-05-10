@@ -20,6 +20,7 @@
     "dashboard": "Painel",
     "accounts": "Contas",
     "transactions": "Transações",
+    "analysis": "Análise",
     "rentals": "Aluguéis",
     "units": "Unidades",
     "tenants": "Inquilinos",
@@ -92,6 +93,80 @@
     "fitid": "FITID",
     "refnum": "REFNUM",
     "originalMemo": "MEMO Original"
+  },
+  "analysis": {
+    "title": "Análise",
+    "description": "Explore tendências de receitas e despesas por contas e categorias.",
+    "filters": "Filtros",
+    "dateRange": "Intervalo de datas",
+    "dateRangePreset": "Intervalo de datas",
+    "from": "De",
+    "to": "Até",
+    "account": "Conta",
+    "allAccounts": "Todas as contas",
+    "grouping": "Agrupamento",
+    "reset": "Redefinir",
+    "resetFilters": "Redefinir",
+    "categories": {
+      "title": "Categorias",
+      "income": "Categorias de receita",
+      "expense": "Categorias de despesa",
+      "uncategorizedIncome": "Receita sem categoria",
+      "uncategorizedExpense": "Despesa sem categoria"
+    },
+    "income": "Receita",
+    "expenses": "Despesas",
+    "category": "Categoria",
+    "type": "Tipo",
+    "total": "Total",
+    "uncategorizedIncome": "Receita sem categoria",
+    "uncategorizedExpense": "Despesa sem categoria",
+    "incomeVsExpensesTrend": "Tendência de receitas vs. despesas",
+    "expenseBreakdown": "Distribuição de despesas",
+    "incomeBreakdown": "Distribuição de receitas",
+    "expenseStackedTrend": "Tendência de despesas por categoria",
+    "incomeStackedTrend": "Tendência de receitas por categoria",
+    "categoryTrendTable": "Tabela de tendências por categoria",
+    "empty": "Nenhum dado para os filtros selecionados.",
+    "emptyIncome": "Nenhum dado de receita para os filtros selecionados.",
+    "emptyExpenses": "Nenhum dado de despesa para os filtros selecionados.",
+    "invalidDateRange": "A data inicial deve ser anterior à data final.",
+    "presets": {
+      "thisMonth": "Este mês",
+      "lastMonth": "Mês passado",
+      "last3Months": "Últimos 3 meses",
+      "last90Days": "Últimos 90 dias",
+      "thisYear": "Este ano",
+      "ytd": "Ano até agora",
+      "lastYear": "Ano passado",
+      "custom": "Personalizado"
+    },
+    "groupings": {
+      "adaptive": "Adaptativo",
+      "daily": "Diário",
+      "weekly": "Semanal",
+      "monthly": "Mensal"
+    },
+    "summary": {
+      "income": "Receita",
+      "expenses": "Despesas"
+    },
+    "charts": {
+      "incomeExpenseTrend": "Tendência de receitas vs. despesas",
+      "incomeStackedTrend": "Tendência de receitas por categoria",
+      "expenseStackedTrend": "Tendência de despesas por categoria",
+      "incomeBreakdown": "Distribuição de receitas",
+      "expenseBreakdown": "Distribuição de despesas",
+      "categoryTrendTable": "Tabela de tendências por categoria",
+      "empty": "Nenhum dado para os filtros selecionados."
+    },
+    "table": {
+      "category": "Categoria",
+      "type": "Tipo",
+      "total": "Total",
+      "income": "Receita",
+      "expense": "Despesa"
+    }
   },
   "expenseReports": {
     "title": "Relatórios de Despesas",
