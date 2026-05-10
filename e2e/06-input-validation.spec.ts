@@ -2,6 +2,28 @@ import { test, expect } from './fixtures';
 import { sql } from '@vercel/postgres';
 import { login } from './helpers/auth';
 import { getAccountIdByName } from './helpers/database';
+import type { Page, Locator } from '@playwright/test';
+
+async function openAddTransactionForm(
+  page: Page,
+  accountId: number
+): Promise<Locator> {
+  await page.goto(`/transactions?accountId=${accountId}&lang=en`);
+
+  await expect(page.getByRole('heading', { name: 'Transactions' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add Transaction' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Add Transaction' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Add Transaction' })).toBeVisible({
+    timeout: 10000,
+  });
+
+  const form = page.locator('form', {
+    has: page.locator('input[name="amount"]'),
+  });
+  await expect(form).toBeVisible();
+  return form;
+}
 
 test.describe('Transaction Input Validation', () => {
   test.afterAll(async () => {
@@ -16,30 +38,23 @@ test.describe('Transaction Input Validation', () => {
 
   test('prevents submission of amount exceeding limit', async ({ page }) => {
     const accountId = await getAccountIdByName('Checking Account');
-    await page.goto(`/accounts/${accountId}`);
-    await page.waitForSelector('button:has-text("Add Transaction")', { state: 'visible', timeout: 5000 });
-    await page.click('button:has-text("Add Transaction")');
+    const form = await openAddTransactionForm(page, accountId);
 
-    await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
-    await page.waitForTimeout(300);
-    await page.locator('[data-state="open"] input[name="amount"]').fill('1000000.01');
-    await page.locator('[data-state="open"] input[name="payee"]').fill('Test');
-    await page.locator('[data-state="open"] button[type="submit"]').click();
+    await form.locator('input[name="amount"]').fill('1000000.01');
+    await form.locator('input[name="payee"]').fill('Test');
+    await form.locator('button[type="submit"]').click();
 
     await expect(page.locator('text=Amount must be between -1,000,000.00 and 1,000,000.00')).toBeVisible({ timeout: 5000 });
   });
 
   test('allows submission of amount at limit', async ({ page }) => {
     const accountId = await getAccountIdByName('Checking Account');
-    await page.goto(`/accounts/${accountId}`);
-    await page.click('button:has-text("Add Transaction")');
+    const form = await openAddTransactionForm(page, accountId);
 
-    await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
-    await page.waitForTimeout(300);
-    await page.locator('[data-state="open"] input[name="amount"]').fill('1000000.00');
-    await page.locator('[data-state="open"] input[name="payee"]').fill('Test');
-    await page.locator('[data-state="open"] input[name="date"]').fill('2026-01-15');
-    await page.locator('[data-state="open"] button[type="submit"]').click();
+    await form.locator('input[name="amount"]').fill('1000000.00');
+    await form.locator('input[name="payee"]').fill('Test');
+    await form.locator('input[name="date"]').fill('2026-01-15');
+    await form.locator('button[type="submit"]').click();
 
     await expect(page.locator('text=Transaction added')).toBeVisible({ timeout: 5000 });
   });
@@ -49,15 +64,12 @@ test.describe('Transaction Input Validation', () => {
       .toISOString().split('T')[0];
     const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto(`/accounts/${accountId}`);
-    await page.click('button:has-text("Add Transaction")');
+    const form = await openAddTransactionForm(page, accountId);
 
-    await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
-    await page.waitForTimeout(300);
-    await page.locator('[data-state="open"] input[name="amount"]').fill('100.00');
-    await page.locator('[data-state="open"] input[name="payee"]').fill('Test');
-    await page.locator('[data-state="open"] input[name="date"]').fill(futureDate);
-    await page.locator('[data-state="open"] button[type="submit"]').click();
+    await form.locator('input[name="amount"]').fill('100.00');
+    await form.locator('input[name="payee"]').fill('Test');
+    await form.locator('input[name="date"]').fill(futureDate);
+    await form.locator('button[type="submit"]').click();
 
     await expect(page.locator('text=Date must be within last 10 years and not in the future')).toBeVisible({ timeout: 5000 });
   });
@@ -66,39 +78,32 @@ test.describe('Transaction Input Validation', () => {
     const oldDate = '2015-01-01';
     const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto(`/accounts/${accountId}`);
-    await page.click('button:has-text("Add Transaction")');
+    const form = await openAddTransactionForm(page, accountId);
 
-    await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
-    await page.waitForTimeout(300);
-    await page.locator('[data-state="open"] input[name="amount"]').fill('100.00');
-    await page.locator('[data-state="open"] input[name="payee"]').fill('Test');
-    await page.locator('[data-state="open"] input[name="date"]').fill(oldDate);
-    await page.locator('[data-state="open"] button[type="submit"]').click();
+    await form.locator('input[name="amount"]').fill('100.00');
+    await form.locator('input[name="payee"]').fill('Test');
+    await form.locator('input[name="date"]').fill(oldDate);
+    await form.locator('button[type="submit"]').click();
 
     await expect(page.locator('text=Date must be within last 10 years and not in the future')).toBeVisible({ timeout: 5000 });
   });
 
   test('shows specific error messages for each invalid field', async ({ page }) => {
     const accountId = await getAccountIdByName('Checking Account');
-    await page.goto(`/accounts/${accountId}`);
-    await page.click('button:has-text("Add Transaction")');
-
-    await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
-    await page.waitForTimeout(300);
+    const form = await openAddTransactionForm(page, accountId);
 
     // Fill in valid amount and payee, but manipulate date to be invalid
-    await page.locator('[data-state="open"] input[name="amount"]').fill('100.00');
-    await page.locator('[data-state="open"] input[name="payee"]').fill('Test');
+    await form.locator('input[name="amount"]').fill('100.00');
+    await form.locator('input[name="payee"]').fill('Test');
 
     // Use JavaScript to bypass browser date validation and set invalid value
-    const dateInput = page.locator('[data-state="open"] input[name="date"]');
+    const dateInput = form.locator('input[name="date"]');
     await dateInput.evaluate((el: HTMLInputElement) => {
       el.removeAttribute('type');  // Remove type to bypass date validation
       el.value = 'invalid-date';
     });
 
-    await page.locator('[data-state="open"] button[type="submit"]').click();
+    await form.locator('button[type="submit"]').click();
 
     await expect(page.locator('text=Invalid date format')).toBeVisible({ timeout: 5000 });
   });
@@ -106,15 +111,12 @@ test.describe('Transaction Input Validation', () => {
   test('allows submission of valid transaction', async ({ page }) => {
     const accountId = await getAccountIdByName('Checking Account');
 
-    await page.goto(`/accounts/${accountId}`);
-    await page.click('button:has-text("Add Transaction")');
+    const form = await openAddTransactionForm(page, accountId);
 
-    await page.waitForSelector('[data-state="open"] form', { state: 'visible', timeout: 5000 });
-    await page.waitForTimeout(300);
-    await page.locator('[data-state="open"] input[name="amount"]').fill('150.50');
-    await page.locator('[data-state="open"] input[name="payee"]').fill('Test Payee');
-    await page.locator('[data-state="open"] input[name="date"]').fill('2026-01-15');
-    await page.locator('[data-state="open"] button[type="submit"]').click();
+    await form.locator('input[name="amount"]').fill('150.50');
+    await form.locator('input[name="payee"]').fill('Test Payee');
+    await form.locator('input[name="date"]').fill('2026-01-15');
+    await form.locator('button[type="submit"]').click();
 
     await expect(page.locator('text=Transaction added')).toBeVisible({ timeout: 5000 });
   });
