@@ -3,6 +3,7 @@ import {
   getTransactionById,
   getTransactionsByAccount,
   getRecentTransactions,
+  getTransactions,
 } from '@/lib/db/transactions';
 import { mockTransaction, mockTransactionWithDetails } from '../utils/mocks';
 
@@ -159,6 +160,61 @@ describe('Transaction Queries', () => {
         expect.stringContaining('ORDER BY t.date DESC'),
         [1, 100, 0]
       );
+    });
+  });
+
+  describe('getTransactions', () => {
+    it('returns global transactions with default pagination', async () => {
+      const { queryMany } = await import('@/lib/db');
+      const transactions = [mockTransactionWithDetails];
+      vi.mocked(queryMany).mockResolvedValue(transactions);
+
+      const result = await getTransactions({});
+
+      expect(result).toEqual(transactions);
+      expect(queryMany).toHaveBeenCalledWith(
+        expect.stringContaining('FROM transactions t'),
+        [100, 0]
+      );
+      expect(vi.mocked(queryMany).mock.calls[0][0]).not.toContain('WHERE t.');
+    });
+
+    it('filters by account, date range, category, and search', async () => {
+      const { queryMany } = await import('@/lib/db');
+      vi.mocked(queryMany).mockResolvedValue([]);
+
+      await getTransactions(
+        {
+          accountId: 2,
+          from: '2026-05-01',
+          to: '2026-05-31',
+          categoryId: 7,
+          q: 'rent',
+        },
+        { limit: 25, offset: 50 }
+      );
+
+      const [sql, params] = vi.mocked(queryMany).mock.calls[0];
+      expect(sql).toContain('WHERE');
+      expect(sql).toContain('t.account_id = $1');
+      expect(sql).toContain('t.date >= $2');
+      expect(sql).toContain('t.date <= $3');
+      expect(sql).toContain('t.category_id = $4');
+      expect(sql).toContain("(t.payee ILIKE $5 ESCAPE '\\\\' OR t.comment ILIKE $5 ESCAPE '\\\\')");
+      expect(sql).toContain('ORDER BY t.date DESC, t.created_at DESC');
+      expect(sql).toContain('LIMIT $6 OFFSET $7');
+      expect(params).toEqual([2, '2026-05-01', '2026-05-31', 7, '%rent%', 25, 50]);
+    });
+
+    it('escapes wildcard characters in search terms', async () => {
+      const { queryMany } = await import('@/lib/db');
+      vi.mocked(queryMany).mockResolvedValue([]);
+
+      await getTransactions({ q: '100%_match' });
+
+      const [sql, params] = vi.mocked(queryMany).mock.calls[0];
+      expect(sql).toContain("ESCAPE '\\\\'");
+      expect(params).toEqual(['%100\\%\\_match%', 100, 0]);
     });
   });
 
