@@ -497,37 +497,41 @@ function categoryTrendQuery(
   whereClause: string,
   includedSql: string
 ): string {
-  return `${CATEGORY_HIERARCHY_CTE}
+  return `${CATEGORY_HIERARCHY_CTE},
+     categorized_transactions AS (
+       SELECT
+         ${periodSql} as period,
+         CASE
+           WHEN t.category_id IS NULL AND t.amount > 0 THEN 'income-uncategorized'
+           WHEN t.category_id IS NULL AND t.amount < 0 THEN 'expense-uncategorized'
+           ELSE ch.category_type || '-' || t.category_id::text
+         END as category_key,
+         CASE
+           WHEN t.category_id IS NULL AND t.amount > 0 THEN 'income'
+           WHEN t.category_id IS NULL AND t.amount < 0 THEN 'expense'
+           ELSE ch.category_type
+         END as category_type,
+         COALESCE(ch.full_path, 'Uncategorized') as category_path,
+         CASE
+           WHEN ch.category_type = 'income' THEN t.amount
+           WHEN ch.category_type = 'expense' THEN ABS(t.amount)
+           WHEN t.category_id IS NULL THEN ABS(t.amount)
+           ELSE 0
+         END as amount
+       FROM transactions t
+       LEFT JOIN category_hierarchy ch ON t.category_id = ch.id
+       ${whereClause}
+         AND (${includedSql})
+     )
      SELECT
-       ${periodSql} as period,
-       CASE
-         WHEN t.category_id IS NULL AND t.amount > 0 THEN 'income-uncategorized'
-         WHEN t.category_id IS NULL AND t.amount < 0 THEN 'expense-uncategorized'
-         ELSE ch.category_type || '-' || t.category_id::text
-       END as category_key,
-       CASE
-         WHEN t.category_id IS NULL AND t.amount > 0 THEN 'income'
-         WHEN t.category_id IS NULL AND t.amount < 0 THEN 'expense'
-         ELSE ch.category_type
-       END as category_type,
-       COALESCE(ch.full_path, 'Uncategorized') as category_path,
-       COALESCE(SUM(CASE
-         WHEN ch.category_type = 'income' THEN t.amount
-         WHEN ch.category_type = 'expense' THEN ABS(t.amount)
-         WHEN t.category_id IS NULL THEN ABS(t.amount)
-         ELSE 0
-       END), 0)::decimal(15,2) as amount
-     FROM transactions t
-     LEFT JOIN category_hierarchy ch ON t.category_id = ch.id
-     ${whereClause}
-       AND (${includedSql})
-     GROUP BY ${periodSql}, category_key, category_type, category_path
-     HAVING COALESCE(SUM(CASE
-       WHEN ch.category_type = 'income' THEN t.amount
-       WHEN ch.category_type = 'expense' THEN ABS(t.amount)
-       WHEN t.category_id IS NULL THEN ABS(t.amount)
-       ELSE 0
-     END), 0) <> 0
+       period,
+       category_key,
+       category_type,
+       category_path,
+       COALESCE(SUM(amount), 0)::decimal(15,2) as amount
+     FROM categorized_transactions
+     GROUP BY period, category_key, category_type, category_path
+     HAVING COALESCE(SUM(amount), 0) <> 0
      ORDER BY category_path ASC, period ASC`;
 }
 

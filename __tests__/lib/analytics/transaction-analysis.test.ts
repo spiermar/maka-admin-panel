@@ -401,6 +401,7 @@ describe('Transaction Analysis Analytics', () => {
       expect(queryManyCalls[5][0]).toContain(
         "WHEN t.category_id IS NULL AND t.amount > 0 THEN 'income'"
       );
+      expect(queryManyCalls[5][0]).toContain('FROM categorized_transactions');
 
       expect(result).toEqual({
         summary: {
