@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,38 @@ interface TransactionsClientProps {
   lang: string;
 }
 
+interface FilterDraft {
+  accountId: string;
+  categoryId: string;
+  from: string;
+  to: string;
+  q: string;
+}
+
+type FilterDraftKey = keyof FilterDraft;
+
+function createFilterDraft(filters: TransactionFilters): FilterDraft {
+  return {
+    accountId: filters.accountId?.toString() || '',
+    categoryId: filters.categoryId?.toString() || '',
+    from: filters.from || '',
+    to: filters.to || '',
+    q: filters.q || '',
+  };
+}
+
+function applyFilterParam(
+  params: URLSearchParams,
+  key: FilterDraftKey,
+  value: string
+) {
+  if (value) {
+    params.set(key, value);
+  } else {
+    params.delete(key);
+  }
+}
+
 export function TransactionsClient({
   accounts,
   categories,
@@ -41,9 +73,6 @@ export function TransactionsClient({
   lang,
 }: TransactionsClientProps) {
   const t = useTranslations('transactions');
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [formOpen, setFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] =
     useState<TransactionWithDetails | null>(null);
@@ -57,25 +86,6 @@ export function TransactionsClient({
     filters.q ?? '',
   ].join('|');
 
-  const updateFilter = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    if (!params.get('lang')) {
-      params.set('lang', lang);
-    }
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
-  const clearFilters = () => {
-    const params = new URLSearchParams();
-    params.set('lang', lang);
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
   const selectedImportAccountId = useMemo(() => {
     const parsed = Number.parseInt(
       filters.accountId?.toString() || importAccountId,
@@ -84,8 +94,13 @@ export function TransactionsClient({
     return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
   }, [filters.accountId, importAccountId]);
 
-  const handleImportComplete = (_result: ImportResult) => {
+  const closeImportFlow = () => {
     setImportOpen(false);
+    setImportAccountId('');
+  };
+
+  const handleImportComplete = (_result: ImportResult) => {
+    closeImportFlow();
   };
 
   return (
@@ -110,98 +125,13 @@ export function TransactionsClient({
         </div>
       </div>
 
-      <Card key={filterControlsKey}>
-        <CardHeader>
-          <CardTitle>{t('filters')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-            <div className="space-y-2">
-              <Label>{t('account')}</Label>
-              <Select
-                value={filters.accountId?.toString() || 'all'}
-                onValueChange={(value) =>
-                  updateFilter('accountId', value === 'all' ? '' : value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('allAccounts')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('allAccounts')}</SelectItem>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id.toString()}>
-                      {account.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="from">{t('from')}</Label>
-              <Input
-                id="from"
-                type="date"
-                defaultValue={filters.from || ''}
-                onBlur={(event) => updateFilter('from', event.currentTarget.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="to">{t('to')}</Label>
-              <Input
-                id="to"
-                type="date"
-                defaultValue={filters.to || ''}
-                onBlur={(event) => updateFilter('to', event.currentTarget.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>{t('category')}</Label>
-              <Select
-                value={filters.categoryId?.toString() || 'all'}
-                onValueChange={(value) =>
-                  updateFilter('categoryId', value === 'all' ? '' : value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('allCategories')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('allCategories')}</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id.toString()}>
-                      {category.path}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2 lg:col-span-2">
-              <Label htmlFor="q">{t('search')}</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="q"
-                  defaultValue={filters.q || ''}
-                  placeholder={t('searchPlaceholder')}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      updateFilter('q', event.currentTarget.value);
-                    }
-                  }}
-                  onBlur={(event) => updateFilter('q', event.currentTarget.value)}
-                />
-                <Button type="button" variant="outline" onClick={clearFilters}>
-                  {t('clearFilters')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <TransactionsFilterControls
+        key={filterControlsKey}
+        accounts={accounts}
+        categories={categories}
+        filters={filters}
+        lang={lang}
+      />
 
       {importOpen && !selectedImportAccountId ? (
         <Card>
@@ -209,8 +139,16 @@ export function TransactionsClient({
             <CardTitle>{t('selectImportAccount')}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 md:flex-row">
-            <Select value={importAccountId || 'none'} onValueChange={setImportAccountId}>
-              <SelectTrigger className="md:max-w-sm">
+            <Select
+              value={importAccountId || 'none'}
+              onValueChange={(value) =>
+                setImportAccountId(value === 'none' ? '' : value)
+              }
+            >
+              <SelectTrigger
+                aria-label={t('selectImportAccount')}
+                className="md:max-w-sm"
+              >
                 <SelectValue placeholder={t('selectAccountPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
@@ -222,7 +160,7 @@ export function TransactionsClient({
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="outline" onClick={() => setImportOpen(false)}>
+            <Button variant="outline" onClick={closeImportFlow}>
               {t('cancelImport')}
             </Button>
           </CardContent>
@@ -260,11 +198,174 @@ export function TransactionsClient({
       {selectedImportAccountId ? (
         <OfxImportDialog
           open={importOpen}
-          onOpenChange={setImportOpen}
+          onOpenChange={(open) => {
+            if (open) {
+              setImportOpen(true);
+            } else {
+              closeImportFlow();
+            }
+          }}
           accountId={selectedImportAccountId}
           onImportComplete={handleImportComplete}
         />
       ) : null}
     </div>
+  );
+}
+
+interface TransactionsFilterControlsProps {
+  accounts: Account[];
+  categories: CategoryWithPath[];
+  filters: TransactionFilters;
+  lang: string;
+}
+
+function TransactionsFilterControls({
+  accounts,
+  categories,
+  filters,
+  lang,
+}: TransactionsFilterControlsProps) {
+  const t = useTranslations('transactions');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [draftFilters, setDraftFilters] = useState(() =>
+    createFilterDraft(filters)
+  );
+  const draftFiltersRef = useRef(draftFilters);
+
+  const updateDraft = (key: FilterDraftKey, value: string) => {
+    const nextDraft = {
+      ...draftFiltersRef.current,
+      [key]: value,
+    };
+    draftFiltersRef.current = nextDraft;
+    setDraftFilters(nextDraft);
+    return nextDraft;
+  };
+
+  const pushFilters = (draft: FilterDraft) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (!params.get('lang')) {
+      params.set('lang', lang);
+    }
+    applyFilterParam(params, 'accountId', draft.accountId);
+    applyFilterParam(params, 'from', draft.from);
+    applyFilterParam(params, 'to', draft.to);
+    applyFilterParam(params, 'categoryId', draft.categoryId);
+    applyFilterParam(params, 'q', draft.q);
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const updateFilter = (key: FilterDraftKey, value: string) => {
+    pushFilters(updateDraft(key, value));
+  };
+
+  const clearFilters = () => {
+    const emptyDraft = createFilterDraft({});
+    draftFiltersRef.current = emptyDraft;
+    setDraftFilters(emptyDraft);
+    const params = new URLSearchParams();
+    params.set('lang', lang);
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('filters')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+          <div className="space-y-2">
+            <Label htmlFor="account-filter">{t('account')}</Label>
+            <Select
+              value={draftFilters.accountId || 'all'}
+              onValueChange={(value) =>
+                updateFilter('accountId', value === 'all' ? '' : value)
+              }
+            >
+              <SelectTrigger id="account-filter" aria-label={t('account')}>
+                <SelectValue placeholder={t('allAccounts')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('allAccounts')}</SelectItem>
+                {accounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id.toString()}>
+                    {account.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="from">{t('from')}</Label>
+            <Input
+              id="from"
+              type="date"
+              value={draftFilters.from}
+              onChange={(event) => updateDraft('from', event.currentTarget.value)}
+              onBlur={(event) => updateFilter('from', event.currentTarget.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="to">{t('to')}</Label>
+            <Input
+              id="to"
+              type="date"
+              value={draftFilters.to}
+              onChange={(event) => updateDraft('to', event.currentTarget.value)}
+              onBlur={(event) => updateFilter('to', event.currentTarget.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category-filter">{t('category')}</Label>
+            <Select
+              value={draftFilters.categoryId || 'all'}
+              onValueChange={(value) =>
+                updateFilter('categoryId', value === 'all' ? '' : value)
+              }
+            >
+              <SelectTrigger id="category-filter" aria-label={t('category')}>
+                <SelectValue placeholder={t('allCategories')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('allCategories')}</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.path}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2 lg:col-span-2">
+            <Label htmlFor="q">{t('search')}</Label>
+            <div className="flex gap-2">
+              <Input
+                id="q"
+                value={draftFilters.q}
+                placeholder={t('searchPlaceholder')}
+                onChange={(event) => updateDraft('q', event.currentTarget.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    updateFilter('q', event.currentTarget.value);
+                  }
+                }}
+                onBlur={(event) => updateFilter('q', event.currentTarget.value)}
+              />
+              <Button type="button" variant="outline" onClick={clearFilters}>
+                {t('clearFilters')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
