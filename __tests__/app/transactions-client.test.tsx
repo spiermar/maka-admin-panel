@@ -1,12 +1,15 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 import { TransactionsClient } from '@/app/(dashboard)/transactions/client';
 import enMessages from '@/messages/en.json';
 import { Account, CategoryWithPath, TransactionWithDetails } from '@/lib/db/types';
+import { TransactionFilters } from '@/lib/transactions/filters';
 
 vi.mock('@/components/ofx-import-dialog', () => ({
-  OfxImportDialog: () => <div data-testid="ofx-import-dialog" />,
+  OfxImportDialog: ({ accountId }: { accountId: number }) => (
+    <div data-testid="ofx-import-dialog">Import account {accountId}</div>
+  ),
 }));
 
 vi.mock('@/components/transactions/transaction-form', () => ({
@@ -63,30 +66,84 @@ describe('TransactionsClient', () => {
     },
   ];
 
-  it('renders URL-provided filter values as initial control state', () => {
-    render(
+  function renderClient(filters: TransactionFilters) {
+    return render(
       <NextIntlClientProvider locale="en" messages={enMessages}>
         <TransactionsClient
           accounts={accounts}
           categories={categories}
           transactions={transactions}
-          filters={{
-            accountId: 1,
-            categoryId: 7,
-            from: '2026-05-01',
-            to: '2026-05-31',
-            q: 'rent',
-          }}
+          filters={filters}
           lang="en"
         />
       </NextIntlClientProvider>
     );
+  }
+
+  it('renders URL-provided filter values as initial control state', () => {
+    renderClient({
+      accountId: 1,
+      categoryId: 7,
+      from: '2026-05-01',
+      to: '2026-05-31',
+      q: 'rent',
+    });
 
     expect(screen.getByRole('heading', { name: 'Transactions' })).toBeInTheDocument();
+    const filtersCard = screen.getByRole('heading', { name: 'Filters' }).closest('div')
+      ?.parentElement;
+    expect(filtersCard).not.toBeNull();
+    const filterSelects = within(filtersCard as HTMLElement).getAllByRole('combobox');
+    expect(filterSelects[0]).toHaveTextContent('Checking Account');
+    expect(filterSelects[1]).toHaveTextContent('Rent');
     expect(screen.getByDisplayValue('2026-05-01')).toBeInTheDocument();
     expect(screen.getByDisplayValue('2026-05-31')).toBeInTheDocument();
     expect(screen.getByDisplayValue('rent')).toBeInTheDocument();
     expect(screen.getByTestId('transaction-table')).toHaveTextContent('Checking Account');
     expect(screen.getByTestId('transaction-table')).toHaveTextContent('Rent');
+  });
+
+  it('clears visible date and search values when filters are cleared on rerender', () => {
+    const { rerender } = renderClient({
+      from: '2026-05-01',
+      to: '2026-05-31',
+      q: 'rent',
+    });
+
+    rerender(
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <TransactionsClient
+          accounts={accounts}
+          categories={categories}
+          transactions={transactions}
+          filters={{}}
+          lang="en"
+        />
+      </NextIntlClientProvider>
+    );
+
+    expect(screen.getByLabelText('From')).toHaveValue('');
+    expect(screen.getByLabelText('To')).toHaveValue('');
+    expect(screen.getByLabelText('Search')).toHaveValue('');
+  });
+
+  it('updates the selected import account when the account filter changes on rerender', () => {
+    const { rerender } = renderClient({ accountId: 1 });
+
+    rerender(
+      <NextIntlClientProvider locale="en" messages={enMessages}>
+        <TransactionsClient
+          accounts={accounts}
+          categories={categories}
+          transactions={transactions}
+          filters={{ accountId: 2 }}
+          lang="en"
+        />
+      </NextIntlClientProvider>
+    );
+
+    expect(screen.getByTestId('ofx-import-dialog')).toHaveTextContent(
+      'Import account 2'
+    );
   });
 });

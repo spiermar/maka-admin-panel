@@ -48,9 +48,14 @@ export function TransactionsClient({
   const [editingTransaction, setEditingTransaction] =
     useState<TransactionWithDetails | null>(null);
   const [importOpen, setImportOpen] = useState(false);
-  const [importAccountId, setImportAccountId] = useState<string>(
-    filters.accountId?.toString() || ''
-  );
+  const [importAccountId, setImportAccountId] = useState<string>('');
+  const filterControlsKey = [
+    filters.accountId ?? 'all',
+    filters.categoryId ?? 'all',
+    filters.from ?? '',
+    filters.to ?? '',
+    filters.q ?? '',
+  ].join('|');
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -72,9 +77,12 @@ export function TransactionsClient({
   };
 
   const selectedImportAccountId = useMemo(() => {
-    const parsed = Number.parseInt(importAccountId, 10);
+    const parsed = Number.parseInt(
+      filters.accountId?.toString() || importAccountId,
+      10
+    );
     return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-  }, [importAccountId]);
+  }, [filters.accountId, importAccountId]);
 
   const handleImportComplete = (_result: ImportResult) => {
     setImportOpen(false);
@@ -102,7 +110,7 @@ export function TransactionsClient({
         </div>
       </div>
 
-      <Card>
+      <Card key={filterControlsKey}>
         <CardHeader>
           <CardTitle>{t('filters')}</CardTitle>
         </CardHeader>
