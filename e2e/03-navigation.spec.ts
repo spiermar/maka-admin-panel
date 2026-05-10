@@ -53,13 +53,24 @@ test.describe('Navigation and Protected Routes', () => {
     const accountId = await getAccountIdByName('Checking Account');
     await expect(page).toHaveURL(/\/$/);
 
-    const routes = ['/settings', `/accounts/${accountId}`];
+    const routes = ['/settings', '/transactions', `/accounts/${accountId}`];
 
     for (const route of routes) {
       await page.goto(route);
       await page.waitForLoadState('networkidle');
       expect(page.url()).not.toContain('/login');
     }
+  });
+
+  test('should redirect account detail URLs to filtered transactions', async ({ page }) => {
+    const accountId = await getAccountIdByName('Checking Account');
+
+    await page.goto(`/accounts/${accountId}`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page).toHaveURL(new RegExp(`/transactions\\?accountId=${accountId}`));
+    await expect(page.getByRole('heading', { name: /transactions/i })).toBeVisible();
+    await expect(page.getByText('Checking Account').first()).toBeVisible();
   });
 
   test('should handle browser back and forward navigation', async ({ page }) => {
@@ -92,6 +103,7 @@ test.describe('Navigation and Protected Routes', () => {
     const protectedRoutes = [
       '/',
       '/settings',
+      '/transactions',
       `/accounts/${accountId}`,
     ];
 
@@ -136,6 +148,7 @@ test.describe('Navigation Unauthorized', () => {
     const protectedRoutes = [
       '/',
       '/settings',
+      '/transactions',
       `/accounts/${accountId}`,
     ];
 

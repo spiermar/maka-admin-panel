@@ -50,18 +50,19 @@ test.describe('Accounts List Page', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('should navigate to account detail when clicking account card', async ({ page }) => {
+  test('should navigate to filtered transactions when clicking account card', async ({ page }) => {
     await page.goto('/accounts');
     await page.waitForLoadState('networkidle');
 
     // Click on Checking Account card
     await page.getByText('Checking Account').first().click();
 
-    // Should navigate to account detail page
-    await expect(page).toHaveURL(/\/accounts\/\d+/);
+    // Should navigate to filtered transactions page
+    await expect(page).toHaveURL(/\/transactions\?accountId=\d+/);
     await expect(
-      page.getByRole('heading', { name: 'Checking Account' })
+      page.getByRole('heading', { name: /transactions/i })
     ).toBeVisible();
+    await expect(page.getByText('Checking Account').first()).toBeVisible();
   });
 
   test('should display accounts link in navbar', async ({ page }) => {
