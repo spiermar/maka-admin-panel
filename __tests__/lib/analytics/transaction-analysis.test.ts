@@ -304,6 +304,19 @@ describe('Transaction Analysis Analytics', () => {
       }
 
       const queryManyCalls = vi.mocked(queryMany).mock.calls;
+      const summarySql = vi.mocked(queryOne).mock.calls[0][0];
+      const incomeExpenseTrendSql = queryManyCalls[0][0];
+      const incomeExpenseClassificationSql = [summarySql, incomeExpenseTrendSql];
+
+      for (const sql of incomeExpenseClassificationSql) {
+        expect(sql).toContain("WHEN ch.category_type = 'income' THEN t.amount");
+        expect(sql).toContain("WHEN ch.category_type = 'expense' THEN ABS(t.amount)");
+        expect(sql).toContain('WHEN t.category_id IS NULL AND t.amount > 0 THEN t.amount');
+        expect(sql).toContain(
+          'WHEN t.category_id IS NULL AND t.amount < 0 THEN ABS(t.amount)'
+        );
+      }
+
       expect(queryManyCalls[0][0]).toContain(
         "TO_CHAR(DATE_TRUNC('week', t.date), 'YYYY-MM-DD')"
       );
