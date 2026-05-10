@@ -24,15 +24,25 @@ export default async function AnalysisPage({
 
   const validAccountIds = new Set(accounts.map((account) => account.id));
   const validCategoryIds = new Set(categories.map((category) => category.id));
+  const includedCategoryIds = parsedFilters.includedCategoryIds.filter((categoryId) =>
+    validCategoryIds.has(categoryId)
+  );
+  const rawCategories = resolvedSearchParams.categories;
+  const firstRawCategory = Array.isArray(rawCategories)
+    ? rawCategories[0]
+    : rawCategories;
+  const hasCategoryFilter =
+    firstRawCategory === undefined
+      ? false
+      : firstRawCategory === '' || includedCategoryIds.length > 0;
   const filters = {
     ...parsedFilters,
     accountId:
       parsedFilters.accountId && validAccountIds.has(parsedFilters.accountId)
         ? parsedFilters.accountId
         : undefined,
-    includedCategoryIds: parsedFilters.includedCategoryIds.filter((categoryId) =>
-      validCategoryIds.has(categoryId)
-    ),
+    includedCategoryIds,
+    hasCategoryFilter,
   };
 
   const data = await getTransactionAnalysis(filters);
