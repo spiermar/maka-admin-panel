@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AnalysisCategoryFilter } from '@/components/analysis/analysis-category-filter';
@@ -36,6 +36,17 @@ interface AnalysisClientProps {
   lang: string;
 }
 
+interface AnalysisFilterDraft {
+  preset: AnalysisDatePreset;
+  from: string;
+  to: string;
+  accountId: string;
+  grouping: AnalysisGrouping;
+  categoryIds: number[];
+  includeUncategorizedIncome: boolean;
+  includeUncategorizedExpense: boolean;
+}
+
 const DATE_PRESET_OPTIONS: Array<{
   value: AnalysisDatePreset;
   labelKey: string;
@@ -60,12 +71,26 @@ const GROUPING_OPTIONS: Array<{
   { value: 'monthly', labelKey: 'groupings.monthly' },
 ];
 
-function setOptionalParam(params: URLSearchParams, key: string, value: string) {
-  if (value) {
-    params.set(key, value);
-  } else {
-    params.delete(key);
-  }
+function sortedCategoryIds(ids: Iterable<number>) {
+  return [...ids].sort((a, b) => a - b);
+}
+
+function createAnalysisFilterDraft(
+  filters: AnalysisFilters,
+  categories: CategoryWithPath[]
+): AnalysisFilterDraft {
+  return {
+    preset: filters.preset,
+    from: filters.from,
+    to: filters.to,
+    accountId: filters.accountId?.toString() ?? '',
+    grouping: filters.grouping,
+    categoryIds: filters.hasCategoryFilter
+      ? sortedCategoryIds(filters.includedCategoryIds)
+      : sortedCategoryIds(categories.map((category) => category.id)),
+    includeUncategorizedIncome: filters.includeUncategorizedIncome,
+    includeUncategorizedExpense: filters.includeUncategorizedExpense,
+  };
 }
 
 export function AnalysisClient({
@@ -79,9 +104,14 @@ export function AnalysisClient({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const selectedCategoryIds = filters.hasCategoryFilter
-    ? filters.includedCategoryIds
-    : categories.map((category) => category.id);
+  const [filterDraft, setFilterDraft] = useState(() =>
+    createAnalysisFilterDraft(filters, categories)
+  );
+  const filterDraftRef = useRef(filterDraft);
+  const allCategoryIds = useMemo(
+    () => sortedCategoryIds(categories.map((category) => category.id)),
+    [categories]
+  );
   const periods = useMemo(
     () => [
       ...new Set(data.incomeExpenseTrend.map((point) => point.period)),
@@ -89,26 +119,84 @@ export function AnalysisClient({
     [data.incomeExpenseTrend]
   );
 
-  const pushParams = (update: (params: URLSearchParams) => void) => {
+  const pushDraft = (draft: AnalysisFilterDraft) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    if (!params.get('lang')) {
-      params.set('lang', lang);
+    params.set('lang', lang);
+
+    if (draft.preset === 'last-3-months') {
+      params.delete('preset');
+    } else {
+      params.set('preset', draft.preset);
     }
 
-    update(params);
+    if (draft.preset === 'custom') {
+      params.set('from', draft.from);
+      params.set('to', draft.to);
+    } else {
+      params.delete('from');
+      params.delete('to');
+    }
+
+    if (draft.accountId) {
+      params.set('accountId', draft.accountId);
+    } else {
+      params.delete('accountId');
+    }
+
+    if (draft.grouping === 'adaptive') {
+      params.delete('grouping');
+    } else {
+      params.set('grouping', draft.grouping);
+    }
+
+    const selectedCategoryIds = sortedCategoryIds(draft.categoryIds);
+    const allCategoriesSelected =
+      selectedCategoryIds.length === allCategoryIds.length &&
+      selectedCategoryIds.every((id, index) => id === allCategoryIds[index]);
+    const hasDefaultCategoryFilter =
+      allCategoriesSelected &&
+      draft.includeUncategorizedIncome &&
+      draft.includeUncategorizedExpense;
+
+    if (hasDefaultCategoryFilter) {
+      params.delete('categories');
+      params.delete('uncategorizedIncome');
+      params.delete('uncategorizedExpense');
+    } else {
+      params.set('categories', selectedCategoryIds.join(','));
+
+      if (draft.includeUncategorizedIncome) {
+        params.delete('uncategorizedIncome');
+      } else {
+        params.set('uncategorizedIncome', '0');
+      }
+
+      if (draft.includeUncategorizedExpense) {
+        params.delete('uncategorizedExpense');
+      } else {
+        params.set('uncategorizedExpense', '0');
+      }
+    }
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const updateFilter = (key: string, value: string) => {
-    pushParams((params) => setOptionalParam(params, key, value));
+  const updateDraft = (
+    update: (current: AnalysisFilterDraft) => AnalysisFilterDraft
+  ) => {
+    const nextDraft = update(filterDraftRef.current);
+    filterDraftRef.current = nextDraft;
+    setFilterDraft(nextDraft);
+    pushDraft(nextDraft);
   };
 
   const updateDateFilter = (key: 'from' | 'to', value: string) => {
-    pushParams((params) => {
-      params.set('preset', 'custom');
-      setOptionalParam(params, key, value);
-    });
+    updateDraft((current) => ({
+      ...current,
+      preset: 'custom',
+      [key]: value,
+    }));
   };
 
   const resetFilters = () => {
@@ -131,8 +219,13 @@ export function AnalysisClient({
             <div className="space-y-2">
               <Label htmlFor="analysis-preset">{t('dateRangePreset')}</Label>
               <Select
-                value={filters.preset}
-                onValueChange={(value) => updateFilter('preset', value)}
+                value={filterDraft.preset}
+                onValueChange={(value) =>
+                  updateDraft((current) => ({
+                    ...current,
+                    preset: value as AnalysisDatePreset,
+                  }))
+                }
               >
                 <SelectTrigger
                   id="analysis-preset"
@@ -155,7 +248,7 @@ export function AnalysisClient({
               <Input
                 id="analysis-from"
                 type="date"
-                value={filters.from}
+                value={filterDraft.from}
                 onChange={(event) => updateDateFilter('from', event.target.value)}
               />
             </div>
@@ -165,7 +258,7 @@ export function AnalysisClient({
               <Input
                 id="analysis-to"
                 type="date"
-                value={filters.to}
+                value={filterDraft.to}
                 onChange={(event) => updateDateFilter('to', event.target.value)}
               />
             </div>
@@ -173,9 +266,12 @@ export function AnalysisClient({
             <div className="space-y-2">
               <Label htmlFor="analysis-account">{t('account')}</Label>
               <Select
-                value={filters.accountId?.toString() ?? 'all'}
+                value={filterDraft.accountId || 'all'}
                 onValueChange={(value) =>
-                  updateFilter('accountId', value === 'all' ? '' : value)
+                  updateDraft((current) => ({
+                    ...current,
+                    accountId: value === 'all' ? '' : value,
+                  }))
                 }
               >
                 <SelectTrigger id="analysis-account" aria-label={t('account')}>
@@ -195,8 +291,13 @@ export function AnalysisClient({
             <div className="space-y-2">
               <Label htmlFor="analysis-grouping">{t('grouping')}</Label>
               <Select
-                value={filters.grouping}
-                onValueChange={(value) => updateFilter('grouping', value)}
+                value={filterDraft.grouping}
+                onValueChange={(value) =>
+                  updateDraft((current) => ({
+                    ...current,
+                    grouping: value as AnalysisGrouping,
+                  }))
+                }
               >
                 <SelectTrigger id="analysis-grouping" aria-label={t('grouping')}>
                   <SelectValue />
@@ -226,9 +327,9 @@ export function AnalysisClient({
 
           <AnalysisCategoryFilter
             categories={categories}
-            selectedCategoryIds={selectedCategoryIds}
-            includeUncategorizedIncome={filters.includeUncategorizedIncome}
-            includeUncategorizedExpense={filters.includeUncategorizedExpense}
+            selectedCategoryIds={filterDraft.categoryIds}
+            includeUncategorizedIncome={filterDraft.includeUncategorizedIncome}
+            includeUncategorizedExpense={filterDraft.includeUncategorizedExpense}
             labels={{
               title: t('categories.title'),
               income: t('categories.income'),
@@ -237,21 +338,12 @@ export function AnalysisClient({
               uncategorizedExpense: t('categories.uncategorizedExpense'),
             }}
             onChange={(next) => {
-              pushParams((params) => {
-                params.set('categories', next.selectedCategoryIds.join(','));
-
-                if (next.includeUncategorizedIncome) {
-                  params.delete('uncategorizedIncome');
-                } else {
-                  params.set('uncategorizedIncome', '0');
-                }
-
-                if (next.includeUncategorizedExpense) {
-                  params.delete('uncategorizedExpense');
-                } else {
-                  params.set('uncategorizedExpense', '0');
-                }
-              });
+              updateDraft((current) => ({
+                ...current,
+                categoryIds: sortedCategoryIds(next.selectedCategoryIds),
+                includeUncategorizedIncome: next.includeUncategorizedIncome,
+                includeUncategorizedExpense: next.includeUncategorizedExpense,
+              }));
             }}
           />
         </CardContent>

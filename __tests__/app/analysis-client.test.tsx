@@ -22,26 +22,101 @@ vi.mock('@/components/analysis/analysis-summary-cards', () => ({
 }));
 
 vi.mock('@/components/analysis/income-expense-trend-chart', () => ({
-  IncomeExpenseTrendChart: ({ title }: { title: string }) => (
-    <section data-testid="income-expense-chart">{title}</section>
+  IncomeExpenseTrendChart: ({
+    data,
+    labels,
+    locale,
+    title,
+  }: {
+    data: TransactionAnalysisData['incomeExpenseTrend'];
+    labels: { income: string; expenses: string };
+    locale: string;
+    title: string;
+  }) => (
+    <section
+      data-testid="income-expense-chart"
+      data-locale={locale}
+      data-points={data.length}
+      data-income-label={labels.income}
+      data-expenses-label={labels.expenses}
+    >
+      {title}
+    </section>
   ),
 }));
 
 vi.mock('@/components/analysis/category-stacked-trend-chart', () => ({
-  CategoryStackedTrendChart: ({ title }: { title: string }) => (
-    <section data-testid="stacked-trend-chart">{title}</section>
+  CategoryStackedTrendChart: ({
+    data,
+    locale,
+    title,
+  }: {
+    data:
+      | TransactionAnalysisData['incomeStackedTrend']
+      | TransactionAnalysisData['expenseStackedTrend'];
+    locale: string;
+    title: string;
+  }) => (
+    <section
+      data-testid="stacked-trend-chart"
+      data-locale={locale}
+      data-points={data.length}
+    >
+      {title}
+    </section>
   ),
 }));
 
 vi.mock('@/components/analysis/category-breakdown-chart', () => ({
-  CategoryBreakdownChart: ({ title }: { title: string }) => (
-    <section data-testid="breakdown-chart">{title}</section>
+  CategoryBreakdownChart: ({
+    color,
+    data,
+    locale,
+    title,
+  }: {
+    color: string;
+    data:
+      | TransactionAnalysisData['incomeBreakdown']
+      | TransactionAnalysisData['expenseBreakdown'];
+    locale: string;
+    title: string;
+  }) => (
+    <section
+      data-testid="breakdown-chart"
+      data-color={color}
+      data-locale={locale}
+      data-points={data.length}
+    >
+      {title}
+    </section>
   ),
 }));
 
 vi.mock('@/components/analysis/category-trend-table', () => ({
-  CategoryTrendTable: ({ title }: { title: string }) => (
-    <section data-testid="trend-table">{title}</section>
+  CategoryTrendTable: ({
+    labels,
+    locale,
+    periods,
+    rows,
+    title,
+  }: {
+    labels: { category: string; type: string; total: string };
+    locale: string;
+    periods: string[];
+    rows: TransactionAnalysisData['categoryTrends'];
+    title: string;
+  }) => (
+    <section
+      data-testid="trend-table"
+      data-category-label={labels.category}
+      data-locale={locale}
+      data-periods={periods.join('|')}
+      data-rows={rows.length}
+      data-total-label={labels.total}
+      data-type-label={labels.type}
+    >
+      {title}
+    </section>
   ),
 }));
 
@@ -150,12 +225,31 @@ describe('AnalysisClient', () => {
     summary: { income: '5000.00', expenses: '2200.00' },
     incomeExpenseTrend: [
       { period: '2026-04', income: '5000.00', expenses: '2200.00' },
+      { period: '2026-05', income: '5200.00', expenses: '2100.00' },
+      { period: '2026-04', income: '500.00', expenses: '200.00' },
     ],
-    incomeBreakdown: [],
-    expenseBreakdown: [],
-    incomeStackedTrend: [],
-    expenseStackedTrend: [],
-    categoryTrends: [],
+    incomeBreakdown: [
+      { categoryId: 10, categoryName: 'Salary', categoryPath: 'Salary', total: '10200.00' },
+    ],
+    expenseBreakdown: [
+      { categoryId: 20, categoryName: 'Rent', categoryPath: 'Rent', total: '4300.00' },
+    ],
+    incomeStackedTrend: [
+      { period: '2026-04', categories: { Salary: '5000.00' } },
+    ],
+    expenseStackedTrend: [
+      { period: '2026-04', categories: { Rent: '2200.00' } },
+    ],
+    categoryTrends: [
+      {
+        categoryId: 10,
+        categoryName: 'Salary',
+        categoryPath: 'Salary',
+        categoryType: 'income',
+        total: '10200.00',
+        periods: { '2026-04': '5000.00', '2026-05': '5200.00' },
+      },
+    ],
   };
 
   beforeEach(() => {
@@ -178,6 +272,12 @@ describe('AnalysisClient', () => {
     );
   });
 
+  function setSearchParams(params: string) {
+    vi.mocked(useSearchParams).mockReturnValue(
+      new URLSearchParams(params) as ReturnType<typeof useSearchParams>
+    );
+  }
+
   function renderClient(nextFilters: AnalysisFilters = filters) {
     return render(
       <NextIntlClientProvider locale="en" messages={messages}>
@@ -196,6 +296,15 @@ describe('AnalysisClient', () => {
     const user = userEvent.setup();
     await user.click(trigger);
     await user.click(await screen.findByRole('option', { name }));
+  }
+
+  function getPushedParams(callIndex = -1) {
+    const pushedUrl = routerPush.mock.calls.at(callIndex)?.[0] as string;
+
+    return {
+      pushedUrl,
+      pushedParams: new URLSearchParams(pushedUrl.split('?')[1]),
+    };
   }
 
   it('renders the page sections', () => {
@@ -229,6 +338,120 @@ describe('AnalysisClient', () => {
     expect(pushedUrl.startsWith('/analysis?')).toBe(true);
     expect(pushedParams.get('accountId')).toBe('2');
     expect(pushedParams.get('lang')).toBe('en');
+  });
+
+  it('pushes both current dates when selecting the custom preset', async () => {
+    renderClient();
+
+    await selectOption(screen.getByRole('combobox', { name: 'Date range' }), 'Custom');
+
+    const { pushedParams } = getPushedParams();
+    expect(pushedParams.get('preset')).toBe('custom');
+    expect(pushedParams.get('from')).toBe('2026-02-10');
+    expect(pushedParams.get('to')).toBe('2026-05-10');
+    expect(pushedParams.get('lang')).toBe('en');
+  });
+
+  it('pushes both dates when editing one custom date input', async () => {
+    const user = userEvent.setup();
+    renderClient();
+
+    await user.clear(screen.getByLabelText('From'));
+    await user.type(screen.getByLabelText('From'), '2026-01-15');
+
+    const { pushedParams } = getPushedParams();
+    expect(pushedParams.get('preset')).toBe('custom');
+    expect(pushedParams.get('from')).toBe('2026-01-15');
+    expect(pushedParams.get('to')).toBe('2026-05-10');
+  });
+
+  it('preserves prior filter changes across quick successive URL updates', async () => {
+    renderClient();
+
+    await selectOption(screen.getByRole('combobox', { name: 'Account' }), 'Savings Account');
+    await selectOption(screen.getByRole('combobox', { name: 'Grouping' }), 'Monthly');
+
+    const { pushedParams } = getPushedParams();
+    expect(pushedParams.get('accountId')).toBe('2');
+    expect(pushedParams.get('grouping')).toBe('monthly');
+    expect(pushedParams.get('lang')).toBe('en');
+  });
+
+  it('clears category params when the selection returns to the default filter', async () => {
+    const user = userEvent.setup();
+    setSearchParams('lang=en&categories=10&uncategorizedIncome=0&uncategorizedExpense=0');
+    renderClient({
+      ...filters,
+      includedCategoryIds: [10],
+      hasCategoryFilter: true,
+      includeUncategorizedIncome: false,
+      includeUncategorizedExpense: false,
+    });
+
+    await user.click(screen.getByRole('checkbox', { name: 'Rent' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Uncategorized income' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Uncategorized expense' }));
+
+    const { pushedParams } = getPushedParams();
+    expect(pushedParams.has('categories')).toBe(false);
+    expect(pushedParams.has('uncategorizedIncome')).toBe(false);
+    expect(pushedParams.has('uncategorizedExpense')).toBe(false);
+    expect(pushedParams.get('lang')).toBe('en');
+  });
+
+  it('writes sorted category params and disabled uncategorized flags', async () => {
+    const user = userEvent.setup();
+    renderClient();
+
+    await user.click(screen.getByRole('checkbox', { name: 'Salary' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Uncategorized expense' }));
+
+    const { pushedParams } = getPushedParams();
+    expect(pushedParams.get('categories')).toBe('20');
+    expect(pushedParams.has('uncategorizedIncome')).toBe(false);
+    expect(pushedParams.get('uncategorizedExpense')).toBe('0');
+    expect(pushedParams.get('lang')).toBe('en');
+  });
+
+  it('forwards chart props and derives table periods from income-expense trend data', () => {
+    renderClient();
+
+    expect(screen.getByTestId('income-expense-chart')).toHaveAttribute(
+      'data-points',
+      '3'
+    );
+    expect(screen.getByTestId('income-expense-chart')).toHaveAttribute(
+      'data-income-label',
+      'Income'
+    );
+    expect(screen.getByTestId('income-expense-chart')).toHaveAttribute(
+      'data-expenses-label',
+      'Expenses'
+    );
+
+    const stackedCharts = screen.getAllByTestId('stacked-trend-chart');
+    expect(stackedCharts[0]).toHaveAttribute('data-points', '1');
+    expect(stackedCharts[1]).toHaveAttribute('data-points', '1');
+
+    const breakdownCharts = screen.getAllByTestId('breakdown-chart');
+    expect(breakdownCharts[0]).toHaveAttribute('data-color', '#22c55e');
+    expect(breakdownCharts[0]).toHaveAttribute('data-points', '1');
+    expect(breakdownCharts[1]).toHaveAttribute('data-color', '#ef4444');
+    expect(breakdownCharts[1]).toHaveAttribute('data-points', '1');
+
+    expect(screen.getByTestId('trend-table')).toHaveAttribute(
+      'data-periods',
+      '2026-04|2026-05'
+    );
+    expect(screen.getByTestId('trend-table')).toHaveAttribute('data-rows', '1');
+    expect(screen.getByTestId('trend-table')).toHaveAttribute(
+      'data-category-label',
+      'Category'
+    );
+    expect(screen.getByTestId('trend-table')).toHaveAttribute(
+      'data-total-label',
+      'Total'
+    );
   });
 
   it('resets filters to the analysis page with lang', async () => {
