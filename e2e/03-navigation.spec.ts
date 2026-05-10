@@ -38,14 +38,14 @@ test.describe('Navigation and Protected Routes', () => {
     await expect(page).toHaveURL(/\/$/);
 
     // Try to navigate to accounts if link exists
-    const accountsLink = page.locator('a[href*="/accounts"], nav a:has-text("Accounts")');
+    const accountsLink = page.getByRole('link', { name: /accounts/i });
 
-    if (await accountsLink.first().isVisible()) {
-      await accountsLink.first().click();
-      await page.waitForLoadState('networkidle');
+    if (await accountsLink.isVisible()) {
+      await accountsLink.click();
 
       // Should navigate successfully
-      expect(page.url()).toContain('/accounts');
+      await expect(page).toHaveURL(/\/accounts/);
+      await expect(page.getByRole('heading', { name: /accounts/i })).toBeVisible();
     }
   });
 
@@ -53,13 +53,26 @@ test.describe('Navigation and Protected Routes', () => {
     const accountId = await getAccountIdByName('Checking Account');
     await expect(page).toHaveURL(/\/$/);
 
-    const routes = ['/settings', `/accounts/${accountId}`];
+    const routes = ['/settings', '/transactions', `/accounts/${accountId}`];
 
     for (const route of routes) {
       await page.goto(route);
       await page.waitForLoadState('networkidle');
       expect(page.url()).not.toContain('/login');
     }
+  });
+
+  test('should redirect account detail URLs to filtered transactions', async ({ page }) => {
+    const accountId = await getAccountIdByName('Checking Account');
+
+    await page.goto(`/accounts/${accountId}`);
+    await page.waitForLoadState('networkidle');
+
+    const url = new URL(page.url());
+    expect(url.pathname).toBe('/transactions');
+    expect(url.searchParams.get('accountId')).toBe(accountId.toString());
+    await expect(page.getByRole('heading', { name: /transactions/i })).toBeVisible();
+    await expect(page.getByText('Checking Account').first()).toBeVisible();
   });
 
   test('should handle browser back and forward navigation', async ({ page }) => {
@@ -92,6 +105,7 @@ test.describe('Navigation and Protected Routes', () => {
     const protectedRoutes = [
       '/',
       '/settings',
+      '/transactions',
       `/accounts/${accountId}`,
     ];
 
@@ -136,6 +150,7 @@ test.describe('Navigation Unauthorized', () => {
     const protectedRoutes = [
       '/',
       '/settings',
+      '/transactions',
       `/accounts/${accountId}`,
     ];
 

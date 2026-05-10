@@ -63,7 +63,7 @@ export async function RecentTransactions() {
                   </TableCell>
                   <TableCell>
                     <Link
-                      href={`/accounts/${transaction.account_id}`}
+                      href={`/transactions?accountId=${transaction.account_id}&lang=${locale}`}
                       className="hover:underline"
                     >
                       {transaction.account_name}

@@ -48,6 +48,18 @@ describe('TransactionTable', () => {
     expect(dateCell).toBeInTheDocument();
   });
 
+  it('renders the account column for global transaction views', () => {
+    renderWithI18n(
+      <TransactionTable
+        transactions={mockTransactions}
+        onEdit={mockOnEdit}
+      />
+    );
+
+    expect(screen.getByRole('columnheader', { name: 'Account' })).toBeInTheDocument();
+    expect(screen.getByText('Test Account')).toBeInTheDocument();
+  });
+
   it('handles date as Date object', () => {
     const testDate = new Date('2024-01-15T12:00:00'); // Use noon to avoid timezone issues
     const transactionsWithDateObject = [

@@ -205,6 +205,15 @@ test.describe('Dashboard Performance', () => {
   test('should not have layout shifts after loading', async ({ page }) => {
     // Wait for initial load
     await page.waitForLoadState('networkidle');
+    await page.waitForSelector('text=Loading summary...', { state: 'hidden', timeout: 10000 });
+    await page.waitForSelector('text=Loading transactions...', { state: 'hidden', timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Cash Flow Over Time' })).toBeVisible();
+    await expect(page.getByText(/top expenses this month/i)).toBeVisible();
+    await expect(page.getByText(/income sources this month/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Transactions' })).toBeVisible();
+
+    // Let client-rendered charts complete their first resize pass before measuring.
+    await page.waitForTimeout(1000);
 
     // Get initial viewport
     const initialHeight = await page.evaluate(() => document.body.scrollHeight);

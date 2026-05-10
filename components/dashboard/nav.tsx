@@ -27,6 +27,7 @@ export function DashboardNav() {
   const navLinks = [
     { href: `/?lang=${lang}`, label: t('dashboard') },
     { href: `/accounts?lang=${lang}`, label: t('accounts') },
+    { href: `/transactions?lang=${lang}`, label: t('transactions') },
   ];
 
   const rentalsLinks = [
