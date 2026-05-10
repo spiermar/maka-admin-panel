@@ -42,6 +42,32 @@ describe('parseTransactionFilters', () => {
     });
   });
 
+  it('ignores partially invalid numeric values', () => {
+    const result = parseTransactionFilters({
+      accountId: '2abc',
+      categoryId: '1.5',
+    });
+
+    expect(result).toEqual({
+      filters: {},
+      lang: 'en',
+      hasInvalidDateRange: false,
+    });
+  });
+
+  it('ignores invalid calendar dates', () => {
+    const result = parseTransactionFilters({
+      from: '2026-02-31',
+      to: '2026-04-31',
+    });
+
+    expect(result).toEqual({
+      filters: {},
+      lang: 'en',
+      hasInvalidDateRange: false,
+    });
+  });
+
   it('marks valid reversed date ranges for empty result rendering', () => {
     const result = parseTransactionFilters({
       from: '2026-05-31',

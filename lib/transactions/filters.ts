@@ -18,6 +18,7 @@ type QueryValue = string | string[] | undefined;
 export type TransactionFilterSearchParams = Record<string, QueryValue>;
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const POSITIVE_INTEGER_RE = /^\d+$/;
 
 function firstValue(value: QueryValue): string | undefined {
   if (Array.isArray(value)) {
@@ -29,7 +30,7 @@ function firstValue(value: QueryValue): string | undefined {
 
 function parsePositiveInteger(value: QueryValue): number | undefined {
   const raw = firstValue(value);
-  if (!raw) {
+  if (!raw || !POSITIVE_INTEGER_RE.test(raw)) {
     return undefined;
   }
 
@@ -44,7 +45,9 @@ function parseIsoDate(value: QueryValue): string | undefined {
   }
 
   const parsed = new Date(`${raw}T00:00:00Z`);
-  return Number.isNaN(parsed.getTime()) ? undefined : raw;
+  return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== raw
+    ? undefined
+    : raw;
 }
 
 function parseSearch(value: QueryValue): string | undefined {
