@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getAccountSummary } from '@/lib/analytics/cash-flow';
 import { getRentalOperationSummary } from '@/lib/analytics/rentals-operations';
+import { formatCurrency } from '@/lib/i18n/format';
 import { getLangFromUrl } from '@/lib/i18n/utils';
 import Link from 'next/link';
 
@@ -10,13 +11,6 @@ export async function SummaryCards() {
   const locale = await getLangFromUrl();
   const summary = await getAccountSummary();
   const rentalSummary = await getRentalOperationSummary();
-
-  const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: locale === 'pt-BR' ? 'BRL' : 'USD',
-    }).format(parseFloat(amount));
-  };
 
   return (
     <>
@@ -29,7 +23,7 @@ export async function SummaryCards() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(summary.total_balance)}
+              {formatCurrency(summary.total_balance, locale)}
             </div>
           </CardContent>
         </Card>
@@ -42,7 +36,7 @@ export async function SummaryCards() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(summary.monthly_income)}
+              {formatCurrency(summary.monthly_income, locale)}
             </div>
           </CardContent>
         </Card>
@@ -55,7 +49,7 @@ export async function SummaryCards() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(summary.monthly_expenses)}
+              {formatCurrency(summary.monthly_expenses, locale)}
             </div>
           </CardContent>
         </Card>
@@ -74,7 +68,7 @@ export async function SummaryCards() {
                   : 'text-red-600'
               }`}
             >
-              {formatCurrency(summary.net_cash_flow)}
+              {formatCurrency(summary.net_cash_flow, locale)}
             </div>
           </CardContent>
         </Card>

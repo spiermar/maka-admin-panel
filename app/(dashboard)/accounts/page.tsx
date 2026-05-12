@@ -2,19 +2,13 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getAllAccountsWithBalances } from '@/lib/db/accounts';
+import { formatCurrency } from '@/lib/i18n/format';
 import { getLangFromUrl } from '@/lib/i18n/utils';
 
 export default async function AccountsPage() {
   const t = await getTranslations('accounts');
   const locale = await getLangFromUrl();
   const accounts = await getAllAccountsWithBalances();
-
-  const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: locale === 'pt-BR' ? 'BRL' : 'USD',
-    }).format(parseFloat(amount));
-  };
 
   return (
     <div className="space-y-6">
@@ -49,7 +43,7 @@ export default async function AccountsPage() {
                         : 'text-red-600'
                     }`}
                   >
-                    {formatCurrency(account.balance)}
+                    {formatCurrency(account.balance, locale)}
                   </div>
                 </CardContent>
               </Card>
