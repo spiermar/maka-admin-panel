@@ -1,16 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 
 export function DashboardNav() {
   const t = useTranslations('nav');
-  const searchParams = useSearchParams();
-  const lang = searchParams.get('lang') || 'en';
+  const lang = useLocale();
   const [rentalsOpen, setRentalsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
