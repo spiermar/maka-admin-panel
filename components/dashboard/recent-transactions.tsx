@@ -10,27 +10,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { getRecentTransactions } from '@/lib/db/transactions';
+import { formatCurrency, formatDate } from '@/lib/i18n/format';
 import { getLangFromUrl } from '@/lib/i18n/utils';
 
 export async function RecentTransactions() {
   const t = await getTranslations('transactions');
   const locale = await getLangFromUrl();
   const transactions = await getRecentTransactions(10);
-
-  const formatCurrency = (amount: string) => {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: locale === 'pt-BR' ? 'BRL' : 'USD',
-    }).format(parseFloat(amount));
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString(locale, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
 
   return (
     <Card>
@@ -59,7 +45,11 @@ export async function RecentTransactions() {
               transactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
-                    {formatDate(transaction.date)}
+                    {formatDate(transaction.date, locale, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
                   </TableCell>
                   <TableCell>
                     <Link
@@ -80,7 +70,7 @@ export async function RecentTransactions() {
                         : 'text-red-600'
                     }`}
                   >
-                    {formatCurrency(transaction.amount)}
+                    {formatCurrency(transaction.amount, locale)}
                   </TableCell>
                 </TableRow>
               ))

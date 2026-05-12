@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Table,
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { TransactionWithDetails } from '@/lib/db/types';
 import { deleteTransaction } from '@/lib/actions/transactions';
+import { formatCurrency, formatDate } from '@/lib/i18n/format';
 import { Info } from 'lucide-react';
 
 interface TransactionTableProps {
@@ -37,25 +38,6 @@ export function TransactionTable({
   const [deleting, setDeleting] = useState<number | null>(null);
   const [infoTransaction, setInfoTransaction] =
     useState<TransactionWithDetails | null>(null);
-
-  const formatCurrency = useMemo(() => {
-    return (amount: string) => {
-      return new Intl.NumberFormat(lang, {
-        style: 'currency',
-        currency: lang === 'pt-BR' ? 'BRL' : 'USD',
-      }).format(parseFloat(amount));
-    };
-  }, [lang]);
-
-  const formatDate = (date: string) => {
-    return new Date(
-      typeof date === 'string' ? date + 'T00:00:00' : date
-    ).toLocaleDateString(lang, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   const handleDelete = async (id: number, accountId: number) => {
     if (!confirm(t('deleteConfirm'))) {
@@ -95,7 +77,11 @@ export function TransactionTable({
           transactions.map((transaction) => (
             <TableRow key={transaction.id}>
               <TableCell>
-                {formatDate(transaction.date)}
+                {formatDate(transaction.date, lang, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
               </TableCell>
               <TableCell>{transaction.account_name}</TableCell>
               <TableCell>{transaction.payee}</TableCell>
@@ -109,7 +95,7 @@ export function TransactionTable({
                     : 'text-red-600'
                 }`}
               >
-                {formatCurrency(transaction.amount)}
+                {formatCurrency(transaction.amount, lang)}
               </TableCell>
               <TableCell className="max-w-xs truncate">
                 {transaction.comment}
