@@ -1,9 +1,26 @@
 import { middleware } from '@/middleware';
 import { NextRequest } from 'next/server';
+import type { headers as nextHeaders } from 'next/headers';
+
+type HeaderStore = Awaited<ReturnType<typeof nextHeaders>>;
 
 vi.mock('next/headers', () => ({
   headers: vi.fn(),
 }));
+
+function createHeaderStore(xLocale: string | null): HeaderStore {
+  const headerStore = new Headers();
+
+  if (xLocale !== null) {
+    headerStore.set('x-locale', xLocale);
+  }
+
+  return headerStore;
+}
+
+async function mockNextHeaders(xLocale: string | null) {
+  vi.spyOn(await import('next/headers'), 'headers').mockResolvedValue(createHeaderStore(xLocale));
+}
 
 describe('i18n Locale Detection', () => {
   describe('Middleware locale detection from query parameter', () => {
@@ -78,18 +95,8 @@ describe('i18n Locale Detection', () => {
     });
 
     it('returns locale from x-locale header', async () => {
-      const mockHeaders = {
-        get: (key: string) => {
-          if (key === 'x-locale') return 'pt-BR';
-          return null;
-        },
-      };
-
-      vi.mocked(vi.fn(() => mockHeaders)).mockResolvedValue(mockHeaders as any);
-      
       const { getLangFromUrl } = await import('@/lib/i18n/utils');
-      
-      vi.spyOn(await import('next/headers'), 'headers').mockResolvedValue(mockHeaders as any);
+      await mockNextHeaders('pt-BR');
 
       const locale = await getLangFromUrl();
 
@@ -97,13 +104,8 @@ describe('i18n Locale Detection', () => {
     });
 
     it('returns default locale when x-locale header is missing', async () => {
-      const mockHeaders = {
-        get: () => null,
-      };
-
-      vi.spyOn(await import('next/headers'), 'headers').mockResolvedValue(mockHeaders as any);
-
       const { getLangFromUrl } = await import('@/lib/i18n/utils');
+      await mockNextHeaders(null);
 
       const locale = await getLangFromUrl();
 
@@ -111,16 +113,8 @@ describe('i18n Locale Detection', () => {
     });
 
     it('returns default locale when x-locale is invalid', async () => {
-      const mockHeaders = {
-        get: (key: string) => {
-          if (key === 'x-locale') return 'invalid-locale';
-          return null;
-        },
-      };
-
-      vi.spyOn(await import('next/headers'), 'headers').mockResolvedValue(mockHeaders as any);
-
       const { getLangFromUrl } = await import('@/lib/i18n/utils');
+      await mockNextHeaders('invalid-locale');
 
       const locale = await getLangFromUrl();
 
@@ -128,16 +122,8 @@ describe('i18n Locale Detection', () => {
     });
 
     it('returns default locale when x-locale is empty string', async () => {
-      const mockHeaders = {
-        get: (key: string) => {
-          if (key === 'x-locale') return '';
-          return null;
-        },
-      };
-
-      vi.spyOn(await import('next/headers'), 'headers').mockResolvedValue(mockHeaders as any);
-
       const { getLangFromUrl } = await import('@/lib/i18n/utils');
+      await mockNextHeaders('');
 
       const locale = await getLangFromUrl();
 
