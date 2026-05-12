@@ -43,6 +43,7 @@ next-env.d.ts
 
 # codex 
 .codex/config.toml
+.superpowers/
 
 # tmp
 tmp/
