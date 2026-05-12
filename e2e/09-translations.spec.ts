@@ -42,23 +42,40 @@ test.describe('Translations', () => {
 
   test('maintains Portuguese locale when navigating to accounts page', async ({ page }) => {
     await page.goto('/?lang=pt-BR');
-    
-    await page.waitForURL(/\/\?.*/);
-    
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((cookie) => cookie.name === 'locale')?.value;
+      })
+      .toBe('pt-BR');
+
     await page.goto('/accounts');
     await page.waitForURL(/.*\/accounts/);
-    
+
+    expect(new URL(page.url()).searchParams.get('lang')).toBeNull();
     await expect(page.getByRole('heading', { name: /contas/i })).toBeVisible();
+
+    await expect(page.getByRole('link', { name: /configurações/i })).toHaveAttribute(
+      'href',
+      '/settings?lang=pt-BR'
+    );
   });
 
   test('maintains Portuguese locale when navigating to settings page', async ({ page }) => {
     await page.goto('/?lang=pt-BR');
-    
-    await page.waitForURL(/\/\?.*/);
-    
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((cookie) => cookie.name === 'locale')?.value;
+      })
+      .toBe('pt-BR');
+
     await page.goto('/settings');
     await page.waitForURL(/.*\/settings/);
-    
+
+    expect(new URL(page.url()).searchParams.get('lang')).toBeNull();
     await expect(page.getByRole('heading', { name: /configurações/i })).toBeVisible();
   });
 
